@@ -50,17 +50,17 @@ class AdminPanelProvider extends PanelProvider
             ->collapsedSidebarWidth('9rem')
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder->groups([
-                    NavigationGroup::make('Ventes')
-                        ->items([
-                            ...DevisResource::getNavigationItems(),
-                            ...FactureResource::getNavigationItems(),
-                        ]),
-
                     NavigationGroup::make('CRM')
                         ->items([
                             ...ClientResource::getNavigationItems(),
                             ...EntrepriseResource::getNavigationItems(),
                             ...OpportunityResource::getNavigationItems(),
+                        ]),
+
+                    NavigationGroup::make('Ventes')
+                        ->items([
+                            ...DevisResource::getNavigationItems(),
+                            ...FactureResource::getNavigationItems(),
                         ]),
 
                     NavigationGroup::make('Communication')
