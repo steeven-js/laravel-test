@@ -17,7 +17,9 @@ class NotificationResource extends Resource
 {
     protected static ?string $model = NotificationModel::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
+    protected static ?string $navigationGroup = 'Communication';
+    protected static ?int $navigationSort = 30;
 
     public static function form(Form $form): Form
     {

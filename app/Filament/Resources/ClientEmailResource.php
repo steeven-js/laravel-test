@@ -17,7 +17,9 @@ class ClientEmailResource extends Resource
 {
     protected static ?string $model = ClientEmail::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-paper-airplane';
+    protected static ?string $navigationGroup = 'Communication';
+    protected static ?int $navigationSort = 20;
 
     public static function form(Form $form): Form
     {

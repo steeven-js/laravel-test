@@ -17,7 +17,9 @@ class FactureResource extends Resource
 {
     protected static ?string $model = Facture::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-receipt-refund';
+    protected static ?string $navigationGroup = 'Ventes';
+    protected static ?int $navigationSort = 20;
 
     public static function form(Form $form): Form
     {

@@ -11,12 +11,30 @@ use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+
+use App\Filament\Resources\DevisResource;
+use App\Filament\Resources\FactureResource;
+use App\Filament\Resources\ClientResource;
+use App\Filament\Resources\EntrepriseResource;
+use App\Filament\Resources\OpportunityResource;
+use App\Filament\Resources\EmailTemplateResource;
+use App\Filament\Resources\ClientEmailResource;
+use App\Filament\Resources\NotificationResource as NotificationsResource;
+use App\Filament\Resources\ServiceResource;
+use App\Filament\Resources\SecteurActiviteResource;
+use App\Filament\Resources\TicketResource;
+use App\Filament\Resources\TodoResource;
+use App\Filament\Resources\UserRoleResource;
+use App\Filament\Resources\UserResource as UsersResource;
+use App\Filament\Resources\MadiniaResource;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -27,6 +45,55 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->collapsibleNavigationGroups()
+            ->sidebarCollapsibleOnDesktop()
+            ->collapsedSidebarWidth('9rem')
+            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+                return $builder->groups([
+                    NavigationGroup::make('Ventes')
+                        ->items([
+                            ...DevisResource::getNavigationItems(),
+                            ...FactureResource::getNavigationItems(),
+                        ]),
+
+                    NavigationGroup::make('CRM')
+                        ->items([
+                            ...ClientResource::getNavigationItems(),
+                            ...EntrepriseResource::getNavigationItems(),
+                            ...OpportunityResource::getNavigationItems(),
+                        ]),
+
+                    NavigationGroup::make('Communication')
+                        ->items([
+                            ...EmailTemplateResource::getNavigationItems(),
+                            ...ClientEmailResource::getNavigationItems(),
+                            ...NotificationsResource::getNavigationItems(),
+                        ]),
+
+                    NavigationGroup::make('Référentiels')
+                        ->items([
+                            ...ServiceResource::getNavigationItems(),
+                            ...SecteurActiviteResource::getNavigationItems(),
+                        ]),
+
+                    NavigationGroup::make('Support')
+                        ->items([
+                            ...TicketResource::getNavigationItems(),
+                            ...TodoResource::getNavigationItems(),
+                        ]),
+
+                    NavigationGroup::make('Réglages')
+                        ->items([
+                            ...MadiniaResource::getNavigationItems(),
+                        ]),
+
+                    NavigationGroup::make('Administration')
+                        ->items([
+                            ...UserRoleResource::getNavigationItems(),
+                            ...UsersResource::getNavigationItems(),
+                        ]),
+                ]);
+            })
             ->colors([
                 'primary' => Color::Amber,
             ])
