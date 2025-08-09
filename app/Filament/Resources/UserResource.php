@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';
+
     protected static ?string $navigationGroup = 'Administration';
+
     protected static ?int $navigationSort = 20;
 
     public static function getModelLabel(): string
@@ -40,33 +42,60 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('telephone')
-                    ->tel()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('ville')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('adresse')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('code_postal')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('pays')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('avatar')
-                    ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('user_role_id')
-                    ->relationship('userRole', 'name'),
+                Forms\Components\Section::make('Profil utilisateur')
+                    ->description('Informations, coordonnées et rôle de l’utilisateur')
+                    ->icon('heroicon-o-user')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->label('Nom')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('email')
+                                    ->label('Email')
+                                    ->email()
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('telephone')
+                                    ->label('Téléphone')
+                                    ->tel()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('ville')
+                                    ->label('Ville')
+                                    ->maxLength(255),
+                            ]),
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\TextInput::make('adresse')
+                                    ->label('Adresse')
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('code_postal')
+                                    ->label('Code postal')
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('pays')
+                                    ->label('Pays')
+                                    ->maxLength(255),
+                            ]),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('avatar')
+                                    ->label('Avatar')
+                                    ->maxLength(255),
+                                Forms\Components\DateTimePicker::make('email_verified_at')->label('Email vérifié le'),
+                            ]),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('password')
+                                    ->label('Mot de passe')
+                                    ->password()
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\Select::make('user_role_id')
+                                    ->label('Rôle')
+                                    ->relationship('userRole', 'display_name'),
+                            ]),
+                    ]),
             ]);
     }
 
@@ -75,46 +104,96 @@ class UserResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->label('Nom')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+                    ->label('Email')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('telephone')
-                    ->searchable(),
+                    ->label('Téléphone')
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('ville')
-                    ->searchable(),
+                    ->label('Ville')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('adresse')
-                    ->searchable(),
+                    ->label('Adresse')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('code_postal')
-                    ->searchable(),
+                    ->label('Code postal')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('pays')
-                    ->searchable(),
+                    ->label('Pays')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('avatar')
-                    ->searchable(),
+                    ->label('Avatar')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('email_verified_at')
+                    ->label('Email vérifié le')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('userRole.display_name')
                     ->label('Rôle')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
+                    ->label('Créé le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('Mis à jour le')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->recordUrl(null)
+            ->recordAction('view')
             ->filters([
                 //
             ])
+            ->searchPlaceholder('Rechercher...')
+            ->emptyStateIcon('heroicon-o-user-circle')
+            ->emptyStateHeading('Aucun utilisateur')
+            ->emptyStateDescription('Ajoutez votre premier utilisateur pour commencer.')
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()->label('Nouvel utilisateur'),
+            ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->label('Aperçu')
+                    ->modalHeading('Aperçu de l\'utilisateur')
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Fermer')
+                    ->infolist([
+                        Infolists\Components\Section::make('Informations')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('name')->label('Nom'),
+                                Infolists\Components\TextEntry::make('email')->label('Email'),
+                                Infolists\Components\TextEntry::make('telephone')->label('Téléphone')->placeholder('—'),
+                                Infolists\Components\TextEntry::make('ville')->label('Ville')->placeholder('—'),
+                                Infolists\Components\TextEntry::make('adresse')->label('Adresse')->placeholder('—'),
+                                Infolists\Components\TextEntry::make('code_postal')->label('Code postal')->placeholder('—'),
+                                Infolists\Components\TextEntry::make('pays')->label('Pays')->placeholder('—'),
+                                Infolists\Components\TextEntry::make('userRole.display_name')->label('Rôle'),
+                                Infolists\Components\TextEntry::make('email_verified_at')->label('Email vérifié le')->dateTime()->placeholder('Non vérifié'),
+                                Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
+                                Infolists\Components\TextEntry::make('updated_at')->label('Mis à jour le')->dateTime(),
+                            ]),
+                    ]),
+                Tables\Actions\EditAction::make()->label('Modifier'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->label('Supprimer la sélection'),
                 ]),
             ]);
     }

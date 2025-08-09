@@ -1,24 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\SecteurActiviteResource\Pages;
-use App\Filament\Resources\SecteurActiviteResource\RelationManagers;
 use App\Models\SecteurActivite;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SecteurActiviteResource extends Resource
 {
     protected static ?string $model = SecteurActivite::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     protected static ?string $navigationGroup = 'Référentiels';
+
     protected static ?int $navigationSort = 20;
 
     public static function getModelLabel(): string
@@ -40,18 +41,22 @@ class SecteurActiviteResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('code')
-                    ->required()
-                    ->maxLength(10),
-                Forms\Components\TextInput::make('libelle')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('division')
-                    ->maxLength(2),
-                Forms\Components\TextInput::make('section')
-                    ->maxLength(1),
-                Forms\Components\Toggle::make('actif')
-                    ->required(),
+                Forms\Components\Section::make("Secteur d'activité")
+                    ->description('Code NAF/APE, libellé et classification')
+                    ->icon('heroicon-o-rectangle-stack')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('code')->required()->maxLength(10),
+                                Forms\Components\TextInput::make('libelle')->required()->maxLength(255),
+                            ]),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('division')->maxLength(2),
+                                Forms\Components\TextInput::make('section')->maxLength(1),
+                            ]),
+                        Forms\Components\Toggle::make('actif')->required(),
+                    ]),
             ]);
     }
 
@@ -60,15 +65,20 @@ class SecteurActiviteResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('code')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('libelle')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('division')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('section')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('actif')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -80,6 +90,13 @@ class SecteurActiviteResource extends Resource
             ])
             ->filters([
                 //
+            ])
+            ->searchPlaceholder('Rechercher...')
+            ->emptyStateIcon('heroicon-o-rectangle-stack')
+            ->emptyStateHeading("Aucun secteur d'activité")
+            ->emptyStateDescription("Ajoutez votre premier secteur d'activité pour commencer.")
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()->label('Nouveau secteur'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

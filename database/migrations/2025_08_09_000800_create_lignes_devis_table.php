@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -28,6 +30,7 @@ return new class extends Migration
             $table->integer('ordre')->default(1)->comment("Ordre d'affichage de la ligne");
             $table->text('description_personnalisee')->nullable()->comment('Description spécifique pour cette ligne');
             $table->timestamps();
+            $table->softDeletes();
 
             // Index pour optimiser les performances
             $table->index(['devis_id', 'ordre']);
@@ -43,5 +46,3 @@ return new class extends Migration
         Schema::dropIfExists('lignes_devis');
     }
 };
-
-

@@ -1,0 +1,56 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "array_syntax": {
+            "syntax": "short"
+        },
+        "binary_operator_spaces": {
+            "default": "single_space"
+        },
+        "concat_space": {
+            "spacing": "one"
+        },
+        "declare_strict_types": true,
+        "general_phpdoc_annotation_remove": {
+            "annotations": ["author"]
+        },
+        "method_argument_space": {
+            "after_heredoc": true,
+            "keep_multiple_spaces_after_comma": false,
+            "on_multiline": "ensure_fully_multiline"
+        },
+        "no_unused_imports": true,
+        "phpdoc_align": {
+            "align": "left"
+        },
+        "single_quote": true,
+        "trailing_comma_in_multiline": {
+            "elements": ["arrays"]
+        }
+    },
+    "finder": {
+        "exclude": [
+            "bootstrap/cache",
+            "node_modules",
+            "public/build",
+            "public/hot",
+            "public/storage",
+            "storage",
+            "vendor"
+        ],
+        "in": [
+            "app",
+            "config",
+            "database",
+            "lang",
+            "routes",
+            "tests"
+        ],
+        "name": [
+            "*.php"
+        ],
+        "not_name": [
+            "*.blade.php"
+        ]
+    }
+}

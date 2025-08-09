@@ -1,24 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\NotificationResource\Pages;
-use App\Filament\Resources\NotificationResource\RelationManagers;
-use Illuminate\Notifications\DatabaseNotification as NotificationModel;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Notifications\DatabaseNotification as NotificationModel;
 
 class NotificationResource extends Resource
 {
     protected static ?string $model = NotificationModel::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
+
     protected static ?string $navigationGroup = 'Communication';
+
     protected static ?int $navigationSort = 30;
 
     public static function getModelLabel(): string
@@ -71,25 +72,31 @@ class NotificationResource extends Resource
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
                     ->copyable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('type')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('notifiable_type')
                     ->label('Notifiable type')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('notifiable_id')
                     ->label('Notifiable ID')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('read_at')
                     ->label('Lu')
                     ->boolean()
                     ->trueIcon('heroicon-m-check')
                     ->falseIcon('heroicon-m-x-mark')
-                    ->getStateUsing(fn ($record) => ! is_null($record->read_at)),
+                    ->getStateUsing(fn ($record) => ! is_null($record->read_at))
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('read')
@@ -106,6 +113,13 @@ class NotificationResource extends Resource
                         ->distinct()
                         ->pluck('type', 'type')
                         ->toArray()),
+            ])
+            ->searchPlaceholder('Rechercher...')
+            ->emptyStateIcon('heroicon-o-bell-alert')
+            ->emptyStateHeading('Aucune notification')
+            ->emptyStateDescription("Il n'y a pas encore de notifications à afficher.")
+            ->emptyStateActions([
+                // pas d'action de création pour les notifications système
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

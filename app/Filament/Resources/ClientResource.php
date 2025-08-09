@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClientResource\Pages;
-use App\Filament\Resources\ClientResource\RelationManagers;
 use App\Models\Client;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
+
     protected static ?string $navigationGroup = 'CRM';
+
     protected static ?int $navigationSort = 10;
 
     public static function getModelLabel(): string
@@ -40,64 +42,100 @@ class ClientResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nom')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('prenom')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true)
-                    ->helperText('Doit être unique si renseigné.'),
-                Forms\Components\TextInput::make('telephone')
-                    ->tel()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('adresse')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('ville')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('code_postal')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('pays')
-                    ->maxLength(255)
-                    ->default('France'),
-                Forms\Components\Toggle::make('actif')
-                    ->required(),
-                Forms\Components\Textarea::make('notes')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('entreprise_id')
-                    ->relationship('entreprise', 'nom')
-                    ->searchable()
-                    ->preload()
-                    ->label('Entreprise'),
+                Forms\Components\Section::make('Identité du client')
+                    ->description('Nom, email et contacts du client')
+                    ->icon('heroicon-o-user-group')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('nom')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('prenom')
+                                    ->maxLength(255),
+                            ]),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('email')
+                                    ->email()
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true)
+                                    ->helperText('Doit être unique si renseigné.'),
+                                Forms\Components\TextInput::make('telephone')
+                                    ->tel()
+                                    ->maxLength(255),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Adresse')
+                    ->description('Adresse postale et pays')
+                    ->icon('heroicon-o-map-pin')
+                    ->schema([
+                        Forms\Components\Textarea::make('adresse')
+                            ->columnSpanFull(),
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\TextInput::make('ville')
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('code_postal')
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('pays')
+                                    ->maxLength(255)
+                                    ->default('France'),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Paramètres')
+                    ->description('Statut et entreprise rattachée')
+                    ->icon('heroicon-o-adjustments-horizontal')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\Toggle::make('actif')->required(),
+                                Forms\Components\Select::make('entreprise_id')
+                                    ->relationship('entreprise', 'nom')
+                                    ->searchable()
+                                    ->preload()
+                                    ->label('Entreprise'),
+                            ]),
+                        Forms\Components\Textarea::make('notes')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->query(static::getEloquentQuery()->whereNull('deleted_at'))
             ->columns([
                 Tables\Columns\TextColumn::make('nom')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('prenom')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('email')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('telephone')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('ville')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('code_postal')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('pays')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('actif')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('entreprise.nom')
                     ->label('Entreprise')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -113,6 +151,13 @@ class ClientResource extends Resource
                     ->relationship('entreprise', 'nom')
                     ->label('Entreprise'),
             ])
+            ->searchPlaceholder('Rechercher...')
+            ->emptyStateIcon('heroicon-o-user-group')
+            ->emptyStateHeading('Aucun client')
+            ->emptyStateDescription('Ajoutez votre premier client pour commencer.')
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()->label('Nouveau client'),
+            ])
             ->emptyStateIcon('heroicon-o-user-group')
             ->emptyStateHeading('Aucun client')
             ->emptyStateDescription('Ajoutez votre premier client pour commencer.')
@@ -120,6 +165,59 @@ class ClientResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouveau client'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->infolist([
+                        Infolists\Components\Section::make('Informations personnelles')
+                            ->description('Détails du profil client')
+                            ->icon('heroicon-o-user')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('nom')
+                                    ->label('Nom'),
+                                Infolists\Components\TextEntry::make('prenom')
+                                    ->label('Prénom'),
+                                Infolists\Components\TextEntry::make('email')
+                                    ->label('Email'),
+                                Infolists\Components\TextEntry::make('telephone')
+                                    ->label('Téléphone'),
+                            ]),
+                        Infolists\Components\Section::make('Adresse')
+                            ->description('Coordonnées géographiques')
+                            ->icon('heroicon-o-map-pin')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('adresse')
+                                    ->label('Adresse'),
+                                Infolists\Components\TextEntry::make('ville')
+                                    ->label('Ville'),
+                                Infolists\Components\TextEntry::make('code_postal')
+                                    ->label('Code postal'),
+                                Infolists\Components\TextEntry::make('pays')
+                                    ->label('Pays'),
+                            ]),
+                        Infolists\Components\Section::make('Entreprise et statut')
+                            ->description('Informations professionnelles')
+                            ->icon('heroicon-o-building-office')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('entreprise.nom')
+                                    ->label('Entreprise'),
+                                Infolists\Components\IconEntry::make('actif')
+                                    ->label('Statut')
+                                    ->boolean(),
+                                Infolists\Components\TextEntry::make('notes')
+                                    ->label('Notes')
+                                    ->markdown(),
+                            ]),
+                        Infolists\Components\Section::make('Informations système')
+                            ->description('Métadonnées techniques')
+                            ->icon('heroicon-o-cog')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('created_at')
+                                    ->label('Créé le')
+                                    ->dateTime(),
+                                Infolists\Components\TextEntry::make('updated_at')
+                                    ->label('Modifié le')
+                                    ->dateTime(),
+                            ]),
+                    ]),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -141,6 +239,7 @@ class ClientResource extends Resource
         return [
             'index' => Pages\ListClients::route('/'),
             'create' => Pages\CreateClient::route('/create'),
+            'view' => Pages\ViewClient::route('/{record}'),
             'edit' => Pages\EditClient::route('/{record}/edit'),
         ];
     }

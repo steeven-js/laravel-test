@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Seeders;
 
 use App\Models\SecteurActivite;
@@ -13,12 +15,14 @@ class SecteurActiviteSeeder extends Seeder
         $csvPath = base_path('secteurs_activite_rows.csv');
         if (! file_exists($csvPath)) {
             $this->command?->warn("Fichier CSV introuvable: {$csvPath}");
+
             return;
         }
 
         $handle = fopen($csvPath, 'r');
         if ($handle === false) {
             $this->command?->error('Impossible d\'ouvrir le fichier CSV.');
+
             return;
         }
 
@@ -27,6 +31,7 @@ class SecteurActiviteSeeder extends Seeder
         if ($header === false) {
             fclose($handle);
             $this->command?->warn('Fichier CSV vide.');
+
             return;
         }
 
@@ -68,5 +73,3 @@ class SecteurActiviteSeeder extends Seeder
         $this->command?->info('Secteurs d\'activité importés depuis le CSV.');
     }
 }
-
-

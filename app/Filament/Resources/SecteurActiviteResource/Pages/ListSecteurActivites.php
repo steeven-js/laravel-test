@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\SecteurActiviteResource\Pages;
 
 use App\Filament\Resources\SecteurActiviteResource;
@@ -9,6 +11,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListSecteurActivites extends ListRecords
 {
     protected static string $resource = SecteurActiviteResource::class;
+
     protected static ?string $breadcrumb = 'Liste';
 
     protected function getHeaderActions(): array

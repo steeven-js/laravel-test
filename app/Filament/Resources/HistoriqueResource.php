@@ -1,17 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\HistoriqueResource\Pages;
-use App\Filament\Resources\HistoriqueResource\RelationManagers;
 use App\Models\Historique;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class HistoriqueResource extends Resource
 {
@@ -23,37 +22,43 @@ class HistoriqueResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('entite_type')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('entite_id')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('action')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('titre')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('donnees_avant'),
-                Forms\Components\TextInput::make('donnees_apres'),
-                Forms\Components\TextInput::make('donnees_supplementaires'),
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->required(),
-                Forms\Components\TextInput::make('user_nom')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('user_email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('ip_address')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('user_agent')
-                    ->columnSpanFull(),
+                Forms\Components\Section::make('Événement')
+                    ->description('Entité, action et titre de l\'historique')
+                    ->icon('heroicon-o-clock')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\TextInput::make('entite_type')->required()->maxLength(255),
+                                Forms\Components\TextInput::make('entite_id')->required()->numeric(),
+                                Forms\Components\TextInput::make('action')->required()->maxLength(255),
+                            ]),
+                        Forms\Components\TextInput::make('titre')->required()->maxLength(255),
+                        Forms\Components\Textarea::make('description')->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Données')
+                    ->description('Avant, après et supplémentaires')
+                    ->icon('heroicon-o-document-text')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\TextInput::make('donnees_avant'),
+                                Forms\Components\TextInput::make('donnees_apres'),
+                                Forms\Components\TextInput::make('donnees_supplementaires'),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Utilisateur & contexte')
+                    ->description('Utilisateur, IP et user agent')
+                    ->icon('heroicon-o-user')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\Select::make('user_id')->relationship('user', 'name')->required(),
+                                Forms\Components\TextInput::make('user_nom')->required()->maxLength(255),
+                                Forms\Components\TextInput::make('user_email')->email()->required()->maxLength(255),
+                            ]),
+                        Forms\Components\TextInput::make('ip_address')->maxLength(255),
+                        Forms\Components\Textarea::make('user_agent')->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -62,30 +67,45 @@ class HistoriqueResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('entite_type')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('entite_id')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('action')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('titre')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user_nom')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('user_email')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('ip_address')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ->toggleable(),
             ])
             ->filters([
                 //
+            ])
+            ->searchPlaceholder('Rechercher...')
+            ->emptyStateIcon('heroicon-o-rectangle-stack')
+            ->emptyStateHeading('Aucun historique')
+            ->emptyStateDescription("Il n'y a pas encore d'événements d'historique.")
+            ->emptyStateActions([
+                // pas de création manuelle d'historique
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServiceResource\Pages;
-use App\Filament\Resources\ServiceResource\RelationManagers;
 use App\Models\Service;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
+
     protected static ?string $navigationGroup = 'Référentiels';
+
     protected static ?int $navigationSort = 10;
 
     public static function getModelLabel(): string
@@ -40,58 +42,71 @@ class ServiceResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nom')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('code')
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true)
-                    ->helperText('Code unique du service (optionnel).'),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\TextInput::make('prix_ht')
-                    ->numeric()
-                    ->inputMode('decimal')
-                    ->prefix('€')
-                    ->helperText('Prix unitaire hors taxes.'),
-                Forms\Components\TextInput::make('qte_defaut')
-                    ->numeric()
-                    ->default(1)
-                    ->minValue(1),
-                Forms\Components\Select::make('unite')
-                    ->required()
-                    ->options([
-                        'heure' => 'Heure',
-                        'journee' => 'Journée',
-                        'semaine' => 'Semaine',
-                        'mois' => 'Mois',
-                        'unite' => 'Unité',
-                        'forfait' => 'Forfait',
-                        'licence' => 'Licence',
-                    ])
-                    ->default('heure'),
-                Forms\Components\Toggle::make('actif'),
+                Forms\Components\Section::make('Informations du service')
+                    ->description('Nom, code, description et paramètres par défaut')
+                    ->icon('heroicon-o-briefcase')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('nom')->required()->maxLength(255),
+                                Forms\Components\TextInput::make('code')
+                                    ->maxLength(255)
+                                    ->unique(ignoreRecord: true)
+                                    ->helperText('Code unique du service (optionnel).'),
+                            ]),
+                        Forms\Components\Textarea::make('description')->columnSpanFull(),
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\TextInput::make('prix_ht')
+                                    ->numeric()
+                                    ->inputMode('decimal')
+                                    ->prefix('€')
+                                    ->helperText('Prix unitaire hors taxes.'),
+                                Forms\Components\TextInput::make('qte_defaut')
+                                    ->numeric()->default(1)->minValue(1),
+                                Forms\Components\Select::make('unite')
+                                    ->required()
+                                    ->options([
+                                        'heure' => 'Heure',
+                                        'journee' => 'Journée',
+                                        'semaine' => 'Semaine',
+                                        'mois' => 'Mois',
+                                        'unite' => 'Unité',
+                                        'forfait' => 'Forfait',
+                                        'licence' => 'Licence',
+                                    ])
+                                    ->default('heure'),
+                            ]),
+                        Forms\Components\Toggle::make('actif'),
+                    ]),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->query(static::getEloquentQuery()->whereNull('deleted_at'))
             ->columns([
                 Tables\Columns\TextColumn::make('nom')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('code')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('prix_ht')
                     ->money('EUR')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('qte_defaut')
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('unite')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\IconColumn::make('actif')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -115,7 +130,50 @@ class ServiceResource extends Resource
                         'licence' => 'Licence',
                     ]),
             ])
+            ->searchPlaceholder('Rechercher...')
+            ->emptyStateIcon('heroicon-o-briefcase')
+            ->emptyStateHeading('Aucun service')
+            ->emptyStateDescription('Ajoutez votre premier service pour commencer.')
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()->label('Nouveau service'),
+            ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->infolist([
+                        Infolists\Components\Section::make('Informations du service')
+                            ->description('Nom, code, description et paramètres par défaut')
+                            ->icon('heroicon-o-briefcase')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('nom')
+                                    ->label('Nom'),
+                                Infolists\Components\TextEntry::make('code')
+                                    ->label('Code'),
+                                Infolists\Components\TextEntry::make('description')
+                                    ->label('Description')
+                                    ->markdown(),
+                                Infolists\Components\TextEntry::make('prix_ht')
+                                    ->label('Prix HT')
+                                    ->money('EUR'),
+                                Infolists\Components\TextEntry::make('qte_defaut')
+                                    ->label('Quantité par défaut'),
+                                Infolists\Components\TextEntry::make('unite')
+                                    ->label('Unité'),
+                                Infolists\Components\IconEntry::make('actif')
+                                    ->label('Statut')
+                                    ->boolean(),
+                            ]),
+                        Infolists\Components\Section::make('Informations système')
+                            ->description('Métadonnées techniques')
+                            ->icon('heroicon-o-cog')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('created_at')
+                                    ->label('Créé le')
+                                    ->dateTime(),
+                                Infolists\Components\TextEntry::make('updated_at')
+                                    ->label('Modifié le')
+                                    ->dateTime(),
+                            ]),
+                    ]),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -137,6 +195,7 @@ class ServiceResource extends Resource
         return [
             'index' => Pages\ListServices::route('/'),
             'create' => Pages\CreateService::route('/create'),
+            'view' => Pages\ViewService::route('/{record}'),
             'edit' => Pages\EditService::route('/{record}/edit'),
         ];
     }

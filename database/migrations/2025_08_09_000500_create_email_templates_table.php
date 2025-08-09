@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -47,6 +49,7 @@ return new class extends Migration
             $table->json('variables')->nullable(); // Variables disponibles dans le template
             $table->text('description')->nullable(); // Description du modèle
             $table->timestamps();
+            $table->softDeletes();
 
             // Index pour optimiser les requêtes
             $table->index(['category', 'is_default']);
@@ -62,5 +65,3 @@ return new class extends Migration
         Schema::dropIfExists('email_templates');
     }
 };
-
-

@@ -1,24 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\OpportunityResource\Pages;
-use App\Filament\Resources\OpportunityResource\RelationManagers;
 use App\Models\Opportunity;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class OpportunityResource extends Resource
 {
     protected static ?string $model = Opportunity::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';
+
     protected static ?string $navigationGroup = 'CRM';
+
     protected static ?int $navigationSort = 30;
 
     public static function getModelLabel(): string
@@ -150,6 +151,12 @@ class OpportunityResource extends Resource
                 Tables\Filters\SelectFilter::make('user_id')
                     ->relationship('user', 'name')
                     ->label('Responsable'),
+            ])
+            ->emptyStateIcon('heroicon-o-chart-bar')
+            ->emptyStateHeading('Aucune opportunité')
+            ->emptyStateDescription('Ajoutez votre première opportunité pour commencer.')
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()->label('Nouvelle opportunité'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

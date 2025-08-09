@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\OpportunityResource\Pages;
 
 use App\Filament\Resources\OpportunityResource;
@@ -9,6 +11,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListOpportunities extends ListRecords
 {
     protected static string $resource = OpportunityResource::class;
+
     protected static ?string $breadcrumb = 'Liste';
 
     protected function getHeaderActions(): array

@@ -56,6 +56,12 @@
         "test": [
             "@php artisan config:clear --ansi",
             "@php artisan test"
+        ],
+        "format": [
+            "@php ./vendor/bin/pint"
+        ],
+        "format:check": [
+            "@php ./vendor/bin/pint --test"
         ]
     },
     "extra": {

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,6 +18,7 @@ return new class extends Migration
             $table->string('section', 1)->nullable()->comment('Section NAF (lettre)');
             $table->boolean('actif')->default(true)->comment('Secteur actif');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['actif']);
             $table->index(['division']);
@@ -28,5 +31,3 @@ return new class extends Migration
         Schema::dropIfExists('secteurs_activite');
     }
 };
-
-

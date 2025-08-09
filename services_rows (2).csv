@@ -1,0 +1,42 @@
+id,nom,code,description,prix_ht,qte_defaut,unite,actif,created_at,updated_at,deleted_at
+1,CONFERENCE INTRODUCTIVE À L'INTELLIGENCE ARTIFICIELLE GENERATIVE,SRV-25-001,"Programme de 2 heures dédié à l'introduction de l'intelligence artificielle
+générative, permettant de découvrir les fondamentaux de l'IA générative et
+ses applications pratiques.",456.22,1,heure,true,2025-06-13 19:23:17,2025-06-14 10:10:40,
+2,Accompagnement Prompt,SRV-25-002,,150.00,1,heure,true,2025-06-13 19:23:18,2025-06-16 11:03:42,
+3,Formation IA par sessions,SRV-25-003,"Service comprenant plusieurs éléments :
+
+• Session 1 - Découverte & premiers pas
+• Session 2 - IA & performance métier
+• Session 3 - IA & attractivité touristique
+• Session 4 - Anticiper les enjeux",800.00,1,heure,true,2025-06-13 19:26:38,2025-06-14 09:31:08,
+4,Formation IA pour séniors,SRV-25-004,"Formation en IA au service de l'entreprenariat des séniors ",120.00,1,heure,true,2025-06-13 19:27:11,2025-06-14 09:31:09,
+5,Solution automatisation fidélisation client,SRV-25-005,Solution d'automatisation suivi client fidélisation (envoi de sms après les RDV),574.80,1,heure,true,2025-06-13 19:27:12,2025-06-14 09:31:09,
+6,Solution automatisation acquisition client,SRV-25-006,Solution d'automatisation d'acquisition de clients via réseaux sociaux (paramétrage de message automatiques d'accueil pour instagram et tiktok),1438.80,1,heure,true,2025-06-13 19:27:13,2025-06-14 09:31:10,
+7,Optimisation capture de leads,SRV-25-007,optimisation de la capture de clients sur site internet (configuration d'un formulaire de capture qui alimente directement le CRM client depuis le site,1438.80,1,heure,true,2025-06-13 19:27:13,2025-06-14 09:31:10,
+8,Solution automatisation création contenu,SRV-25-008,Solution d'automatisation de création de contenu vidéo faceless pour les réseaux (contenu vidéo généré à 100% avec l'IA inclus voix off),3636.00,1,heure,true,2025-06-13 19:27:14,2025-06-14 09:31:11,
+9,Solution automatisation prospection B2B,SRV-25-009,Solution d'automatisation de prospection B2B (scrapping et séquence emailing inclus pour 1 cible définie),1308.00,1,heure,true,2025-06-13 19:27:15,2025-06-14 09:31:11,
+10,Audit,SRV-25-010,"Cette prestation d’audit a pour objectif d’analyser le niveau de maturité numérique et organisationnelle de la structure vis-à-vis des technologies d’intelligence artificielle (IA). Elle permet d’identifier les opportunités concrètes de déploiement de solutions d’IA générative ou d’automatisation, adaptées aux besoins métiers et aux capacités internes.",220.00,1,heure,true,2025-06-16 10:55:35,2025-06-16 10:55:35,
+11,Frais de fonctionnement,SRV-25-011,"Déplacement, hôtellerie, restauration et véhicule",9210.00,1,heure,true,2025-06-16 17:19:34,2025-06-16 17:19:34,
+12,Développement site web vitrine,SRV-25-012,Création d'un site web vitrine responsive avec CMS,2500.00,1,forfait,true,2025-06-16 18:20:58,2025-06-16 18:20:58,
+13,Application web sur mesure,SRV-25-013,Développement d'une application web personnalisée (Laravel/React),8000.00,1,forfait,true,2025-06-16 18:21:00,2025-06-16 18:21:00,
+14,Développement API REST,SRV-25-014,Création d'une API REST sécurisée avec documentation,3500.00,1,forfait,true,2025-06-16 18:21:01,2025-06-16 18:21:01,
+15,Intégration systèmes,SRV-25-015,Intégration entre différents systèmes et plateformes,1500.00,1,forfait,true,2025-06-16 18:21:01,2025-06-16 18:21:01,
+16,Maintenance mensuelle,SRV-25-016,Maintenance et support technique mensuel,350.00,12,mois,true,2025-06-16 18:21:02,2025-06-16 18:21:02,
+17,Formation utilisateurs,SRV-25-017,Formation des utilisateurs finaux (par journée),450.00,2,journee,true,2025-06-16 18:21:03,2025-06-16 18:21:03,
+18,Audit de sécurité,SRV-25-018,Audit de sécurité complet avec rapport détaillé,1200.00,1,forfait,true,2025-06-16 18:21:03,2025-06-16 18:21:03,
+19,Optimisation performances,SRV-25-019,Optimisation des performances et de la vitesse,800.00,1,forfait,true,2025-06-16 18:21:04,2025-06-16 18:21:04,
+20,Migration de données,SRV-25-020,Migration sécurisée de données entre systèmes,1800.00,1,forfait,true,2025-06-16 18:21:05,2025-06-16 18:21:05,
+21,Design UX/UI,SRV-25-021,Conception d'interface utilisateur et expérience utilisateur,2200.00,1,forfait,true,2025-06-16 18:21:06,2025-06-16 18:21:06,
+22,Consultation technique,SRV-25-022,Consultation technique et conseils stratégiques (par heure),85.00,8,heure,true,2025-06-16 18:21:06,2025-06-16 18:21:06,
+23,Hébergement premium,SRV-25-023,Hébergement haute performance avec support 24/7 (par mois),150.00,12,mois,true,2025-06-16 18:21:07,2025-06-16 18:21:07,
+24,Test Service 212025,SRV-25-024,Service de test pour notifications,100.00,1,heure,true,2025-07-01 21:20:25,2025-07-01 21:20:25,
+26,Service Test Supprimé,SRV-25-026,,100.00,1,heure,true,2025-07-05 21:25:26,2025-07-05 21:25:26,2025-07-05 21:25:26
+27,Service Test,SRV-25-027,Service Test pour le développement. (Steeven),550.00,1,heure,true,2025-07-07 21:21:01,2025-07-08 13:57:14,
+28,"Une masterclass découverte de l'Intelligence Artificielle, dédiée aux instances publiques",SRV-25-028,,0.00,1,heure,true,2025-07-16 10:13:44,2025-07-16 10:13:44,
+29,Une masterclass croisée Tourisme & IA,SRV-25-029,,0.00,1,heure,true,2025-07-16 10:14:21,2025-07-16 10:14:21,
+30,Une formation d'initiation et découverte à l'IA spécifiquement conçue pour les acteurs publics,SRV-25-030,,0.00,1,heure,true,2025-07-16 10:14:59,2025-07-16 10:14:59,
+31,Développement Web Frontend,SRV-25-031,Développement d'interfaces utilisateur modernes avec React/Vue.js,65.00,1,heure,true,2025-07-31 15:13:07,2025-07-31 15:13:07,
+32,Audit de Sécurité,SRV-25-032,Audit complet de sécurité informatique pour entreprise,1200.00,1,forfait,true,2025-07-31 15:13:24,2025-07-31 15:13:24,
+33,Maintenance Serveur,SRV-25-033,Maintenance préventive et corrective des serveurs,450.00,1,mois,true,2025-07-31 15:13:25,2025-07-31 15:13:25,
+34,Formation Laravel,SRV-25-034,Formation complète au framework Laravel PHP,800.00,5,journee,true,2025-07-31 15:13:26,2025-07-31 15:13:26,
+35,Licence Logiciel CRM,SRV-25-035,Licence annuelle pour logiciel de gestion client,99.00,1,licence,false,2025-07-31 15:13:27,2025-07-31 15:13:27,

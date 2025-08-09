@@ -1,24 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClientEmailResource\Pages;
-use App\Filament\Resources\ClientEmailResource\RelationManagers;
 use App\Models\ClientEmail;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ClientEmailResource extends Resource
 {
     protected static ?string $model = ClientEmail::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-paper-airplane';
+
     protected static ?string $navigationGroup = 'Communication';
+
     protected static ?int $navigationSort = 20;
 
     public static function getModelLabel(): string
@@ -40,44 +41,33 @@ class ClientEmailResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('client_id')
-                    ->label('Client')
-                    ->relationship('client', 'nom')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\Select::make('user_id')
-                    ->label('Utilisateur')
-                    ->relationship('user', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\TextInput::make('objet')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('contenu')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('cc')
-                    ->columnSpanFull(),
-                Forms\Components\KeyValue::make('attachments')
-                    ->label('Pièces jointes (JSON)')
-                    ->keyLabel('Nom')
-                    ->valueLabel('Valeur / URL')
-                    ->addButtonLabel('Ajouter une pièce jointe')
-                    ->reorderable()
-                    ->nullable()
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('statut')
-                    ->label('Statut')
-                    ->required()
-                    ->options([
-                        'envoye' => 'Envoyé',
-                        'echec' => 'Échec',
-                    ])
-                    ->default('envoye'),
-                Forms\Components\DateTimePicker::make('date_envoi')
-                    ->required(),
+                Forms\Components\Section::make('Destinataires & message')
+                    ->description('Sélection du client, de l’utilisateur et objet du message')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('client_id')->label('Client')->relationship('client', 'nom')->searchable()->preload()->required(),
+                                Forms\Components\Select::make('user_id')->label('Utilisateur')->relationship('user', 'name')->searchable()->preload()->required(),
+                            ]),
+                        Forms\Components\TextInput::make('objet')->required()->maxLength(255),
+                        Forms\Components\Textarea::make('contenu')->required()->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Pièces & statut')
+                    ->description('Pièces jointes, copie et statut d’envoi')
+                    ->icon('heroicon-o-paper-clip')
+                    ->schema([
+                        Forms\Components\Textarea::make('cc')->columnSpanFull(),
+                        Forms\Components\KeyValue::make('attachments')->label('Pièces jointes (JSON)')->keyLabel('Nom')->valueLabel('Valeur / URL')->addButtonLabel('Ajouter une pièce jointe')->reorderable()->nullable()->columnSpanFull(),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('statut')->label('Statut')->required()->options([
+                                    'envoye' => 'Envoyé',
+                                    'echec' => 'Échec',
+                                ])->default('envoye'),
+                                Forms\Components\DateTimePicker::make('date_envoi')->required(),
+                            ]),
+                    ]),
             ]);
     }
 
@@ -88,18 +78,23 @@ class ClientEmailResource extends Resource
                 Tables\Columns\TextColumn::make('client.nom')
                     ->label('Client')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Utilisateur')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('objet')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('statut')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('date_envoi')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -118,6 +113,13 @@ class ClientEmailResource extends Resource
                 Tables\Filters\SelectFilter::make('client_id')
                     ->relationship('client', 'nom')
                     ->label('Client'),
+            ])
+            ->searchPlaceholder('Rechercher...')
+            ->emptyStateIcon('heroicon-o-paper-airplane')
+            ->emptyStateHeading('Aucun email client')
+            ->emptyStateDescription('Ajoutez votre premier email client pour commencer.')
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()->label('Nouvel email'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

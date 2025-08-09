@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,6 +24,7 @@ return new class extends Migration
             $table->enum('statut', ['envoye', 'echec'])->default('envoye');
             $table->timestamp('date_envoi');
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index(['client_id', 'user_id']);
             $table->index('date_envoi');
@@ -36,5 +39,3 @@ return new class extends Migration
         Schema::dropIfExists('client_emails');
     }
 };
-
-

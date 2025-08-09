@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\EmailTemplateResource\Pages;
 
 use App\Filament\Resources\EmailTemplateResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateEmailTemplate extends CreateRecord

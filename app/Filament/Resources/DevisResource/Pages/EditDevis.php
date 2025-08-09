@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources\DevisResource\Pages;
 
 use App\Filament\Resources\DevisResource;
@@ -9,6 +11,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditDevis extends EditRecord
 {
     protected static string $resource = DevisResource::class;
+
     protected static ?string $breadcrumb = 'Modifier';
 
     protected function getHeaderActions(): array

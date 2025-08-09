@@ -1,24 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TicketResource\Pages;
-use App\Filament\Resources\TicketResource\RelationManagers;
 use App\Models\Ticket;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TicketResource extends Resource
 {
     protected static ?string $model = Ticket::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-lifebuoy';
+
     protected static ?string $navigationGroup = 'Support';
+
     protected static ?int $navigationSort = 10;
 
     public static function getModelLabel(): string
@@ -40,131 +42,134 @@ class TicketResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('titre')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->required()
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('priorite')
-                    ->label('Priorité')
-                    ->required()
-                    ->options([
-                        'faible' => 'Faible',
-                        'normale' => 'Normale',
-                        'haute' => 'Haute',
-                        'critique' => 'Critique',
-                    ])
-                    ->default('normale'),
-                Forms\Components\Select::make('statut')
-                    ->label('Statut')
-                    ->required()
-                    ->options([
-                        'ouvert' => 'Ouvert',
-                        'en_cours' => 'En cours',
-                        'resolu' => 'Résolu',
-                        'ferme' => 'Fermé',
-                    ])
-                    ->default('ouvert'),
-                Forms\Components\Select::make('type')
-                    ->label('Type')
-                    ->required()
-                    ->options([
-                        'bug' => 'Bug',
-                        'demande' => 'Demande',
-                        'incident' => 'Incident',
-                        'question' => 'Question',
-                        'autre' => 'Autre',
-                    ])
-                    ->default('incident'),
-                Forms\Components\Select::make('client_id')
-                    ->label('Client')
-                    ->relationship('client', 'nom')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\Select::make('user_id')
-                    ->label('Assigné à')
-                    ->relationship('user', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\Select::make('created_by')
-                    ->label('Créé par')
-                    ->relationship('creator', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\Textarea::make('notes_internes')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('solution')
-                    ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('date_resolution'),
-                Forms\Components\DateTimePicker::make('date_echeance'),
-                Forms\Components\TextInput::make('temps_estime')
-                    ->numeric()
-                    ->minValue(0)
-                    ->suffix('h'),
-                Forms\Components\TextInput::make('temps_passe')
-                    ->required()
-                    ->numeric()
-                    ->minValue(0)
-                    ->default(0)
-                    ->suffix('h'),
-                Forms\Components\TextInput::make('progression')
-                    ->required()
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->step(1)
-                    ->default(0)
-                    ->suffix('%'),
-                Forms\Components\Toggle::make('visible_client')
-                    ->required(),
+                Forms\Components\Section::make('Ticket')
+                    ->description('Informations principales du ticket')
+                    ->icon('heroicon-o-lifebuoy')
+                    ->schema([
+                        Forms\Components\TextInput::make('titre')->required()->maxLength(255),
+                        Forms\Components\Textarea::make('description')->required()->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Classification')
+                    ->description('Priorité, statut et type')
+                    ->icon('heroicon-o-flag')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\Select::make('priorite')->label('Priorité')->required()->options([
+                                    'faible' => 'Faible',
+                                    'normale' => 'Normale',
+                                    'haute' => 'Haute',
+                                    'critique' => 'Critique',
+                                ])->default('normale'),
+                                Forms\Components\Select::make('statut')->label('Statut')->required()->options([
+                                    'ouvert' => 'Ouvert',
+                                    'en_cours' => 'En cours',
+                                    'resolu' => 'Résolu',
+                                    'ferme' => 'Fermé',
+                                ])->default('ouvert'),
+                                Forms\Components\Select::make('type')->label('Type')->required()->options([
+                                    'bug' => 'Bug',
+                                    'demande' => 'Demande',
+                                    'incident' => 'Incident',
+                                    'question' => 'Question',
+                                    'autre' => 'Autre',
+                                ])->default('incident'),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Attribution')
+                    ->description('Client, assignation et créateur')
+                    ->icon('heroicon-o-user-plus')
+                    ->schema([
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\Select::make('client_id')->label('Client')->relationship('client', 'nom')->searchable()->preload()->required(),
+                                Forms\Components\Select::make('user_id')->label('Assigné à')->relationship('user', 'name')->searchable()->preload()->required(),
+                                Forms\Components\Select::make('created_by')->label('Créé par')->relationship('creator', 'name')->searchable()->preload()->required(),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Suivi & temps')
+                    ->description('Dates, temps et visibilité')
+                    ->icon('heroicon-o-clock')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\DateTimePicker::make('date_resolution'),
+                                Forms\Components\DateTimePicker::make('date_echeance'),
+                            ]),
+                        Forms\Components\Grid::make(3)
+                            ->schema([
+                                Forms\Components\TextInput::make('temps_estime')->numeric()->minValue(0)->suffix('h'),
+                                Forms\Components\TextInput::make('temps_passe')->required()->numeric()->minValue(0)->default(0)->suffix('h'),
+                                Forms\Components\TextInput::make('progression')->required()->numeric()->minValue(0)->maxValue(100)->step(1)->default(0)->suffix('%'),
+                            ]),
+                        Forms\Components\Toggle::make('visible_client')->required(),
+                    ]),
+                Forms\Components\Section::make('Résolution')
+                    ->description('Notes internes et solution')
+                    ->icon('heroicon-o-pencil-square')
+                    ->schema([
+                        Forms\Components\Textarea::make('notes_internes')->columnSpanFull(),
+                        Forms\Components\Textarea::make('solution')->columnSpanFull(),
+                    ]),
             ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
+            ->recordAction('view')
             ->columns([
                 Tables\Columns\TextColumn::make('titre')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('priorite')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('statut')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('type')
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('client.nom')
                     ->label('Client')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Assigné à')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('creator.name')
                     ->label('Créé par')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('date_resolution')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('date_echeance')
                     ->dateTime()
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('temps_estime')
                     ->suffix('h')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('temps_passe')
                     ->suffix('h')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('progression')
                     ->suffix('%')
-                    ->sortable(),
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\IconColumn::make('visible_client')
-                    ->boolean(),
+                    ->boolean()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -198,7 +203,83 @@ class TicketResource extends Resource
                 Tables\Filters\SelectFilter::make('client_id')->relationship('client', 'nom')->label('Client'),
                 Tables\Filters\SelectFilter::make('user_id')->relationship('user', 'name')->label('Assigné à'),
             ])
+            ->searchPlaceholder('Rechercher...')
+            ->emptyStateIcon('heroicon-o-lifebuoy')
+            ->emptyStateHeading('Aucun ticket')
+            ->emptyStateDescription('Ajoutez votre premier ticket pour commencer.')
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()->label('Nouveau ticket'),
+            ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->infolist([
+                        Infolists\Components\Section::make('Ticket')
+                            ->description('Informations principales du ticket')
+                            ->icon('heroicon-o-lifebuoy')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('titre')
+                                    ->label('Titre'),
+                                Infolists\Components\TextEntry::make('description')
+                                    ->label('Description')
+                                    ->markdown(),
+                            ]),
+                        Infolists\Components\Section::make('Classification')
+                            ->description('Priorité, statut et type')
+                            ->icon('heroicon-o-flag')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('priorite')
+                                    ->label('Priorité'),
+                                Infolists\Components\TextEntry::make('statut')
+                                    ->label('Statut'),
+                                Infolists\Components\TextEntry::make('type')
+                                    ->label('Type'),
+                            ]),
+                        Infolists\Components\Section::make('Attribution')
+                            ->description('Client, assignation et créateur')
+                            ->icon('heroicon-o-user-plus')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('client.nom')
+                                    ->label('Client'),
+                                Infolists\Components\TextEntry::make('user.name')
+                                    ->label('Assigné à'),
+                                Infolists\Components\TextEntry::make('creator.name')
+                                    ->label('Créé par'),
+                            ]),
+                        Infolists\Components\Section::make('Suivi & temps')
+                            ->description('Dates, temps et visibilité')
+                            ->icon('heroicon-o-clock')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('date_resolution')
+                                    ->label('Date de résolution')
+                                    ->dateTime(),
+                                Infolists\Components\TextEntry::make('date_echeance')
+                                    ->label('Date d\'échéance')
+                                    ->dateTime(),
+                                Infolists\Components\TextEntry::make('temps_estime')
+                                    ->label('Temps estimé')
+                                    ->suffix('h'),
+                                Infolists\Components\TextEntry::make('temps_passe')
+                                    ->label('Temps passé')
+                                    ->suffix('h'),
+                                Infolists\Components\TextEntry::make('progression')
+                                    ->label('Progression')
+                                    ->suffix('%'),
+                                Infolists\Components\IconEntry::make('visible_client')
+                                    ->label('Visible client')
+                                    ->boolean(),
+                            ]),
+                        Infolists\Components\Section::make('Informations système')
+                            ->description('Métadonnées techniques')
+                            ->icon('heroicon-o-cog')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('created_at')
+                                    ->label('Créé le')
+                                    ->dateTime(),
+                                Infolists\Components\TextEntry::make('updated_at')
+                                    ->label('Modifié le')
+                                    ->dateTime(),
+                            ]),
+                    ]),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

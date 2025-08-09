@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -20,6 +22,7 @@ return new class extends Migration
             $table->json('permissions')->nullable(); // Permissions spécifiques au rôle
             $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('users', function (Blueprint $table) {
@@ -37,6 +40,7 @@ return new class extends Migration
             $table->foreignId('user_role_id')->nullable()->constrained('user_roles')->nullOnDelete();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
