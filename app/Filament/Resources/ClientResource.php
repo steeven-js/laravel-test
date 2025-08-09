@@ -21,6 +21,21 @@ class ClientResource extends Resource
     protected static ?string $navigationGroup = 'CRM';
     protected static ?int $navigationSort = 10;
 
+    public static function getModelLabel(): string
+    {
+        return 'Client';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Clients';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Clients';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -97,6 +112,12 @@ class ClientResource extends Resource
                 Tables\Filters\SelectFilter::make('entreprise_id')
                     ->relationship('entreprise', 'nom')
                     ->label('Entreprise'),
+            ])
+            ->emptyStateIcon('heroicon-o-user-group')
+            ->emptyStateHeading('Aucun client')
+            ->emptyStateDescription('Ajoutez votre premier client pour commencer.')
+            ->emptyStateActions([
+                Tables\Actions\CreateAction::make()->label('Nouveau client'),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

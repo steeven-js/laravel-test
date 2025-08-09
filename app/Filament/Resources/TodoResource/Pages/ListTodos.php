@@ -9,11 +9,12 @@ use Filament\Resources\Pages\ListRecords;
 class ListTodos extends ListRecords
 {
     protected static string $resource = TodoResource::class;
+    protected static ?string $breadcrumb = 'Liste';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Nouvelle'),
         ];
     }
 }

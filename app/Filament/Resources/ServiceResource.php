@@ -21,6 +21,21 @@ class ServiceResource extends Resource
     protected static ?string $navigationGroup = 'Référentiels';
     protected static ?int $navigationSort = 10;
 
+    public static function getModelLabel(): string
+    {
+        return 'Service';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Services';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Services';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

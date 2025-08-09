@@ -21,6 +21,21 @@ class SecteurActiviteResource extends Resource
     protected static ?string $navigationGroup = 'Référentiels';
     protected static ?int $navigationSort = 20;
 
+    public static function getModelLabel(): string
+    {
+        return "Secteur d'activité";
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return "Secteurs d'activité";
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return "Secteurs d'activité";
+    }
+
     public static function form(Form $form): Form
     {
         return $form

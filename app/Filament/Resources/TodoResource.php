@@ -21,6 +21,21 @@ class TodoResource extends Resource
     protected static ?string $navigationGroup = 'Support';
     protected static ?int $navigationSort = 20;
 
+    public static function getModelLabel(): string
+    {
+        return 'Tâche';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Tâches';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Tâches';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

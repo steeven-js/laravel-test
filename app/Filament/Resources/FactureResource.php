@@ -21,6 +21,21 @@ class FactureResource extends Resource
     protected static ?string $navigationGroup = 'Ventes';
     protected static ?int $navigationSort = 20;
 
+    public static function getModelLabel(): string
+    {
+        return 'Facture';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Factures';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Factures';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

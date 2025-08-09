@@ -21,6 +21,21 @@ class ClientEmailResource extends Resource
     protected static ?string $navigationGroup = 'Communication';
     protected static ?int $navigationSort = 20;
 
+    public static function getModelLabel(): string
+    {
+        return 'Email client';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Emails clients';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Emails clients';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

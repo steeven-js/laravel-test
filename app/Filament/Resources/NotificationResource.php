@@ -21,6 +21,21 @@ class NotificationResource extends Resource
     protected static ?string $navigationGroup = 'Communication';
     protected static ?int $navigationSort = 30;
 
+    public static function getModelLabel(): string
+    {
+        return 'Notification';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Notifications';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Notifications';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

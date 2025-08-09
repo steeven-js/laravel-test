@@ -9,11 +9,12 @@ use Filament\Resources\Pages\ListRecords;
 class ListSecteurActivites extends ListRecords
 {
     protected static string $resource = SecteurActiviteResource::class;
+    protected static ?string $breadcrumb = 'Liste';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Nouveau'),
         ];
     }
 }

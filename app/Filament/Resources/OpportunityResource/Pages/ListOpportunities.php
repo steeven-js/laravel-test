@@ -9,11 +9,12 @@ use Filament\Resources\Pages\ListRecords;
 class ListOpportunities extends ListRecords
 {
     protected static string $resource = OpportunityResource::class;
+    protected static ?string $breadcrumb = 'Liste';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Nouvelle'),
         ];
     }
 }

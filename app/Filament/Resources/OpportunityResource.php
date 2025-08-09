@@ -21,6 +21,21 @@ class OpportunityResource extends Resource
     protected static ?string $navigationGroup = 'CRM';
     protected static ?int $navigationSort = 30;
 
+    public static function getModelLabel(): string
+    {
+        return 'Opportunité';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Opportunités';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Opportunités';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

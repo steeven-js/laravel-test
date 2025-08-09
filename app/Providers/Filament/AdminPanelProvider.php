@@ -13,6 +13,7 @@ use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\MenuItem;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -46,10 +47,17 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->collapsibleNavigationGroups()
-            ->sidebarCollapsibleOnDesktop()
-            ->collapsedSidebarWidth('9rem')
+            ->topNavigation()
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
-                return $builder->groups([
+                return $builder
+                    ->items([
+                        // Dashboard en premier
+                        \Filament\Navigation\NavigationItem::make('Dashboard')
+                            ->icon('heroicon-o-home')
+                            ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
+                            ->url(fn (): string => Pages\Dashboard::getUrl()),
+                    ])
+                    ->groups([
                     NavigationGroup::make('CRM')
                         ->items([
                             ...ClientResource::getNavigationItems(),
@@ -92,7 +100,7 @@ class AdminPanelProvider extends PanelProvider
                             ...UserRoleResource::getNavigationItems(),
                             ...UsersResource::getNavigationItems(),
                         ]),
-                ]);
+                    ]);
             })
             ->colors([
                 'primary' => Color::Amber,

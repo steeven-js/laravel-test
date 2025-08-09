@@ -21,6 +21,21 @@ class UserRoleResource extends Resource
     protected static ?string $navigationGroup = 'Administration';
     protected static ?int $navigationSort = 10;
 
+    public static function getModelLabel(): string
+    {
+        return 'Rôle';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Rôles';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Rôles';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

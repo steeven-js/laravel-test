@@ -21,6 +21,21 @@ class EmailTemplateResource extends Resource
     protected static ?string $navigationGroup = 'Communication';
     protected static ?int $navigationSort = 10;
 
+    public static function getModelLabel(): string
+    {
+        return 'Modèle d\'email';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Modèles d\'email';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Modèles d\'email';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

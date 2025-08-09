@@ -21,6 +21,21 @@ class TicketResource extends Resource
     protected static ?string $navigationGroup = 'Support';
     protected static ?int $navigationSort = 10;
 
+    public static function getModelLabel(): string
+    {
+        return 'Ticket';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Tickets';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Tickets';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

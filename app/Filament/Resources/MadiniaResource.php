@@ -21,6 +21,21 @@ class MadiniaResource extends Resource
     protected static ?string $navigationGroup = 'Réglages';
     protected static ?int $navigationSort = 10;
 
+    public static function getModelLabel(): string
+    {
+        return 'Paramètres Madinia';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Paramètres Madinia';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Madinia';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

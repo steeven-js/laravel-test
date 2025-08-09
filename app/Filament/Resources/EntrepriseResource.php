@@ -21,6 +21,21 @@ class EntrepriseResource extends Resource
     protected static ?string $navigationGroup = 'CRM';
     protected static ?int $navigationSort = 20;
 
+    public static function getModelLabel(): string
+    {
+        return 'Entreprise';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Entreprises';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Entreprises';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

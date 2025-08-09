@@ -9,11 +9,12 @@ use Filament\Resources\Pages\ListRecords;
 class ListClientEmails extends ListRecords
 {
     protected static string $resource = ClientEmailResource::class;
+    protected static ?string $breadcrumb = 'Liste';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Nouvel email'),
         ];
     }
 }

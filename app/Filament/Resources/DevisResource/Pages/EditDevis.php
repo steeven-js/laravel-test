@@ -9,6 +9,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditDevis extends EditRecord
 {
     protected static string $resource = DevisResource::class;
+    protected static ?string $breadcrumb = 'Modifier';
 
     protected function getHeaderActions(): array
     {

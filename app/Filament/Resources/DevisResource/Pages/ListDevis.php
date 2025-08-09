@@ -9,11 +9,13 @@ use Filament\Resources\Pages\ListRecords;
 class ListDevis extends ListRecords
 {
     protected static string $resource = DevisResource::class;
+    protected static ?string $breadcrumb = 'Liste';
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Nouveau'),
         ];
     }
 }

@@ -21,6 +21,21 @@ class DevisResource extends Resource
     protected static ?string $navigationGroup = 'Ventes';
     protected static ?int $navigationSort = 10;
 
+    public static function getModelLabel(): string
+    {
+        return 'Devis';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Devis';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Devis';
+    }
+
     public static function form(Form $form): Form
     {
         return $form

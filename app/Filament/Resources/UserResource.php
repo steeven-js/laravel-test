@@ -21,6 +21,21 @@ class UserResource extends Resource
     protected static ?string $navigationGroup = 'Administration';
     protected static ?int $navigationSort = 20;
 
+    public static function getModelLabel(): string
+    {
+        return 'Utilisateur';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Utilisateurs';
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Utilisateurs';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
