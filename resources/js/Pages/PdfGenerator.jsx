@@ -169,7 +169,7 @@ const PdfGenerator = () => {
             <View style={styles.col}>
               <Text style={styles.sectionTitle}>Client</Text>
               <View style={styles.infoRow}><Text style={styles.label}>Nom</Text><Text style={styles.value}>{document.client?.nom || document.client?.raison_sociale}</Text></View>
-              {document.client?.entreprise && (<View style={styles.infoRow}><Text style={styles.label}>Entreprise</Text><Text style={styles.value}>{document.client.entreprise.raison_sociale}</Text></View>)}
+              {document.client?.entreprise && (<View style={styles.infoRow}><Text style={styles.label}>Entreprise</Text><Text style={styles.value}>{document.client.entreprise.nom}</Text></View>)}
               {document.client?.adresse && (<View style={styles.infoRow}><Text style={styles.label}>Adresse</Text><Text style={styles.value}>{document.client.adresse}</Text></View>)}
               {document.client?.ville && (<View style={styles.infoRow}><Text style={styles.label}>Ville</Text><Text style={styles.value}>{document.client.code_postal} {document.client.ville}</Text></View>)}
             </View>
