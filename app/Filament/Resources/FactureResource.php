@@ -207,8 +207,12 @@ class FactureResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('statut')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => FactureStatus::from($state)->getLabel())
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'en_attente' => 'En attente',
+                        default => FactureStatus::from($state)->getLabel(),
+                    })
                     ->color(fn (string $state): string => match ($state) {
+                        'en_attente' => 'warning',
                         'brouillon' => 'gray',
                         'emise' => 'info',
                         'envoyee' => 'warning',
@@ -218,6 +222,7 @@ class FactureResource extends Resource
                         default => 'gray',
                     })
                     ->icon(fn (string $state): string => match ($state) {
+                        'en_attente' => 'heroicon-m-clock',
                         'brouillon' => 'heroicon-m-document-text',
                         'emise' => 'heroicon-m-document',
                         'envoyee' => 'heroicon-m-paper-airplane',
@@ -387,8 +392,12 @@ class FactureResource extends Resource
                                 Infolists\Components\TextEntry::make('statut')
                                     ->label('Statut')
                                     ->badge()
-                                    ->formatStateUsing(fn (string $state): string => FactureStatus::from($state)->getLabel())
+                                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                                        'en_attente' => 'En attente',
+                                        default => FactureStatus::from($state)->getLabel(),
+                                    })
                                     ->color(fn (string $state): string => match ($state) {
+                                        'en_attente' => 'warning',
                                         'brouillon' => 'gray',
                                         'emise' => 'info',
                                         'envoyee' => 'warning',
@@ -398,6 +407,7 @@ class FactureResource extends Resource
                                         default => 'gray',
                                     })
                                     ->icon(fn (string $state): string => match ($state) {
+                                        'en_attente' => 'heroicon-m-clock',
                                         'brouillon' => 'heroicon-m-document-text',
                                         'emise' => 'heroicon-m-document',
                                         'envoyee' => 'heroicon-m-paper-airplane',

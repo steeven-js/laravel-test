@@ -299,10 +299,8 @@ class ClientResource extends Resource
 
     public static function getRecordSubNavigation(Page $page): array
     {
-        return $page->generateNavigationItems([
-            Pages\ViewClient::class,
-            Pages\EditClient::class,
-        ]);
+        // Masque les onglets "View" / "Edit" en haut des pages d'enregistrement
+        return [];
     }
 
     public static function getPages(): array

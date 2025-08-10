@@ -14,10 +14,20 @@ use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class ViewClient extends ViewRecord
 {
     protected static string $resource = ClientResource::class;
+
+    public function getTitle(): string | Htmlable
+    {
+        $nom = (string) ($this->record->nom ?? '');
+        $prenom = (string) ($this->record->prenom ?? '');
+        $fullName = trim("{$nom} {$prenom}");
+
+        return $fullName !== '' ? $fullName : parent::getTitle();
+    }
 
     protected function getHeaderActions(): array
     {
@@ -70,101 +80,6 @@ class ViewClient extends ViewRecord
                                 TextEntry::make('notes')->label('Notes')->markdown()->columnSpanFull(),
                             ]),
                     ]),
-                Section::make('Statistiques')
-                    ->description('Aperçu des performances et informations commerciales')
-                    ->schema([
-                        // Ligne 1: 4 cartes KPI en grille responsive (1 / 2 / 4 colonnes)
-                        InfoGrid::make()
-                            ->columns(1)
-                            ->columns(2, 'md')
-                            ->columns(4, 'xl')
-                            ->schema([
-                                Section::make('Total devis')
-                                    ->icon('heroicon-m-document-text')
-                                    ->columnSpan(1)
-                                    ->schema([
-                                        TextEntry::make('total_devis')
-                                            ->label('')
-                                            ->getStateUsing(fn ($record) => $record->devis()->count())
-                                            ->formatStateUsing(fn ($state) => (string) $state)
-                                            ->extraAttributes(['class' => 'text-2xl font-semibold']),
-                                    ]),
-                                Section::make('Devis acceptés')
-                                    ->icon('heroicon-m-check-circle')
-                                    ->columnSpan(1)
-                                    ->schema([
-                                        TextEntry::make('devis_acceptes_card')
-                                            ->label('')
-                                            ->getStateUsing(fn ($record) => $record->devis()->where('statut', 'accepte')->count())
-                                            ->formatStateUsing(fn ($state) => (string) $state)
-                                            ->extraAttributes(['class' => 'text-2xl font-semibold']),
-                                    ]),
-                                Section::make('Taux de conversion')
-                                    ->icon('heroicon-m-chart-bar')
-                                    ->columnSpan(1)
-                                    ->schema([
-                                        TextEntry::make('taux_conversion_card')
-                                            ->label('')
-                                            ->getStateUsing(function ($record) {
-                                                $total = $record->devis()->count();
-                                                $accepted = $record->devis()->where('statut', 'accepte')->count();
-
-                                                return $total > 0 ? number_format(($accepted / $total) * 100, 1, ',', ' ') . ' %' : '0,0 %';
-                                            })
-                                            ->extraAttributes(['class' => 'text-2xl font-semibold']),
-                                    ]),
-                                Section::make('CA total')
-                                    ->icon('heroicon-m-currency-euro')
-                                    ->columnSpan(1)
-                                    ->schema([
-                                        TextEntry::make('ca_total_card')
-                                            ->label('')
-                                            ->getStateUsing(fn ($record) => number_format((float) $record->factures()->sum('montant_ttc'), 2, ',', ' ') . ' €')
-                                            ->extraAttributes(['class' => 'text-2xl font-semibold']),
-                                    ]),
-                            ])
-                            ->columnSpanFull(),
-
-                        // Ligne 2: 2 colonnes (répartition / informations commerciales)
-                        InfoGrid::make(2)
-                            ->schema([
-                                Section::make('Répartition des devis')
-                                    ->schema([
-                                        InfoGrid::make(1)
-                                            ->schema([
-                                                TextEntry::make('devis_acceptes')
-                                                    ->label('Acceptés')
-                                                    ->getStateUsing(fn ($record) => $record->devis()->where('statut', 'accepte')->count()),
-                                                TextEntry::make('devis_en_attente')
-                                                    ->label('En attente')
-                                                    ->getStateUsing(fn ($record) => $record->devis()->where('statut', 'en_attente')->count()),
-                                                TextEntry::make('devis_refuses')
-                                                    ->label('Refusés')
-                                                    ->getStateUsing(fn ($record) => $record->devis()->where('statut', 'refuse')->count()),
-                                            ]),
-                                    ]),
-                                Section::make('Informations commerciales')
-                                    ->schema([
-                                        InfoGrid::make(2)
-                                            ->schema([
-                                                TextEntry::make('premier_devis')
-                                                    ->label('Premier devis')
-                                                    ->getStateUsing(fn ($record) => optional($record->devis()->oldest('created_at')->first())->created_at?->format('d/m/Y') ?? 'N/A'),
-                                                TextEntry::make('dernier_devis')
-                                                    ->label('Dernier devis')
-                                                    ->getStateUsing(fn ($record) => optional($record->devis()->latest('created_at')->first())->created_at?->format('d/m/Y') ?? 'N/A'),
-                                                TextEntry::make('panier_moyen')
-                                                    ->label('Panier moyen')
-                                                    ->getStateUsing(fn ($record) => number_format((float) $record->devis()->where('statut', 'accepte')->avg('montant_ttc') ?? 0, 2, ',', ' ') . ' €'),
-                                                TextEntry::make('valeur_totale')
-                                                    ->label('Valeur totale')
-                                                    ->getStateUsing(fn ($record) => number_format((float) $record->factures()->sum('montant_ttc'), 2, ',', ' ') . ' €'),
-                                            ]),
-                                    ]),
-                            ])
-                            ->columnSpanFull(),
-                    ])
-                    ->collapsible(),
             ]);
     }
 
@@ -178,7 +93,9 @@ class ViewClient extends ViewRecord
     protected function getHeaderWidgetsData(): array
     {
         return [
-            'clientId' => $this->record->getKey(),
+            ClientStats::class => [
+                'clientId' => $this->record->getKey(),
+            ],
         ];
     }
 }

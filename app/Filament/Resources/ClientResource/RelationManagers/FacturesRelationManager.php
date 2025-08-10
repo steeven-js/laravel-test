@@ -42,8 +42,12 @@ class FacturesRelationManager extends RelationManager
                 Tables\Columns\TextColumn::make('statut')
                     ->label('Statut')
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => FactureStatus::from($state)->getLabel())
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'en_attente' => 'En attente',
+                        default => FactureStatus::from($state)->getLabel(),
+                    })
                     ->color(fn (string $state): string => match ($state) {
+                        'en_attente' => 'warning',
                         'brouillon' => 'gray',
                         'emise' => 'info',
                         'envoyee' => 'warning',
