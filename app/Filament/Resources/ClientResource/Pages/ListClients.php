@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Resources\ClientResource;
-use App\Filament\Widgets\BlogPostsChart;
+use App\Filament\Widgets\clients\ClientsStats;
 use App\Models\Client;
 use App\Models\Entreprise;
 use Faker\Factory as FakerFactory;
@@ -85,7 +85,7 @@ class ListClients extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            BlogPostsChart::class,
+            ClientsStats::class,
         ];
     }
 }
