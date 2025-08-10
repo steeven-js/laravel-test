@@ -17,4 +17,17 @@ class CreateDevis extends CreateRecord
     {
         return 'Créer ' . DevisResource::getModelLabel();
     }
+
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('view', ['record' => $this->getRecord()]);
+    }
+
+    protected function getCreateFormAction(): \Filament\Actions\Action
+    {
+        return parent::getCreateFormAction()
+            ->after(function () {
+                $this->notify('success', 'Devis créé ! Vous pouvez maintenant générer son PDF.');
+            });
+    }
 }

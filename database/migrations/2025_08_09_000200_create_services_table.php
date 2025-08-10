@@ -22,7 +22,7 @@ return new class extends Migration
             $table->integer('qte_defaut')->default(1)->nullable()->comment('Quantité par défaut');
             $table->enum('unite', [
                 'heure',
-                'journee',
+                'jour',
                 'semaine',
                 'mois',
                 'unite',

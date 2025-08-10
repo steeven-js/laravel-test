@@ -316,6 +316,20 @@ class FactureResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouvelle facture'),
             ])
             ->actions([
+                Tables\Actions\Action::make('preview_pdf_modal')
+                    ->label('Aperçu PDF')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->modalHeading(fn ($record) => "Aperçu PDF - Facture {$record->numero_facture}")
+                    ->modalContent(fn ($record) => view('pdf.preview-modal-facture', [
+                        'pdfUrl' => route('factures.pdf', $record),
+                        'facture' => $record,
+                    ]))
+                    ->modalWidth('7xl')
+                    ->modalCancelActionLabel('Fermer')
+                    ->modalSubmitAction(false)
+                    ->visible(fn ($record) => $record !== null),
+
                 Tables\Actions\ViewAction::make()
                     ->modal()
                     ->url(null)

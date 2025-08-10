@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             SuperAdminSeeder::class,
             SecteurActiviteSeeder::class,
             ServiceSeeder::class,
+            MadiniaSeeder::class,
         ]);
     }
 }

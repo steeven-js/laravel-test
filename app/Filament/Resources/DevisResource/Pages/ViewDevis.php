@@ -15,6 +15,19 @@ class ViewDevis extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\Action::make('preview_pdf_modal')
+                ->label('Aperçu PDF')
+                ->icon('heroicon-o-eye')
+                ->color('info')
+                ->modalHeading(fn () => "Aperçu PDF - Devis {$this->record->numero_devis}")
+                ->modalContent(fn () => view('pdf.preview-modal', [
+                    'pdfUrl' => route('devis.pdf', $this->record),
+                    'devis' => $this->record,
+                ]))
+                ->modalWidth('7xl')
+                ->modalCancelActionLabel('Fermer')
+                ->modalSubmitAction(false),
+
             Actions\EditAction::make(),
         ];
     }

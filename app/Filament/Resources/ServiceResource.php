@@ -78,7 +78,7 @@ class ServiceResource extends Resource
                                     ->required()
                                     ->options([
                                         'heure' => 'Heure',
-                                        'journee' => 'Journée',
+                                        'jour' => 'Jour',
                                         'semaine' => 'Semaine',
                                         'mois' => 'Mois',
                                         'unite' => 'Unité',

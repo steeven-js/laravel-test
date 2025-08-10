@@ -246,6 +246,20 @@ class DevisResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouveau devis'),
             ])
             ->actions([
+                Tables\Actions\Action::make('preview_pdf_modal')
+                    ->label('Aperçu PDF')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->modalHeading(fn ($record) => "Aperçu PDF - Devis {$record->numero_devis}")
+                    ->modalContent(fn ($record) => view('pdf.preview-modal', [
+                        'pdfUrl' => route('devis.pdf', $record),
+                        'devis' => $record,
+                    ]))
+                    ->modalWidth('7xl')
+                    ->modalCancelActionLabel('Fermer')
+                    ->modalSubmitAction(false)
+                    ->visible(fn ($record) => $record !== null),
+
                 Tables\Actions\ViewAction::make()
                     ->modal()
                     ->url(null)
