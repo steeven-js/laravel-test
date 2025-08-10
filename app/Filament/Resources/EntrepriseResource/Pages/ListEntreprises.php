@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\EntrepriseResource\Pages;
 
 use App\Filament\Resources\EntrepriseResource;
+use App\Filament\Widgets\entreprises\EntreprisesStats;
 use App\Models\Entreprise;
 use Faker\Factory as FakerFactory;
 use Filament\Actions;
@@ -83,6 +84,13 @@ class ListEntreprises extends ListRecords
                     Notification::make()->title($count . ' entreprises factices créées')->success()->send();
                 })
                 ->requiresConfirmation(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            EntreprisesStats::class,
         ];
     }
 }

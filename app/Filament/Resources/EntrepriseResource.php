@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EntrepriseResource\Pages;
 use App\Filament\Resources\Traits\HasStandardActions;
 use App\Models\Entreprise;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists;
@@ -114,6 +115,7 @@ class EntrepriseResource extends Resource
     {
         return $table
             ->query(static::getEloquentQuery()->whereNull('deleted_at'))
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount(['devis', 'factures']))
             ->recordUrl(null)
             ->recordAction('view')
             ->columns([
@@ -153,6 +155,16 @@ class EntrepriseResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('site_web')
                     ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('devis_count')
+                    ->label('Devis')
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('factures_count')
+                    ->label('Factures')
+                    ->badge()
+                    ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('actif')
                     ->boolean()
