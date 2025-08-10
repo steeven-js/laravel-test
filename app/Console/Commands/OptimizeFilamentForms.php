@@ -32,14 +32,15 @@ class OptimizeFilamentForms extends Command
         $this->info('🚀 Optimisation des formulaires Filament...');
 
         $resourcesPath = app_path('Filament/Resources');
-        
-        if (!File::exists($resourcesPath)) {
+
+        if (! File::exists($resourcesPath)) {
             $this->error('Le dossier des ressources Filament n\'existe pas.');
+
             return 1;
         }
 
         $resourceName = $this->option('resource');
-        
+
         if ($resourceName) {
             // Optimiser une ressource spécifique
             $this->optimizeSpecificResource($resourceName);
@@ -49,6 +50,7 @@ class OptimizeFilamentForms extends Command
         }
 
         $this->info('✅ Optimisation terminée !');
+
         return 0;
     }
 
@@ -58,9 +60,10 @@ class OptimizeFilamentForms extends Command
     private function optimizeSpecificResource(string $resourceName): void
     {
         $resourcePath = app_path("Filament/Resources/{$resourceName}.php");
-        
-        if (!File::exists($resourcePath)) {
+
+        if (! File::exists($resourcePath)) {
             $this->error("La ressource {$resourceName} n'existe pas.");
+
             return;
         }
 
@@ -74,13 +77,13 @@ class OptimizeFilamentForms extends Command
     private function optimizeAllResources(string $resourcesPath): void
     {
         $resourceFiles = File::glob($resourcesPath . '/*.php');
-        
-        $this->info("📁 Trouvé " . count($resourceFiles) . " ressources à analyser...");
+
+        $this->info('📁 Trouvé ' . count($resourceFiles) . ' ressources à analyser...');
 
         foreach ($resourceFiles as $resourceFile) {
             $resourceName = basename($resourceFile, '.php');
             $this->info("🔧 Analyse de {$resourceName}...");
-            
+
             if ($this->needsOptimization($resourceFile)) {
                 $this->info("  ⚡ Optimisation nécessaire pour {$resourceName}");
                 $this->optimizeResourceFile($resourceFile);
@@ -96,7 +99,7 @@ class OptimizeFilamentForms extends Command
     private function needsOptimization(string $filePath): bool
     {
         $content = File::get($filePath);
-        
+
         // Vérifier si le fichier contient déjà des composants Grid
         if (Str::contains($content, 'Forms\\Components\\Grid::make')) {
             return false;
@@ -122,14 +125,14 @@ class OptimizeFilamentForms extends Command
 
         // Ajouter des sections et des grilles basiques
         $content = $this->addBasicSections($content);
-        
+
         // Sauvegarder le fichier original
         $backupPath = $filePath . '.backup.' . date('Y-m-d-H-i-s');
         File::put($backupPath, $originalContent);
-        
+
         // Sauvegarder le fichier optimisé
         File::put($filePath, $content);
-        
+
         $this->info("  💾 Fichier optimisé et sauvegardé dans {$backupPath}");
     }
 
@@ -139,12 +142,12 @@ class OptimizeFilamentForms extends Command
     private function addBasicSections(string $content): string
     {
         // Rechercher la méthode form
-        if (!Str::contains($content, 'public static function form(Form $form): Form')) {
+        if (! Str::contains($content, 'public static function form(Form $form): Form')) {
             return $content;
         }
 
         // Ajouter des imports si nécessaire
-        if (!Str::contains($content, 'use Filament\\Forms\\Components\\Section;')) {
+        if (! Str::contains($content, 'use Filament\\Forms\\Components\\Section;')) {
             $content = str_replace(
                 'use Filament\\Forms;',
                 "use Filament\\Forms;\nuse Filament\\Forms\\Components\\Section;",

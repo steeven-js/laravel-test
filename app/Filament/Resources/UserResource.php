@@ -15,7 +15,6 @@ use Filament\Tables\Table;
 use Parfaitementweb\FilamentCountryField\Forms\Components\Country;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Tables\PhoneColumn;
-use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 
 class UserResource extends Resource
 {

@@ -15,7 +15,7 @@ use Filament\Tables\Table;
 
 /**
  * Exemple de ressource utilisant le système d'actions standardisées
- * 
+ *
  * Cette ressource démontre comment utiliser le trait HasStandardActions
  * pour avoir automatiquement un aperçu modal et un bouton détail.
  */
@@ -170,7 +170,7 @@ class ExempleNouvelleResource extends Resource
 
     /**
      * Méthode alternative utilisant le trait pour une configuration plus simple
-     * 
+     *
      * Décommentez cette méthode et commentez la méthode table() ci-dessus
      * pour utiliser le trait automatiquement.
      */

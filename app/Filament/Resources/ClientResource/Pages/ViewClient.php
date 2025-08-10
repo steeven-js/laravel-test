@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Resources\ClientResource;
+use App\Filament\Widgets\client\ClientStats;
 use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Infolists\Infolist;
-use Filament\Infolists\Components\Section;
-use Filament\Infolists\Components\Grid as InfoGrid;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\IconEntry;
-use App\Filament\Widgets\ClientQuickOverview;
 use Filament\Actions\Action;
+use Filament\Infolists\Components\Grid as InfoGrid;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
+use Filament\Resources\Pages\ViewRecord;
 
 class ViewClient extends ViewRecord
 {
@@ -108,6 +108,7 @@ class ViewClient extends ViewRecord
                                             ->getStateUsing(function ($record) {
                                                 $total = $record->devis()->count();
                                                 $accepted = $record->devis()->where('statut', 'accepte')->count();
+
                                                 return $total > 0 ? number_format(($accepted / $total) * 100, 1, ',', ' ') . ' %' : '0,0 %';
                                             })
                                             ->extraAttributes(['class' => 'text-2xl font-semibold']),
@@ -170,8 +171,7 @@ class ViewClient extends ViewRecord
     protected function getHeaderWidgets(): array
     {
         return [
-            // Cartes KPI (4 colonnes responsives)
-            ClientQuickOverview::class,
+            ClientStats::class,
         ];
     }
 

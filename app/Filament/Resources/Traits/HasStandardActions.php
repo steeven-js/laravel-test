@@ -24,7 +24,7 @@ trait HasStandardActions
                 ->modalCancelActionLabel('Fermer')
                 ->icon('heroicon-o-eye')
                 ->color('gray'),
-            
+
             // Action Détail (page complète)
             Tables\Actions\Action::make('detail')
                 ->label('Détail')
@@ -32,7 +32,7 @@ trait HasStandardActions
                 ->color('info')
                 ->url(fn (Model $record): string => $resourceClass::getUrl('view', ['record' => $record]))
                 ->openUrlInNewTab(false),
-            
+
             // Action Éditer
             Tables\Actions\EditAction::make()
                 ->icon('heroicon-o-pencil')
@@ -54,7 +54,7 @@ trait HasStandardActions
                 ->modalCancelActionLabel('Fermer')
                 ->icon('heroicon-o-eye')
                 ->color('gray'),
-            
+
             // Action Détail (page complète)
             Tables\Actions\Action::make('detail')
                 ->label('Détail')
@@ -91,7 +91,7 @@ trait HasStandardActions
                 ->modalCancelActionLabel('Fermer')
                 ->icon('heroicon-o-eye')
                 ->color('gray'),
-            
+
             // Action Détail (page complète)
             Tables\Actions\Action::make('detail')
                 ->label('Détail')

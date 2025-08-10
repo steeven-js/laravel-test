@@ -32,7 +32,7 @@ class PdfController extends Controller
         $devis->load([
             'client:id,nom,adresse,ville,code_postal,entreprise_id',
             'client.entreprise:id,nom',
-            'lignes' => fn ($q) => $q->select('id','devis_id','service_id','quantite','unite','prix_unitaire_ht','remise_pourcentage','taux_tva','description_personnalisee','montant_ht','ordre')->orderBy('ordre'),
+            'lignes' => fn ($q) => $q->select('id', 'devis_id', 'service_id', 'quantite', 'unite', 'prix_unitaire_ht', 'remise_pourcentage', 'taux_tva', 'description_personnalisee', 'montant_ht', 'ordre')->orderBy('ordre'),
             'lignes.service:id,nom',
         ]);
 
@@ -65,7 +65,7 @@ class PdfController extends Controller
             'client:id,nom,adresse,ville,code_postal,entreprise_id',
             'client.entreprise:id,nom',
             'devis:id,numero_devis',
-            'lignes' => fn ($q) => $q->select('id','facture_id','service_id','quantite','unite','prix_unitaire_ht','remise_pourcentage','taux_tva','description_personnalisee','montant_ht','ordre')->orderBy('ordre'),
+            'lignes' => fn ($q) => $q->select('id', 'facture_id', 'service_id', 'quantite', 'unite', 'prix_unitaire_ht', 'remise_pourcentage', 'taux_tva', 'description_personnalisee', 'montant_ht', 'ordre')->orderBy('ordre'),
             'lignes.service:id,nom',
         ]);
 

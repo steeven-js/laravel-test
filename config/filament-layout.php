@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -12,9 +14,9 @@ return [
     */
 
     'default_grid_columns' => 2,
-    
+
     'max_grid_columns' => 3,
-    
+
     'preferred_grid_columns' => [
         'client' => 2,
         'entreprise' => 2,
@@ -42,7 +44,7 @@ return [
     | Icônes Heroicon à utiliser par défaut pour chaque type de section.
     |
     */
-    
+
     'default_section_icons' => [
         'general' => 'heroicon-o-information-circle',
         'contact' => 'heroicon-o-envelope',
@@ -74,7 +76,7 @@ return [
     | Descriptions à utiliser par défaut pour chaque type de section.
     |
     */
-    
+
     'default_section_descriptions' => [
         'general' => 'Informations générales de l\'entité',
         'contact' => 'Coordonnées et informations de contact',
@@ -106,7 +108,7 @@ return [
     | Règles pour déterminer quand utiliser 2, 3 ou plus de colonnes.
     |
     */
-    
+
     'grid_rules' => [
         'use_2_columns' => [
             'max_fields_per_section' => 8,
@@ -129,7 +131,7 @@ return [
     | Classes CSS à appliquer aux grilles et sections.
     |
     */
-    
+
     'custom_css_classes' => [
         'grid_2_columns' => 'grid-cols-1 md:grid-cols-2 gap-4',
         'grid_3_columns' => 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4',

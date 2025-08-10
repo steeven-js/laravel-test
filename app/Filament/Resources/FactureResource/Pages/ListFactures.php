@@ -80,6 +80,7 @@ class ListFactures extends ListRecords
 
                     if ($count < 1) {
                         Notification::make()->title('Quantité invalide')->danger()->send();
+
                         return;
                     }
 
@@ -96,6 +97,7 @@ class ListFactures extends ListRecords
                             ->body("Créez d'abord des clients et des services pour générer des factures.")
                             ->danger()
                             ->send();
+
                         return;
                     }
 

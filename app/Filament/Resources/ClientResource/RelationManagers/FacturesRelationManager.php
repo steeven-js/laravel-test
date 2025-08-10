@@ -6,7 +6,6 @@ namespace App\Filament\Resources\ClientResource\RelationManagers;
 
 use App\Enums\FactureEnvoiStatus;
 use App\Enums\FactureStatus;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -88,5 +87,3 @@ class FacturesRelationManager extends RelationManager
             ]);
     }
 }
-
-

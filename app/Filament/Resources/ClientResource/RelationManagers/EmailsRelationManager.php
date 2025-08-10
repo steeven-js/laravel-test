@@ -47,5 +47,3 @@ class EmailsRelationManager extends RelationManager
             ]);
     }
 }
-
-

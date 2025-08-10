@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\ClientResource\Pages;
 
 use App\Filament\Resources\ClientResource;
+use App\Filament\Widgets\BlogPostsChart;
 use App\Models\Client;
 use App\Models\Entreprise;
 use Faker\Factory as FakerFactory;
@@ -78,6 +79,13 @@ class ListClients extends ListRecords
                     Notification::make()->title($count . ' clients factices créés')->success()->send();
                 })
                 ->requiresConfirmation(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            BlogPostsChart::class,
         ];
     }
 }
