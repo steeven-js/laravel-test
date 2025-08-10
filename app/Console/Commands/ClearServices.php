@@ -33,27 +33,29 @@ class ClearServices extends Command
         $servicesInactifs = Service::where('actif', false)->count();
         $servicesSupprimes = Service::withTrashed()->whereNotNull('deleted_at')->count();
 
-        $this->info("📊 Statistiques actuelles des services:");
+        $this->info('📊 Statistiques actuelles des services:');
         $this->info("   • Total: {$totalServices}");
         $this->info("   • Actifs: {$servicesActifs}");
         $this->info("   • Inactifs: {$servicesInactifs}");
         $this->info("   • Supprimés: {$servicesSupprimes}");
 
         if ($totalServices === 0) {
-            $this->info("✅ Aucun service à nettoyer.");
+            $this->info('✅ Aucun service à nettoyer.');
+
             return 0;
         }
 
         $mode = $this->option('soft') ? 'soft delete' : 'suppression définitive';
-        
+
         if (! $this->option('force')) {
             if (! $this->confirm("Voulez-vous vraiment supprimer tous les services ? Mode: {$mode}")) {
                 $this->info('Nettoyage annulé.');
+
                 return 0;
             }
         }
 
-        $this->info("🧹 Nettoyage des services en cours...");
+        $this->info('🧹 Nettoyage des services en cours...');
 
         try {
             if ($this->option('soft')) {
@@ -72,7 +74,8 @@ class ClearServices extends Command
 
             return 0;
         } catch (\Exception $e) {
-            $this->error("❌ Erreur lors du nettoyage: " . $e->getMessage());
+            $this->error('❌ Erreur lors du nettoyage: ' . $e->getMessage());
+
             return 1;
         }
     }

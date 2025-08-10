@@ -8,6 +8,7 @@ use App\Filament\Resources\SecteurActiviteResource\Pages;
 use App\Models\SecteurActivite;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -22,20 +23,15 @@ class SecteurActiviteResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    public static function getModelLabel(): string
-    {
-        return "Secteur d'activité";
-    }
+    protected static ?string $modelLabel = 'Secteur d\'activité';
 
-    public static function getPluralModelLabel(): string
-    {
-        return "Secteurs d'activité";
-    }
+    protected static ?string $pluralModelLabel = 'Secteurs d\'activités';
 
-    public static function getNavigationLabel(): string
-    {
-        return "Secteurs d'activité";
-    }
+    protected static ?string $navigationLabel = 'Secteurs d\'activités';
+
+    protected static ?string $pluralNavigationLabel = 'Secteurs d\'activités';
+
+    protected static bool $hasTitleCaseModelLabel = false;
 
     public static function form(Form $form): Form
     {
@@ -63,6 +59,8 @@ class SecteurActiviteResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
+            ->recordAction('view')
             ->columns([
                 Tables\Columns\TextColumn::make('code')
                     ->searchable()
@@ -99,6 +97,44 @@ class SecteurActiviteResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouveau secteur'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->name('view')
+                    ->label('Aperçu')
+                    ->icon('heroicon-o-eye')
+                    ->modal()
+                    ->url(null)
+                    ->modalCancelActionLabel('Fermer')
+                    ->modalHeading("Aperçu du secteur d'activité")
+                    ->modalDescription("Détails complets du secteur d'activité sélectionné")
+                    ->modalWidth('4xl')
+                    ->infolist([
+                        Infolists\Components\Section::make("Secteur d'activité")
+                            ->description('Code NAF/APE, libellé et classification')
+                            ->icon('heroicon-o-rectangle-stack')
+                            ->schema([
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('code')->label('Code')->badge()->color('primary'),
+                                        Infolists\Components\TextEntry::make('libelle')->label('Libellé')->size(Infolists\Components\TextEntry\TextEntrySize::Large)->weight('bold'),
+                                    ]),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('division')->label('Division')->badge(),
+                                        Infolists\Components\TextEntry::make('section')->label('Section')->badge(),
+                                    ]),
+                                Infolists\Components\IconEntry::make('actif')->label('Actif')->boolean(),
+                            ]),
+                        Infolists\Components\Section::make('Informations système')
+                            ->description('Métadonnées techniques')
+                            ->icon('heroicon-o-cog')
+                            ->schema([
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
+                                        Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime(),
+                                    ]),
+                            ]),
+                    ]),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

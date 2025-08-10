@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class UserRoleResource extends Resource
 {
+    protected static ?string $modelLabel = 'Rôle utilisateur';
+
+    protected static ?string $pluralModelLabel = 'Rôles utilisateurs';
+
+    protected static ?string $navigationLabel = 'Rôles utilisateurs';
+
+    protected static ?string $pluralNavigationLabel = 'Rôles utilisateurs';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = UserRole::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-key';
@@ -92,6 +102,9 @@ class UserRoleResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->modal()
+                    ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->infolist([
                         Infolists\Components\Section::make('Rôle')
                             ->description('Identifiants et permissions')

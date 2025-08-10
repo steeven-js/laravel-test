@@ -29,9 +29,10 @@ class RestoreServices extends Command
     public function handle(): int
     {
         $servicesSupprimes = Service::withTrashed()->whereNotNull('deleted_at')->count();
-        
+
         if ($servicesSupprimes === 0) {
-            $this->info("✅ Aucun service supprimé à restaurer.");
+            $this->info('✅ Aucun service supprimé à restaurer.');
+
             return 0;
         }
 
@@ -42,18 +43,21 @@ class RestoreServices extends Command
             if (! $this->option('force')) {
                 if (! $this->confirm("Voulez-vous restaurer tous les {$servicesSupprimes} services supprimés ?")) {
                     $this->info('Restauration annulée.');
+
                     return 0;
                 }
             }
 
-            $this->info("🔄 Restauration de tous les services supprimés...");
-            
+            $this->info('🔄 Restauration de tous les services supprimés...');
+
             try {
                 $restored = Service::withTrashed()->whereNotNull('deleted_at')->restore();
                 $this->info("✅ {$restored} services restaurés avec succès !");
+
                 return 0;
             } catch (\Exception $e) {
-                $this->error("❌ Erreur lors de la restauration: " . $e->getMessage());
+                $this->error('❌ Erreur lors de la restauration: ' . $e->getMessage());
+
                 return 1;
             }
         }
@@ -61,14 +65,16 @@ class RestoreServices extends Command
         if ($this->option('id')) {
             // Restaurer des services spécifiques par ID
             $ids = $this->option('id');
-            $this->info("🔄 Restauration des services avec IDs: " . implode(', ', $ids));
-            
+            $this->info('🔄 Restauration des services avec IDs: ' . implode(', ', $ids));
+
             try {
                 $restored = Service::withTrashed()->whereIn('id', $ids)->restore();
                 $this->info("✅ {$restored} services restaurés avec succès !");
+
                 return 0;
             } catch (\Exception $e) {
-                $this->error("❌ Erreur lors de la restauration: " . $e->getMessage());
+                $this->error('❌ Erreur lors de la restauration: ' . $e->getMessage());
+
                 return 1;
             }
         }
@@ -76,15 +82,15 @@ class RestoreServices extends Command
         // Mode interactif : afficher la liste des services supprimés
         $this->info("\n📋 Services supprimés disponibles:");
         $services = Service::withTrashed()->whereNotNull('deleted_at')->get(['id', 'nom', 'code', 'deleted_at']);
-        
+
         foreach ($services as $service) {
             $deletedDate = $service->deleted_at->format('d/m/Y H:i');
             $this->info("   • ID {$service->id}: {$service->code} - {$service->nom} (supprimé le {$deletedDate})");
         }
 
         $this->info("\n💡 Utilisez --all pour restaurer tous les services ou --id=X,Y,Z pour des IDs spécifiques.");
-        $this->info("   Exemple: php artisan services:restore --all");
-        $this->info("   Exemple: php artisan services:restore --id=26,27");
+        $this->info('   Exemple: php artisan services:restore --all');
+        $this->info('   Exemple: php artisan services:restore --id=26,27');
 
         return 0;
     }

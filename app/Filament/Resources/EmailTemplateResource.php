@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class EmailTemplateResource extends Resource
 {
+    protected static ?string $modelLabel = 'Template email';
+
+    protected static ?string $pluralModelLabel = 'Templates emails';
+
+    protected static ?string $navigationLabel = 'Templates emails';
+
+    protected static ?string $pluralNavigationLabel = 'Templates emails';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = EmailTemplate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
@@ -138,6 +148,9 @@ class EmailTemplateResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->modal()
+                    ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->infolist([
                         Infolists\Components\Section::make('Métadonnées')
                             ->description('Nom, catégories et statut du template')

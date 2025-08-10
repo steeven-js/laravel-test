@@ -14,6 +14,16 @@ use Filament\Tables\Table;
 
 class OpportunityResource extends Resource
 {
+    protected static ?string $modelLabel = 'Opportunité';
+
+    protected static ?string $pluralModelLabel = 'Opportunités';
+
+    protected static ?string $navigationLabel = 'Opportunités';
+
+    protected static ?string $pluralNavigationLabel = 'Opportunités';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = Opportunity::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-chart-bar';

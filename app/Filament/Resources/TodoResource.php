@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class TodoResource extends Resource
 {
+    protected static ?string $modelLabel = 'Tâche';
+
+    protected static ?string $pluralModelLabel = 'Tâches';
+
+    protected static ?string $navigationLabel = 'Tâches';
+
+    protected static ?string $pluralNavigationLabel = 'Tâches';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = Todo::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-check-circle';
@@ -141,6 +151,9 @@ class TodoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->modal()
+                    ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->infolist([
                         Infolists\Components\Section::make('Tâche')
                             ->description('Titre et description')

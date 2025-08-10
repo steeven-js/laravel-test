@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class ServiceResource extends Resource
 {
+    protected static ?string $modelLabel = 'Service';
+
+    protected static ?string $pluralModelLabel = 'Services';
+
+    protected static ?string $navigationLabel = 'Services';
+
+    protected static ?string $pluralNavigationLabel = 'Services';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = Service::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-briefcase';
@@ -143,6 +153,9 @@ class ServiceResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->label('Aperçu')
                     ->icon('heroicon-o-eye')
+                    ->modal()
+                    ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->modalHeading('Aperçu du service')
                     ->modalDescription('Détails complets du service sélectionné')
                     ->modalWidth('4xl')

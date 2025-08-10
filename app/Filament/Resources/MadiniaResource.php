@@ -14,6 +14,16 @@ use Filament\Tables\Table;
 
 class MadiniaResource extends Resource
 {
+    protected static ?string $modelLabel = 'Madinia';
+
+    protected static ?string $pluralModelLabel = 'Madinia';
+
+    protected static ?string $navigationLabel = 'Madinia';
+
+    protected static ?string $pluralNavigationLabel = 'Madinia';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = Madinia::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-storefront';

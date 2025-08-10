@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class UserResource extends Resource
 {
+    protected static ?string $modelLabel = 'Utilisateur';
+
+    protected static ?string $pluralModelLabel = 'Utilisateurs';
+
+    protected static ?string $navigationLabel = 'Utilisateurs';
+
+    protected static ?string $pluralNavigationLabel = 'Utilisateurs';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-circle';

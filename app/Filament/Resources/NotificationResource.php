@@ -15,6 +15,16 @@ use Illuminate\Notifications\DatabaseNotification as NotificationModel;
 
 class NotificationResource extends Resource
 {
+    protected static ?string $modelLabel = 'Notification';
+
+    protected static ?string $pluralModelLabel = 'Notifications';
+
+    protected static ?string $navigationLabel = 'Notifications';
+
+    protected static ?string $pluralNavigationLabel = 'Notifications';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = NotificationModel::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-bell-alert';
@@ -131,6 +141,7 @@ class NotificationResource extends Resource
                     ->icon('heroicon-o-eye')
                     ->modal()
                     ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->modalHeading('Aperçu de la notification')
                     ->modalDescription('Détails complets de la notification sélectionnée')
                     ->modalWidth('4xl')

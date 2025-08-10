@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class TicketResource extends Resource
 {
+    protected static ?string $modelLabel = 'Ticket';
+
+    protected static ?string $pluralModelLabel = 'Tickets';
+
+    protected static ?string $navigationLabel = 'Tickets';
+
+    protected static ?string $pluralNavigationLabel = 'Tickets';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = Ticket::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-lifebuoy';
@@ -212,6 +222,9 @@ class TicketResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->modal()
+                    ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->infolist([
                         Infolists\Components\Section::make('Ticket')
                             ->description('Informations principales du ticket')

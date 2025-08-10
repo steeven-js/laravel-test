@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class ClientResource extends Resource
 {
+    protected static ?string $modelLabel = 'Client';
+
+    protected static ?string $pluralModelLabel = 'Clients';
+
+    protected static ?string $navigationLabel = 'Clients';
+
+    protected static ?string $pluralNavigationLabel = 'Clients';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
@@ -170,6 +180,7 @@ class ClientResource extends Resource
                 Tables\Actions\ViewAction::make()
                     ->modal()
                     ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->infolist([
                         Infolists\Components\Section::make('Informations personnelles')
                             ->description('Détails du profil client')

@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class HistoriqueResource extends Resource
 {
+    protected static ?string $modelLabel = 'Historique';
+
+    protected static ?string $pluralModelLabel = 'Historiques';
+
+    protected static ?string $navigationLabel = 'Historiques';
+
+    protected static ?string $pluralNavigationLabel = 'Historiques';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = Historique::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
@@ -117,6 +127,7 @@ class HistoriqueResource extends Resource
                     ->icon('heroicon-o-eye')
                     ->modal()
                     ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->modalHeading('Aperçu de l\'historique')
                     ->modalDescription('Détails complets de l\'événement d\'historique sélectionné')
                     ->modalWidth('4xl')

@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class DevisResource extends Resource
 {
+    protected static ?string $modelLabel = 'Devis';
+
+    protected static ?string $pluralModelLabel = 'Devis';
+
+    protected static ?string $navigationLabel = 'Devis';
+
+    protected static ?string $pluralNavigationLabel = 'Devis';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = Devis::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
@@ -237,6 +247,9 @@ class DevisResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->modal()
+                    ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->infolist([
                         Infolists\Components\Section::make('Informations générales')
                             ->description('Client, dates, administrateur et statut du devis')

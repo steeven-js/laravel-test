@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class ClientEmailResource extends Resource
 {
+    protected static ?string $modelLabel = 'Email client';
+
+    protected static ?string $pluralModelLabel = 'Emails clients';
+
+    protected static ?string $navigationLabel = 'Emails clients';
+
+    protected static ?string $pluralNavigationLabel = 'Emails clients';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = ClientEmail::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-paper-airplane';
@@ -131,6 +141,7 @@ class ClientEmailResource extends Resource
                     ->icon('heroicon-o-eye')
                     ->modal()
                     ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->modalHeading('Aperçu de l\'email client')
                     ->modalDescription('Détails complets de l\'email client sélectionné')
                     ->modalWidth('4xl')

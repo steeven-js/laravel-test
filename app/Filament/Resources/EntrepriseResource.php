@@ -15,6 +15,16 @@ use Filament\Tables\Table;
 
 class EntrepriseResource extends Resource
 {
+    protected static ?string $modelLabel = 'Entreprise';
+
+    protected static ?string $pluralModelLabel = 'Entreprises';
+
+    protected static ?string $navigationLabel = 'Entreprises';
+
+    protected static ?string $pluralNavigationLabel = 'Entreprises';
+
+    protected static bool $hasTitleCaseModelLabel = false;
+
     protected static ?string $model = Entreprise::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office';
@@ -164,6 +174,7 @@ class EntrepriseResource extends Resource
                     ->icon('heroicon-o-eye')
                     ->modal()
                     ->url(null)
+                    ->modalCancelActionLabel('Fermer')
                     ->modalHeading('Aperçu de l\'entreprise')
                     ->modalDescription('Détails complets de l\'entreprise sélectionnée')
                     ->modalWidth('4xl')
