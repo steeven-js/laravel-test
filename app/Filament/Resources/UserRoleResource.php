@@ -15,35 +15,15 @@ use Filament\Tables\Table;
 
 class UserRoleResource extends Resource
 {
-    protected static ?string $modelLabel = 'Rôle utilisateur';
-
-    protected static ?string $pluralModelLabel = 'Rôles utilisateurs';
-
-    protected static ?string $navigationLabel = 'Rôles utilisateurs';
-
-    protected static ?string $pluralNavigationLabel = 'Rôles utilisateurs';
-
-    protected static bool $hasTitleCaseModelLabel = false;
-
     protected static ?string $model = UserRole::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-key';
 
     protected static ?string $navigationGroup = 'Administration';
 
-    protected static ?int $navigationSort = 10;
-
-    public static function getModelLabel(): string
-    {
-        return 'Rôle';
-    }
+    protected static ?string $navigationLabel = 'Rôles';
 
     public static function getPluralModelLabel(): string
-    {
-        return 'Rôles';
-    }
-
-    public static function getNavigationLabel(): string
     {
         return 'Rôles';
     }
@@ -62,7 +42,14 @@ class UserRoleResource extends Resource
                                 Forms\Components\TextInput::make('display_name')->required()->maxLength(255),
                             ]),
                         Forms\Components\Textarea::make('description')->columnSpanFull(),
-                        Forms\Components\KeyValue::make('permissions')->label('Permissions (JSON)')->reorderable()->keyLabel('Clé')->valueLabel('Valeur')->addButtonLabel('Ajouter une permission')->nullable()->columnSpanFull(),
+                        Forms\Components\KeyValue::make('permissions')
+                            ->label('Permissions (JSON)')
+                            ->reorderable()
+                            ->keyLabel('Clé')
+                            ->valueLabel('Valeur')
+                            ->addActionLabel('Ajouter une permission')
+                            ->nullable()
+                            ->columnSpanFull(),
                         Forms\Components\Toggle::make('is_active')->required(),
                     ]),
             ]);
@@ -72,32 +59,14 @@ class UserRoleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('display_name')
-                    ->searchable()
-                    ->toggleable(),
-                Tables\Columns\IconColumn::make('is_active')
-                    ->boolean()
-                    ->toggleable(),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('name')->label('Nom')->searchable(),
+                Tables\Columns\TextColumn::make('display_name')->label("Nom d'affichage")->searchable(),
+                Tables\Columns\IconColumn::make('is_active')->label('Actif')->boolean(),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime()->since(),
             ])
             ->filters([
-                //
             ])
-            ->searchPlaceholder('Rechercher...')
-            ->emptyStateIcon('heroicon-o-key')
-            ->emptyStateHeading('Aucun rôle')
-            ->emptyStateDescription('Ajoutez votre premier rôle pour commencer.')
-            ->emptyStateActions([
+            ->headerActions([
                 Tables\Actions\CreateAction::make()->label('Nouveau rôle'),
             ])
             ->actions([
@@ -110,30 +79,23 @@ class UserRoleResource extends Resource
                             ->description('Identifiants et permissions')
                             ->icon('heroicon-o-key')
                             ->schema([
-                                Infolists\Components\TextEntry::make('name')
-                                    ->label('Nom'),
-                                Infolists\Components\TextEntry::make('display_name')
-                                    ->label('Nom d\'affichage'),
-                                Infolists\Components\TextEntry::make('description')
-                                    ->label('Description')
-                                    ->markdown(),
+                                Infolists\Components\TextEntry::make('name')->label('Nom'),
+                                Infolists\Components\TextEntry::make('display_name')->label("Nom d'affichage"),
+                                Infolists\Components\TextEntry::make('description')->label('Description')->markdown(),
                                 Infolists\Components\TextEntry::make('permissions')
                                     ->label('Permissions')
-                                    ->json(),
-                                Infolists\Components\IconEntry::make('is_active')
-                                    ->label('Actif')
-                                    ->boolean(),
+                                    ->formatStateUsing(fn ($state) => $state ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : '-')
+                                    ->extraAttributes(['class' => 'font-mono whitespace-pre-wrap text-xs'])
+                                    ->copyable()
+                                    ->columnSpanFull(),
+                                Infolists\Components\IconEntry::make('is_active')->label('Actif')->boolean(),
                             ]),
                         Infolists\Components\Section::make('Informations système')
                             ->description('Métadonnées techniques')
                             ->icon('heroicon-o-cog')
                             ->schema([
-                                Infolists\Components\TextEntry::make('created_at')
-                                    ->label('Créé le')
-                                    ->dateTime(),
-                                Infolists\Components\TextEntry::make('updated_at')
-                                    ->label('Modifié le')
-                                    ->dateTime(),
+                                Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
+                                Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime(),
                             ]),
                     ]),
                 Tables\Actions\EditAction::make(),
