@@ -15,6 +15,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewClient extends ViewRecord
 {
@@ -32,6 +33,22 @@ class ViewClient extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            Action::make('precedent')
+                ->label('Précédent')
+                ->icon('heroicon-m-chevron-left')
+                ->color('gray')
+                ->url(fn (): string => $this->getPreviousRecordId()
+                    ? ClientResource::getUrl('view', ['record' => $this->getPreviousRecordId()])
+                    : '#')
+                ->disabled(fn (): bool => $this->getPreviousRecordId() === null),
+            Action::make('suivant')
+                ->label('Suivant')
+                ->icon('heroicon-m-chevron-right')
+                ->color('gray')
+                ->url(fn (): string => $this->getNextRecordId()
+                    ? ClientResource::getUrl('view', ['record' => $this->getNextRecordId()])
+                    : '#')
+                ->disabled(fn (): bool => $this->getNextRecordId() === null),
             Actions\EditAction::make(),
             Action::make('nouveau_devis')
                 ->label('Nouveau devis')
@@ -44,6 +61,30 @@ class ViewClient extends ViewRecord
                 ->color('gray')
                 ->url(fn (): string => \App\Filament\Resources\ClientEmailResource::getUrl('create', ['client_id' => $this->record->getKey()])),
         ];
+    }
+
+    private function getPreviousRecordId(): ?int
+    {
+        /** @var Model $record */
+        $record = static::getResource()::getEloquentQuery()
+            ->whereNull('deleted_at')
+            ->where('id', '<', $this->record->getKey())
+            ->orderByDesc('id')
+            ->first();
+
+        return $record?->getKey();
+    }
+
+    private function getNextRecordId(): ?int
+    {
+        /** @var Model $record */
+        $record = static::getResource()::getEloquentQuery()
+            ->whereNull('deleted_at')
+            ->where('id', '>', $this->record->getKey())
+            ->orderBy('id')
+            ->first();
+
+        return $record?->getKey();
     }
 
     public function infolist(Infolist $infolist): Infolist
