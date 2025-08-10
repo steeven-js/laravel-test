@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             UserRoleSeeder::class,
             SuperAdminSeeder::class,
             SecteurActiviteSeeder::class,
+            ServiceSeeder::class,
         ]);
     }
 }

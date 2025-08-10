@@ -86,6 +86,8 @@ class ServiceResource extends Resource
     {
         return $table
             ->query(static::getEloquentQuery()->whereNull('deleted_at'))
+            ->recordUrl(null)
+            ->recordAction('view')
             ->columns([
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable()
@@ -139,39 +141,63 @@ class ServiceResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->label('Aperçu')
+                    ->icon('heroicon-o-eye')
+                    ->modalHeading('Aperçu du service')
+                    ->modalDescription('Détails complets du service sélectionné')
+                    ->modalWidth('4xl')
                     ->infolist([
                         Infolists\Components\Section::make('Informations du service')
                             ->description('Nom, code, description et paramètres par défaut')
                             ->icon('heroicon-o-briefcase')
                             ->schema([
                                 Infolists\Components\TextEntry::make('nom')
-                                    ->label('Nom'),
+                                    ->label('Nom')
+                                    ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                                    ->weight('bold'),
                                 Infolists\Components\TextEntry::make('code')
-                                    ->label('Code'),
+                                    ->label('Code')
+                                    ->badge()
+                                    ->color('primary'),
                                 Infolists\Components\TextEntry::make('description')
                                     ->label('Description')
-                                    ->markdown(),
-                                Infolists\Components\TextEntry::make('prix_ht')
-                                    ->label('Prix HT')
-                                    ->money('EUR'),
-                                Infolists\Components\TextEntry::make('qte_defaut')
-                                    ->label('Quantité par défaut'),
-                                Infolists\Components\TextEntry::make('unite')
-                                    ->label('Unité'),
+                                    ->markdown()
+                                    ->columnSpanFull(),
+                                Infolists\Components\Grid::make(3)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('prix_ht')
+                                            ->label('Prix HT')
+                                            ->money('EUR')
+                                            ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                                            ->color('success'),
+                                        Infolists\Components\TextEntry::make('qte_defaut')
+                                            ->label('Quantité par défaut')
+                                            ->badge(),
+                                        Infolists\Components\TextEntry::make('unite')
+                                            ->label('Unité')
+                                            ->badge()
+                                            ->color('info'),
+                                    ]),
                                 Infolists\Components\IconEntry::make('actif')
                                     ->label('Statut')
-                                    ->boolean(),
+                                    ->boolean()
+                                    ->size(Infolists\Components\IconEntry\IconEntrySize::Large),
                             ]),
                         Infolists\Components\Section::make('Informations système')
                             ->description('Métadonnées techniques')
                             ->icon('heroicon-o-cog')
                             ->schema([
-                                Infolists\Components\TextEntry::make('created_at')
-                                    ->label('Créé le')
-                                    ->dateTime(),
-                                Infolists\Components\TextEntry::make('updated_at')
-                                    ->label('Modifié le')
-                                    ->dateTime(),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('created_at')
+                                            ->label('Créé le')
+                                            ->dateTime()
+                                            ->icon('heroicon-o-calendar'),
+                                        Infolists\Components\TextEntry::make('updated_at')
+                                            ->label('Modifié le')
+                                            ->dateTime()
+                                            ->icon('heroicon-o-clock'),
+                                    ]),
                             ]),
                     ]),
                 Tables\Actions\EditAction::make(),

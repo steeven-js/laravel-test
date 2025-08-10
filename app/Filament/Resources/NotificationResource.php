@@ -7,6 +7,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\NotificationResource\Pages;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -68,6 +69,8 @@ class NotificationResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
+            ->recordAction('view')
             ->columns([
                 Tables\Columns\TextColumn::make('id')
                     ->label('ID')
@@ -122,6 +125,69 @@ class NotificationResource extends Resource
                 // pas d'action de création pour les notifications système
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->name('view')
+                    ->label('Aperçu')
+                    ->icon('heroicon-o-eye')
+                    ->modal()
+                    ->url(null)
+                    ->modalHeading('Aperçu de la notification')
+                    ->modalDescription('Détails complets de la notification sélectionnée')
+                    ->modalWidth('4xl')
+                    ->infolist([
+                        Infolists\Components\Section::make('Informations de la notification')
+                            ->description('Type, destinataire et données de la notification')
+                            ->icon('heroicon-o-bell-alert')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('type')
+                                    ->label('Type')
+                                    ->badge()
+                                    ->color('primary'),
+                                Infolists\Components\TextEntry::make('notifiable_type')
+                                    ->label('Type de destinataire')
+                                    ->badge()
+                                    ->color('info'),
+                                Infolists\Components\TextEntry::make('notifiable_id')
+                                    ->label('ID du destinataire')
+                                    ->badge()
+                                    ->color('warning'),
+                                Infolists\Components\IconEntry::make('read_at')
+                                    ->label('Statut de lecture')
+                                    ->boolean()
+                                    ->trueIcon('heroicon-m-check-circle')
+                                    ->falseIcon('heroicon-m-x-circle')
+                                    ->trueColor('success')
+                                    ->falseColor('danger')
+                                    ->getStateUsing(fn ($record) => ! is_null($record->read_at)),
+                            ]),
+                        Infolists\Components\Section::make('Données de la notification')
+                            ->description('Contenu et métadonnées de la notification')
+                            ->icon('heroicon-o-document-text')
+                            ->schema([
+                                Infolists\Components\TextEntry::make('data')
+                                    ->label('Données (JSON)')
+                                    ->markdown()
+                                    ->columnSpanFull()
+                                    ->getStateUsing(fn ($record) => json_encode($record->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)),
+                            ]),
+                        Infolists\Components\Section::make('Informations système')
+                            ->description('Métadonnées techniques')
+                            ->icon('heroicon-o-cog')
+                            ->schema([
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('created_at')
+                                            ->label('Créée le')
+                                            ->dateTime()
+                                            ->icon('heroicon-o-calendar'),
+                                        Infolists\Components\TextEntry::make('read_at')
+                                            ->label('Lue le')
+                                            ->dateTime()
+                                            ->icon('heroicon-o-clock')
+                                            ->placeholder('Non lue'),
+                                    ]),
+                            ]),
+                    ]),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('markAsRead')
                     ->label('Marquer comme lu')

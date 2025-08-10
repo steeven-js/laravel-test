@@ -61,8 +61,6 @@ class UserRoleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->recordUrl(null)
-            ->recordAction('view')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()

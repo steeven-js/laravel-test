@@ -106,6 +106,8 @@ class ClientResource extends Resource
     {
         return $table
             ->query(static::getEloquentQuery()->whereNull('deleted_at'))
+            ->recordUrl(null)
+            ->recordAction('view')
             ->columns([
                 Tables\Columns\TextColumn::make('nom')
                     ->searchable()
@@ -166,6 +168,8 @@ class ClientResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->modal()
+                    ->url(null)
                     ->infolist([
                         Infolists\Components\Section::make('Informations personnelles')
                             ->description('Détails du profil client')

@@ -102,6 +102,8 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
+            ->recordAction('view')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->label('Nom')
@@ -155,8 +157,6 @@ class UserResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->recordUrl(null)
-            ->recordAction('view')
             ->filters([
                 //
             ])

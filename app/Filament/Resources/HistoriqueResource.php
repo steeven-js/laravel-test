@@ -8,6 +8,7 @@ use App\Filament\Resources\HistoriqueResource\Pages;
 use App\Models\Historique;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -65,6 +66,8 @@ class HistoriqueResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
+            ->recordAction('view')
             ->columns([
                 Tables\Columns\TextColumn::make('entite_type')
                     ->searchable()
@@ -108,6 +111,114 @@ class HistoriqueResource extends Resource
                 // pas de création manuelle d'historique
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->name('view')
+                    ->label('Aperçu')
+                    ->icon('heroicon-o-eye')
+                    ->modal()
+                    ->url(null)
+                    ->modalHeading('Aperçu de l\'historique')
+                    ->modalDescription('Détails complets de l\'événement d\'historique sélectionné')
+                    ->modalWidth('4xl')
+                    ->infolist([
+                        Infolists\Components\Section::make('Événement')
+                            ->description('Entité, action et titre de l\'historique')
+                            ->icon('heroicon-o-clock')
+                            ->schema([
+                                Infolists\Components\Grid::make(3)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('entite_type')
+                                            ->label('Type d\'entité')
+                                            ->badge()
+                                            ->color('primary'),
+                                        Infolists\Components\TextEntry::make('entite_id')
+                                            ->label('ID de l\'entité')
+                                            ->badge()
+                                            ->color('info'),
+                                        Infolists\Components\TextEntry::make('action')
+                                            ->label('Action')
+                                            ->badge()
+                                            ->color('warning'),
+                                    ]),
+                                Infolists\Components\TextEntry::make('titre')
+                                    ->label('Titre')
+                                    ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                                    ->weight('bold'),
+                                Infolists\Components\TextEntry::make('description')
+                                    ->label('Description')
+                                    ->markdown()
+                                    ->columnSpanFull(),
+                            ]),
+                        Infolists\Components\Section::make('Données')
+                            ->description('Avant, après et supplémentaires')
+                            ->icon('heroicon-o-document-text')
+                            ->schema([
+                                Infolists\Components\Grid::make(3)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('donnees_avant')
+                                            ->label('Données avant')
+                                            ->markdown()
+                                            ->placeholder('Aucune donnée'),
+                                        Infolists\Components\TextEntry::make('donnees_apres')
+                                            ->label('Données après')
+                                            ->markdown()
+                                            ->placeholder('Aucune donnée'),
+                                        Infolists\Components\TextEntry::make('donnees_supplementaires')
+                                            ->label('Données supplémentaires')
+                                            ->markdown()
+                                            ->placeholder('Aucune donnée'),
+                                    ]),
+                            ]),
+                        Infolists\Components\Section::make('Utilisateur & contexte')
+                            ->description('Utilisateur, IP et user agent')
+                            ->icon('heroicon-o-user')
+                            ->schema([
+                                Infolists\Components\Grid::make(3)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('user.name')
+                                            ->label('Utilisateur')
+                                            ->badge()
+                                            ->color('primary'),
+                                        Infolists\Components\TextEntry::make('user_nom')
+                                            ->label('Nom utilisateur')
+                                            ->badge()
+                                            ->color('info'),
+                                        Infolists\Components\TextEntry::make('user_email')
+                                            ->label('Email utilisateur')
+                                            ->badge()
+                                            ->color('warning'),
+                                    ]),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('ip_address')
+                                            ->label('Adresse IP')
+                                            ->badge()
+                                            ->color('success')
+                                            ->icon('heroicon-o-computer-desktop'),
+                                        Infolists\Components\TextEntry::make('user_agent')
+                                            ->label('User Agent')
+                                            ->badge()
+                                            ->color('gray')
+                                            ->icon('heroicon-o-globe-alt'),
+                                    ]),
+                            ]),
+                        Infolists\Components\Section::make('Informations système')
+                            ->description('Métadonnées techniques')
+                            ->icon('heroicon-o-cog')
+                            ->schema([
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('created_at')
+                                            ->label('Créé le')
+                                            ->dateTime()
+                                            ->icon('heroicon-o-calendar'),
+                                        Infolists\Components\TextEntry::make('updated_at')
+                                            ->label('Modifié le')
+                                            ->dateTime()
+                                            ->icon('heroicon-o-clock'),
+                                    ]),
+                            ]),
+                    ]),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
