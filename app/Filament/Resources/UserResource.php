@@ -12,6 +12,10 @@ use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Parfaitementweb\FilamentCountryField\Forms\Components\Country;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\Tables\PhoneColumn;
+use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 
 class UserResource extends Resource
 {
@@ -67,9 +71,12 @@ class UserResource extends Resource
                                     ->email()
                                     ->required()
                                     ->maxLength(255),
-                                Forms\Components\TextInput::make('telephone')
+                                PhoneInput::make('telephone')
                                     ->label('Téléphone')
-                                    ->tel()
+                                    ->defaultCountry('FR')
+                                    ->formatAsYouType(true)
+                                    ->displayNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::NATIONAL)
+                                    ->inputNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::E164)
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('ville')
                                     ->label('Ville')
@@ -83,9 +90,9 @@ class UserResource extends Resource
                                 Forms\Components\TextInput::make('code_postal')
                                     ->label('Code postal')
                                     ->maxLength(255),
-                                Forms\Components\TextInput::make('pays')
+                                Country::make('pays')
                                     ->label('Pays')
-                                    ->maxLength(255),
+                                    ->default('FR'),
                             ]),
                         Forms\Components\Grid::make(2)
                             ->schema([
@@ -123,7 +130,7 @@ class UserResource extends Resource
                     ->label('Email')
                     ->searchable()
                     ->toggleable(),
-                Tables\Columns\TextColumn::make('telephone')
+                PhoneColumn::make('telephone')
                     ->label('Téléphone')
                     ->searchable()
                     ->toggleable(),

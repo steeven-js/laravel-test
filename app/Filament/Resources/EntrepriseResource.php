@@ -12,6 +12,8 @@ use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Parfaitementweb\FilamentCountryField\Forms\Components\Country;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EntrepriseResource extends Resource
 {
@@ -86,7 +88,12 @@ class EntrepriseResource extends Resource
                             ]),
                         Forms\Components\Grid::make(3)
                             ->schema([
-                                Forms\Components\TextInput::make('telephone')->tel()->maxLength(255),
+                                PhoneInput::make('telephone')
+                                    ->label('Téléphone')
+                                    ->defaultCountry('FR')
+                                    ->formatAsYouType(true)
+                                    ->displayNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::NATIONAL)
+                                    ->inputNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::E164),
                                 Forms\Components\TextInput::make('email')->email()->maxLength(255),
                                 Forms\Components\TextInput::make('site_web')->maxLength(255),
                             ]),

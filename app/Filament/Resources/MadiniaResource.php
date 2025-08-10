@@ -11,6 +11,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Parfaitementweb\FilamentCountryField\Forms\Components\Country;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class MadiniaResource extends Resource
 {
@@ -62,7 +64,12 @@ class MadiniaResource extends Resource
                             ]),
                         Forms\Components\Grid::make(3)
                             ->schema([
-                                Forms\Components\TextInput::make('telephone')->tel()->maxLength(255),
+                                PhoneInput::make('telephone')
+                                    ->label('Téléphone')
+                                    ->defaultCountry('FR')
+                                    ->formatAsYouType(true)
+                                    ->displayNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::NATIONAL)
+                                    ->inputNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::E164),
                                 Forms\Components\TextInput::make('email')->email()->maxLength(255),
                                 Forms\Components\TextInput::make('site_web')->maxLength(255),
                             ]),
@@ -75,7 +82,7 @@ class MadiniaResource extends Resource
                             ->schema([
                                 Forms\Components\TextInput::make('siret')->maxLength(255),
                                 Forms\Components\TextInput::make('numero_nda')->maxLength(255),
-                                Forms\Components\TextInput::make('pays')->required()->maxLength(255)->default('France'),
+                                Country::make('pays')->required()->label('Pays')->default('FR'),
                             ]),
                         Forms\Components\Textarea::make('adresse')->columnSpanFull(),
                         Forms\Components\Textarea::make('description')->columnSpanFull(),

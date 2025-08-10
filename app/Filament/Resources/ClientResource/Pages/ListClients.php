@@ -13,6 +13,7 @@ use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class ListClients extends ListRecords
 {
@@ -62,11 +63,11 @@ class ListClients extends ListRecords
                             'nom' => $faker->lastName(),
                             'prenom' => $faker->firstName(),
                             'email' => $faker->unique()->safeEmail(),
-                            'telephone' => $faker->phoneNumber(),
+                            'telephone' => '+33' . ltrim(preg_replace('/\D+/', '', $faker->phoneNumber()), '0'),
                             'adresse' => $faker->streetAddress(),
                             'ville' => $faker->city(),
                             'code_postal' => $faker->postcode(),
-                            'pays' => 'France',
+                            'pays' => 'FR',
                             'actif' => true,
                             'notes' => $faker->sentence(10),
                             'entreprise_id' => ($data['withEntreprise'] ?? 'oui') === 'oui' && ! empty($entrepriseIds)

@@ -12,6 +12,8 @@ use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Parfaitementweb\FilamentCountryField\Forms\Components\Country;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class ClientResource extends Resource
 {
@@ -71,9 +73,12 @@ class ClientResource extends Resource
                                     ->maxLength(255)
                                     ->unique(ignoreRecord: true)
                                     ->helperText('Doit être unique si renseigné.'),
-                                Forms\Components\TextInput::make('telephone')
-                                    ->tel()
-                                    ->maxLength(255),
+                                PhoneInput::make('telephone')
+                                    ->label('Téléphone')
+                                    ->defaultCountry('FR')
+                                    ->formatAsYouType(true)
+                                    ->displayNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::NATIONAL)
+                                    ->inputNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::E164),
                             ]),
                     ]),
                 Forms\Components\Section::make('Adresse')
@@ -88,9 +93,9 @@ class ClientResource extends Resource
                                     ->maxLength(255),
                                 Forms\Components\TextInput::make('code_postal')
                                     ->maxLength(255),
-                                Forms\Components\TextInput::make('pays')
-                                    ->maxLength(255)
-                                    ->default('France'),
+                                Country::make('pays')
+                                    ->label('Pays')
+                                    ->default('FR'),
                             ]),
                     ]),
                 Forms\Components\Section::make('Paramètres')
