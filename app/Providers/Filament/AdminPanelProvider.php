@@ -15,6 +15,7 @@ use App\Filament\Resources\NotificationResource as NotificationsResource;
 use App\Filament\Resources\OpportunityResource;
 use App\Filament\Resources\SecteurActiviteResource;
 use App\Filament\Resources\ServiceResource;
+use App\Filament\Resources\Settings\NumeroSequenceResource;
 use App\Filament\Resources\TicketResource;
 use App\Filament\Resources\TodoResource;
 use App\Filament\Resources\UserResource as UsersResource;
@@ -93,6 +94,7 @@ class AdminPanelProvider extends PanelProvider
                         NavigationGroup::make('Réglages')
                             ->items([
                                 ...MadiniaResource::getNavigationItems(),
+                                ...NumeroSequenceResource::getNavigationItems(),
                             ]),
 
                         NavigationGroup::make('Administration')

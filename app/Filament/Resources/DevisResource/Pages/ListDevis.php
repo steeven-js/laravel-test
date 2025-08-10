@@ -8,6 +8,7 @@ use App\Filament\Resources\DevisResource;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\LigneDevis;
+use App\Models\NumeroSequence;
 use App\Models\Service;
 use App\Models\User;
 use Carbon\Carbon;
@@ -16,6 +17,7 @@ use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ListDevis extends ListRecords
@@ -57,6 +59,11 @@ class ListDevis extends ListRecords
                         ->required(),
                 ])
                 ->action(function (array $data): void {
+                    // Eviter les timeouts et réduire l’overhead mémoire pendant la génération
+                    @set_time_limit(0);
+                    @ini_set('memory_limit', '512M');
+                    DB::connection()->disableQueryLog();
+
                     $count = (int) ($data['count'] ?? 0);
                     $minLines = max(1, (int) ($data['min_lines'] ?? 1));
                     $maxLines = max($minLines, (int) ($data['max_lines'] ?? $minLines));
@@ -88,16 +95,18 @@ class ListDevis extends ListRecords
                     $created = 0;
 
                     for ($i = 0; $i < $count; $i++) {
-                        // Générer un numéro de devis unique court
-                        $numero = null;
-                        for ($attempt = 0; $attempt < 5; $attempt++) {
-                            $candidate = 'DV-' . now()->format('y') . '-' . Str::upper(Str::random(6));
-                            if (! Devis::where('numero_devis', $candidate)->exists()) {
-                                $numero = $candidate;
-                                break;
-                            }
-                        }
-                        $numero = $numero ?? ('DV-' . now()->timestamp . '-' . Str::random(4));
+                        // Numéro DV-YY-XXX via compteur centralisé
+                        $year = (int) now()->format('y');
+                        $current = null;
+                        DB::transaction(function () use ($year, &$current) {
+                            $seq = NumeroSequence::query()
+                                ->lockForUpdate()
+                                ->firstOrCreate(['type' => 'devis', 'year' => $year], ['next_number' => 1]);
+                            $current = (int) $seq->next_number;
+                            $seq->next_number = $current + 1;
+                            $seq->save();
+                        });
+                        $numero = sprintf('DV-%02d-%03d', $year, $current);
 
                         $clientId = $clientIds[array_rand($clientIds)];
                         $adminId = ! empty($admins) ? $admins[array_rand($admins)] : null;
@@ -119,17 +128,17 @@ class ListDevis extends ListRecords
                             'taux_tva' => $tva,
                             'montant_tva' => 0,
                             'montant_ttc' => 0,
-                            'conditions' => 'Règlement à 30 jours. TVA 8,5%.',
+                            'conditions' => 'TVA 8,5% - validité 30 jours.',
                             'notes' => 'Généré par outil super admin.',
                             'archive' => false,
                         ]);
 
-                        $numLines = random_int($minLines, $maxLines);
                         $ligneOrder = 1;
                         $sumHt = 0.0;
                         $sumTva = 0.0;
                         $sumTtc = 0.0;
 
+                        $numLines = random_int($minLines, $maxLines);
                         for ($j = 0; $j < $numLines; $j++) {
                             $serviceId = $serviceIds[array_rand($serviceIds)];
                             $service = Service::find($serviceId);
@@ -153,7 +162,6 @@ class ListDevis extends ListRecords
                                 'description_personnalisee' => null,
                             ]);
 
-                            // Après events, montants calculés sur $ligne
                             $sumHt += (float) $ligne->montant_ht;
                             $sumTva += (float) $ligne->montant_tva;
                             $sumTtc += (float) $ligne->montant_ttc;
@@ -166,6 +174,13 @@ class ListDevis extends ListRecords
                         ]);
 
                         $created++;
+
+                        if ($created % 10 === 0 || $created === $count) {
+                            Notification::make()
+                                ->title("Progression: $created / $count devis")
+                                ->success()
+                                ->sendToDatabase(\Illuminate\Support\Facades\Auth::user());
+                        }
                     }
 
                     Notification::make()->title($created . ' devis factices créés')->success()->send();

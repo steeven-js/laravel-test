@@ -8,6 +8,7 @@ use App\Models\Devis;
 use App\Models\Facture;
 use App\Models\Madinia;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class PdfController extends Controller
@@ -17,19 +18,27 @@ class PdfController extends Controller
      */
     public function generateDevisPdf(Devis $devis)
     {
-        // Vérifier que l'utilisateur est connecté
         if (! Auth::check()) {
             abort(403, 'Accès non autorisé');
         }
 
+        // Optimisations pour documents volumineux
+        DB::connection()->disableQueryLog();
+        @ini_set('memory_limit', '512M');
+        @set_time_limit(180);
+
         $madinia = Madinia::query()->first();
+
+        $devis->load([
+            'client:id,nom,adresse,ville,code_postal,entreprise_id',
+            'client.entreprise:id,nom',
+            'lignes' => fn ($q) => $q->select('id','devis_id','service_id','quantite','unite','prix_unitaire_ht','remise_pourcentage','taux_tva','description_personnalisee','montant_ht','ordre')->orderBy('ordre'),
+            'lignes.service:id,nom',
+        ]);
 
         return Inertia::render('PdfGenerator', [
             'type' => 'devis',
-            'document' => $devis->load([
-                'lignes.service',
-                'client.entreprise',
-            ]),
+            'document' => $devis,
             'madinia' => $madinia,
             'user' => Auth::user(),
             'title' => "Devis {$devis->numero_devis}",
@@ -41,20 +50,28 @@ class PdfController extends Controller
      */
     public function generateFacturePdf(Facture $facture)
     {
-        // Vérifier que l'utilisateur est connecté
         if (! Auth::check()) {
             abort(403, 'Accès non autorisé');
         }
 
+        // Optimisations pour documents volumineux
+        DB::connection()->disableQueryLog();
+        @ini_set('memory_limit', '512M');
+        @set_time_limit(180);
+
         $madinia = Madinia::query()->first();
+
+        $facture->load([
+            'client:id,nom,adresse,ville,code_postal,entreprise_id',
+            'client.entreprise:id,nom',
+            'devis:id,numero_devis',
+            'lignes' => fn ($q) => $q->select('id','facture_id','service_id','quantite','unite','prix_unitaire_ht','remise_pourcentage','taux_tva','description_personnalisee','montant_ht','ordre')->orderBy('ordre'),
+            'lignes.service:id,nom',
+        ]);
 
         return Inertia::render('PdfGenerator', [
             'type' => 'facture',
-            'document' => $facture->load([
-                'lignes.service',
-                'client.entreprise',
-                'devis',
-            ]),
+            'document' => $facture,
             'madinia' => $madinia,
             'user' => Auth::user(),
             'title' => "Facture {$facture->numero_facture}",

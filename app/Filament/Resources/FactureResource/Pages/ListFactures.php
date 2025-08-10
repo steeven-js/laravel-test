@@ -9,14 +9,17 @@ use App\Models\Client;
 use App\Models\Devis;
 use App\Models\Facture;
 use App\Models\LigneFacture;
+use App\Models\NumeroSequence;
 use App\Models\Service;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Forms;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ListFactures extends ListRecords
@@ -41,12 +44,18 @@ class ListFactures extends ListRecords
                         ->maxValue(100)
                         ->default(10)
                         ->required(),
+                    Forms\Components\Toggle::make('link_to_devis')
+                        ->label('Lier à un devis existant (et copier les lignes)')
+                        ->reactive()
+                        ->default(true),
                     Forms\Components\TextInput::make('min_lines')
                         ->label('Lignes min/facture')
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(10)
                         ->default(1)
+                        ->disabled(fn (Get $get): bool => (bool) $get('link_to_devis') === true)
+                        ->helperText('Ignoré si « Lier à un devis » est activé')
                         ->required(),
                     Forms\Components\TextInput::make('max_lines')
                         ->label('Lignes max/facture')
@@ -54,12 +63,16 @@ class ListFactures extends ListRecords
                         ->minValue(1)
                         ->maxValue(10)
                         ->default(4)
+                        ->disabled(fn (Get $get): bool => (bool) $get('link_to_devis') === true)
+                        ->helperText('Ignoré si « Lier à un devis » est activé')
                         ->required(),
-                    Forms\Components\Toggle::make('link_to_devis')
-                        ->label('Lier à un devis existant (et copier les lignes)')
-                        ->default(true),
                 ])
                 ->action(function (array $data): void {
+                    // Eviter les timeouts et réduire l’overhead mémoire pendant la génération
+                    @set_time_limit(0);
+                    @ini_set('memory_limit', '512M');
+                    \Illuminate\Support\Facades\DB::connection()->disableQueryLog();
+
                     $count = (int) ($data['count'] ?? 0);
                     $minLines = max(1, (int) ($data['min_lines'] ?? 1));
                     $maxLines = max($minLines, (int) ($data['max_lines'] ?? $minLines));
@@ -67,7 +80,6 @@ class ListFactures extends ListRecords
 
                     if ($count < 1) {
                         Notification::make()->title('Quantité invalide')->danger()->send();
-
                         return;
                     }
 
@@ -84,7 +96,6 @@ class ListFactures extends ListRecords
                             ->body("Créez d'abord des clients et des services pour générer des factures.")
                             ->danger()
                             ->send();
-
                         return;
                     }
 
@@ -92,20 +103,23 @@ class ListFactures extends ListRecords
                     $created = 0;
 
                     for ($i = 0; $i < $count; $i++) {
-                        // Générer un numéro de facture unique court
-                        $numero = null;
-                        for ($attempt = 0; $attempt < 5; $attempt++) {
-                            $candidate = 'F-' . now()->format('y') . '-' . Str::upper(Str::random(6));
-                            if (! Facture::where('numero_facture', $candidate)->exists()) {
-                                $numero = $candidate;
-                                break;
-                            }
-                        }
-                        $numero = $numero ?? ('F-' . now()->timestamp . '-' . Str::random(4));
+                        // Numéro FC-YY-XXX via compteur centralisé
+                        $year = (int) now()->format('y');
+                        $current = null;
+                        DB::transaction(function () use ($year, &$current) {
+                            $seq = NumeroSequence::query()
+                                ->lockForUpdate()
+                                ->firstOrCreate(['type' => 'facture', 'year' => $year], ['next_number' => 1]);
+                            $current = (int) $seq->next_number;
+                            $seq->next_number = $current + 1;
+                            $seq->save();
+                        });
+                        $numero = sprintf('FC-%02d-%03d', $year, $current);
 
                         $selectedDevis = null;
                         if ($linkToDevis) {
-                            $selectedDevis = Devis::query()->inRandomOrder()->first();
+                            // On choisit un devis qui a des lignes pour garantir la copie
+                            $selectedDevis = Devis::query()->whereHas('lignes')->inRandomOrder()->first();
                         }
 
                         $clientId = $selectedDevis?->client_id ?? $clientIds[array_rand($clientIds)];
@@ -141,7 +155,6 @@ class ListFactures extends ListRecords
                         $sumTtc = 0.0;
 
                         if ($selectedDevis && $selectedDevis->lignes()->exists()) {
-                            // Copier les lignes du devis
                             foreach ($selectedDevis->lignes as $ligneDevis) {
                                 $ligne = LigneFacture::create([
                                     'facture_id' => $facture->id,
@@ -160,7 +173,6 @@ class ListFactures extends ListRecords
                                 $sumTtc += (float) $ligne->montant_ttc;
                             }
                         } else {
-                            // Générer des lignes aléatoires depuis les services
                             $numLines = random_int($minLines, $maxLines);
                             for ($j = 0; $j < $numLines; $j++) {
                                 $serviceId = $serviceIds[array_rand($serviceIds)];
@@ -171,7 +183,7 @@ class ListFactures extends ListRecords
 
                                 $quantite = random_int(1, 5);
                                 $prixUnitaire = (float) ($service->prix_ht ?? 0);
-                                $remise = random_int(0, 20); // %
+                                $remise = random_int(0, 20);
 
                                 $ligne = LigneFacture::create([
                                     'facture_id' => $facture->id,
@@ -198,6 +210,13 @@ class ListFactures extends ListRecords
                         ]);
 
                         $created++;
+
+                        if ($created % 10 === 0 || $created === $count) {
+                            Notification::make()
+                                ->title("Progression: $created / $count factures")
+                                ->success()
+                                ->sendToDatabase(\Illuminate\Support\Facades\Auth::user());
+                        }
                     }
 
                     Notification::make()->title($created . ' factures factices créées')->success()->send();

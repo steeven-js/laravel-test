@@ -12,6 +12,7 @@ use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class DevisResource extends Resource
 {
@@ -140,6 +141,7 @@ class DevisResource extends Resource
     {
         return $table
             ->query(static::getEloquentQuery()->whereNull('deleted_at'))
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount('lignes'))
             ->recordUrl(null)
             ->recordAction('view')
             ->columns([
@@ -151,6 +153,11 @@ class DevisResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('lignes_count')
+                    ->label('Lignes')
+                    ->badge()
+                    ->color('gray')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('administrateur.name')
                     ->label('Administrateur')
                     ->sortable()
