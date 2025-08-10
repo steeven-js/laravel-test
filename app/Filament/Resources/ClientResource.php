@@ -12,6 +12,9 @@ use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Pages\SubNavigationPosition;
+use Filament\Resources\Pages\Page;
+use Illuminate\Database\Eloquent\Builder;
 use Parfaitementweb\FilamentCountryField\Forms\Components\Country;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
@@ -34,6 +37,8 @@ class ClientResource extends Resource
     protected static ?string $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 10;
+
+    protected static SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     public static function getModelLabel(): string
     {
@@ -121,6 +126,7 @@ class ClientResource extends Resource
     {
         return $table
             ->query(static::getEloquentQuery()->whereNull('deleted_at'))
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount(['devis', 'factures']))
             ->recordUrl(null)
             ->recordAction('view')
             ->columns([
@@ -153,6 +159,16 @@ class ClientResource extends Resource
                     ->sortable()
                     ->searchable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('devis_count')
+                    ->label('Devis')
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(),
+                Tables\Columns\TextColumn::make('factures_count')
+                    ->label('Factures')
+                    ->badge()
+                    ->sortable()
+                    ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -183,61 +199,82 @@ class ClientResource extends Resource
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
+                    ->label('Aperçu')
                     ->modal()
                     ->url(null)
                     ->modalCancelActionLabel('Fermer')
+                    ->icon('heroicon-o-eye')
                     ->infolist([
                         Infolists\Components\Section::make('Informations personnelles')
                             ->description('Détails du profil client')
                             ->icon('heroicon-o-user')
                             ->schema([
-                                Infolists\Components\TextEntry::make('nom')
-                                    ->label('Nom'),
-                                Infolists\Components\TextEntry::make('prenom')
-                                    ->label('Prénom'),
-                                Infolists\Components\TextEntry::make('email')
-                                    ->label('Email'),
-                                Infolists\Components\TextEntry::make('telephone')
-                                    ->label('Téléphone'),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('nom')
+                                            ->label('Nom'),
+                                        Infolists\Components\TextEntry::make('prenom')
+                                            ->label('Prénom'),
+                                        Infolists\Components\TextEntry::make('email')
+                                            ->label('Email'),
+                                        Infolists\Components\TextEntry::make('telephone')
+                                            ->label('Téléphone'),
+                                    ]),
                             ]),
                         Infolists\Components\Section::make('Adresse')
                             ->description('Coordonnées géographiques')
                             ->icon('heroicon-o-map-pin')
                             ->schema([
-                                Infolists\Components\TextEntry::make('adresse')
-                                    ->label('Adresse'),
-                                Infolists\Components\TextEntry::make('ville')
-                                    ->label('Ville'),
-                                Infolists\Components\TextEntry::make('code_postal')
-                                    ->label('Code postal'),
-                                Infolists\Components\TextEntry::make('pays')
-                                    ->label('Pays'),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('adresse')
+                                            ->label('Adresse'),
+                                        Infolists\Components\TextEntry::make('ville')
+                                            ->label('Ville'),
+                                        Infolists\Components\TextEntry::make('code_postal')
+                                            ->label('Code postal'),
+                                        Infolists\Components\TextEntry::make('pays')
+                                            ->label('Pays'),
+                                    ]),
                             ]),
                         Infolists\Components\Section::make('Entreprise et statut')
                             ->description('Informations professionnelles')
                             ->icon('heroicon-o-building-office')
                             ->schema([
-                                Infolists\Components\TextEntry::make('entreprise.nom')
-                                    ->label('Entreprise'),
-                                Infolists\Components\IconEntry::make('actif')
-                                    ->label('Statut')
-                                    ->boolean(),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('entreprise.nom')
+                                            ->label('Entreprise'),
+                                        Infolists\Components\IconEntry::make('actif')
+                                            ->label('Statut')
+                                            ->boolean(),
+                                    ]),
                                 Infolists\Components\TextEntry::make('notes')
                                     ->label('Notes')
-                                    ->markdown(),
+                                    ->markdown()
+                                    ->columnSpanFull(),
                             ]),
                         Infolists\Components\Section::make('Informations système')
                             ->description('Métadonnées techniques')
                             ->icon('heroicon-o-cog')
                             ->schema([
-                                Infolists\Components\TextEntry::make('created_at')
-                                    ->label('Créé le')
-                                    ->dateTime(),
-                                Infolists\Components\TextEntry::make('updated_at')
-                                    ->label('Modifié le')
-                                    ->dateTime(),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('created_at')
+                                            ->label('Créé le')
+                                            ->dateTime(),
+                                        Infolists\Components\TextEntry::make('updated_at')
+                                            ->label('Modifié le')
+                                            ->dateTime(),
+                                    ]),
                             ]),
                     ]),
+                Tables\Actions\Action::make('detail')
+                    ->label('Détail')
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->color('info')
+                    ->url(fn (Client $record): string => static::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(false),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
@@ -250,8 +287,22 @@ class ClientResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            ClientResource\RelationManagers\DevisRelationManager::class,
+            ClientResource\RelationManagers\FacturesRelationManager::class,
+            ClientResource\RelationManagers\OpportunitiesRelationManager::class,
+            ClientResource\RelationManagers\TicketsRelationManager::class,
+            ClientResource\RelationManagers\TodosRelationManager::class,
+            ClientResource\RelationManagers\EmailsRelationManager::class,
+            ClientResource\RelationManagers\HistoriquesRelationManager::class,
         ];
+    }
+
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return $page->generateNavigationItems([
+            Pages\ViewClient::class,
+            Pages\EditClient::class,
+        ]);
     }
 
     public static function getPages(): array

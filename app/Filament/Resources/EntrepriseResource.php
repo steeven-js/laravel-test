@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\EntrepriseResource\Pages;
+use App\Filament\Resources\Traits\HasStandardActions;
 use App\Models\Entreprise;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -17,6 +18,8 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EntrepriseResource extends Resource
 {
+    use HasStandardActions;
+
     protected static ?string $modelLabel = 'Entreprise';
 
     protected static ?string $pluralModelLabel = 'Entreprises';
@@ -298,6 +301,12 @@ class EntrepriseResource extends Resource
                                     ]),
                             ]),
                     ]),
+                Tables\Actions\Action::make('detail')
+                    ->label('Détail')
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->color('info')
+                    ->url(fn (Entreprise $record): string => static::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(false),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

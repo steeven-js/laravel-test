@@ -79,23 +79,29 @@ class UserRoleResource extends Resource
                             ->description('Identifiants et permissions')
                             ->icon('heroicon-o-key')
                             ->schema([
-                                Infolists\Components\TextEntry::make('name')->label('Nom'),
-                                Infolists\Components\TextEntry::make('display_name')->label("Nom d'affichage"),
-                                Infolists\Components\TextEntry::make('description')->label('Description')->markdown(),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('name')->label('Nom'),
+                                        Infolists\Components\TextEntry::make('display_name')->label("Nom d'affichage"),
+                                        Infolists\Components\IconEntry::make('is_active')->label('Actif')->boolean(),
+                                    ]),
+                                Infolists\Components\TextEntry::make('description')->label('Description')->markdown()->columnSpanFull(),
                                 Infolists\Components\TextEntry::make('permissions')
                                     ->label('Permissions')
                                     ->formatStateUsing(fn ($state) => $state ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : '-')
                                     ->extraAttributes(['class' => 'font-mono whitespace-pre-wrap text-xs'])
                                     ->copyable()
                                     ->columnSpanFull(),
-                                Infolists\Components\IconEntry::make('is_active')->label('Actif')->boolean(),
                             ]),
                         Infolists\Components\Section::make('Informations système')
                             ->description('Métadonnées techniques')
                             ->icon('heroicon-o-cog')
                             ->schema([
-                                Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
-                                Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime(),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
+                                        Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime(),
+                                    ]),
                             ]),
                     ]),
                 Tables\Actions\EditAction::make(),

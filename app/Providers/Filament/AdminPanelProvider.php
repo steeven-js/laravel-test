@@ -48,7 +48,8 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->collapsibleNavigationGroups()
-            ->topNavigation()
+            ->sidebarCollapsibleOnDesktop()
+            // ->topNavigation() // Désactivé: utiliser la navigation latérale
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 return $builder
                     ->items([
@@ -60,6 +61,7 @@ class AdminPanelProvider extends PanelProvider
                     ])
                     ->groups([
                         NavigationGroup::make('CRM')
+                            ->collapsible()
                             ->items([
                                 ...ClientResource::getNavigationItems(),
                                 ...EntrepriseResource::getNavigationItems(),
@@ -67,12 +69,14 @@ class AdminPanelProvider extends PanelProvider
                             ]),
 
                         NavigationGroup::make('Ventes')
+                            ->collapsible()
                             ->items([
                                 ...DevisResource::getNavigationItems(),
                                 ...FactureResource::getNavigationItems(),
                             ]),
 
                         NavigationGroup::make('Communication')
+                            ->collapsible()
                             ->items([
                                 ...EmailTemplateResource::getNavigationItems(),
                                 ...ClientEmailResource::getNavigationItems(),
@@ -80,24 +84,28 @@ class AdminPanelProvider extends PanelProvider
                             ]),
 
                         NavigationGroup::make('Référentiels')
+                            ->collapsible()
                             ->items([
                                 ...ServiceResource::getNavigationItems(),
                                 ...SecteurActiviteResource::getNavigationItems(),
                             ]),
 
                         NavigationGroup::make('Support')
+                            ->collapsible()
                             ->items([
                                 ...TicketResource::getNavigationItems(),
                                 ...TodoResource::getNavigationItems(),
                             ]),
 
                         NavigationGroup::make('Réglages')
+                            ->collapsible()
                             ->items([
                                 ...MadiniaResource::getNavigationItems(),
                                 ...NumeroSequenceResource::getNavigationItems(),
                             ]),
 
                         NavigationGroup::make('Administration')
+                            ->collapsible()
                             ->items([
                                 ...UserRoleResource::getNavigationItems(),
                                 ...UsersResource::getNavigationItems(),

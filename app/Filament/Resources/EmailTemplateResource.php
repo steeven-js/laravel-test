@@ -156,20 +156,23 @@ class EmailTemplateResource extends Resource
                             ->description('Nom, catégories et statut du template')
                             ->icon('heroicon-o-envelope')
                             ->schema([
-                                Infolists\Components\TextEntry::make('name')
-                                    ->label('Nom'),
-                                Infolists\Components\TextEntry::make('subject')
-                                    ->label('Objet'),
-                                Infolists\Components\TextEntry::make('category')
-                                    ->label('Catégorie'),
-                                Infolists\Components\TextEntry::make('sub_category')
-                                    ->label('Sous-catégorie'),
-                                Infolists\Components\IconEntry::make('is_default')
-                                    ->label('Par défaut')
-                                    ->boolean(),
-                                Infolists\Components\IconEntry::make('is_active')
-                                    ->label('Actif')
-                                    ->boolean(),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('name')
+                                            ->label('Nom'),
+                                        Infolists\Components\TextEntry::make('subject')
+                                            ->label('Objet'),
+                                        Infolists\Components\TextEntry::make('category')
+                                            ->label('Catégorie'),
+                                        Infolists\Components\TextEntry::make('sub_category')
+                                            ->label('Sous-catégorie'),
+                                        Infolists\Components\IconEntry::make('is_default')
+                                            ->label('Par défaut')
+                                            ->boolean(),
+                                        Infolists\Components\IconEntry::make('is_active')
+                                            ->label('Actif')
+                                            ->boolean(),
+                                    ]),
                             ]),
                         Infolists\Components\Section::make('Contenu')
                             ->description('Corps et variables disponibles')
@@ -177,24 +180,31 @@ class EmailTemplateResource extends Resource
                             ->schema([
                                 Infolists\Components\TextEntry::make('body')
                                     ->label('Corps du message')
-                                    ->markdown(),
-                                Infolists\Components\TextEntry::make('variables')
-                                    ->label('Variables')
-                                    ->json(),
-                                Infolists\Components\TextEntry::make('description')
-                                    ->label('Description')
-                                    ->markdown(),
+                                    ->markdown()
+                                    ->columnSpanFull(),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('variables')
+                                            ->label('Variables')
+                                            ->json(),
+                                        Infolists\Components\TextEntry::make('description')
+                                            ->label('Description')
+                                            ->markdown(),
+                                    ]),
                             ]),
                         Infolists\Components\Section::make('Informations système')
                             ->description('Métadonnées techniques')
                             ->icon('heroicon-o-cog')
                             ->schema([
-                                Infolists\Components\TextEntry::make('created_at')
-                                    ->label('Créé le')
-                                    ->dateTime(),
-                                Infolists\Components\TextEntry::make('updated_at')
-                                    ->label('Modifié le')
-                                    ->dateTime(),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('created_at')
+                                            ->label('Créé le')
+                                            ->dateTime(),
+                                        Infolists\Components\TextEntry::make('updated_at')
+                                            ->label('Modifié le')
+                                            ->dateTime(),
+                                    ]),
                             ]),
                     ]),
                 Tables\Actions\EditAction::make(),

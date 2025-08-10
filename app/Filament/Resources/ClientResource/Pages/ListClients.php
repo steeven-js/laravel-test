@@ -13,7 +13,6 @@ use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 
 class ListClients extends ListRecords
 {

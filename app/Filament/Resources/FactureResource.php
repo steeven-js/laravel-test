@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources;
 
+use App\Enums\FactureEnvoiStatus;
+use App\Enums\FactureStatus;
 use App\Filament\Resources\FactureResource\Pages;
 use App\Models\Facture;
 use Filament\Forms;
@@ -73,19 +75,18 @@ class FactureResource extends Resource
                             ]),
                         Forms\Components\Grid::make(2)
                             ->schema([
-                                Forms\Components\Select::make('statut')->label('Statut')->required()->options([
-                                    'brouillon' => 'Brouillon',
-                                    'en_attente' => 'En attente',
-                                    'envoyee' => 'Envoyée',
-                                    'payee' => 'Payée',
-                                    'en_retard' => 'En retard',
-                                    'annulee' => 'Annulée',
-                                ])->default('en_attente'),
-                                Forms\Components\Select::make('statut_envoi')->label("Statut d'envoi")->required()->options([
-                                    'non_envoyee' => 'Non envoyée',
-                                    'envoyee' => 'Envoyée',
-                                    'echec_envoi' => "Échec d'envoi",
-                                ])->default('non_envoyee'),
+                                Forms\Components\ToggleButtons::make('statut')
+                                    ->label('Statut')
+                                    ->inline()
+                                    ->options(FactureStatus::class)
+                                    ->required()
+                                    ->default(FactureStatus::Emise),
+                                Forms\Components\ToggleButtons::make('statut_envoi')
+                                    ->label("Statut d'envoi")
+                                    ->inline()
+                                    ->options(FactureEnvoiStatus::class)
+                                    ->required()
+                                    ->default(FactureEnvoiStatus::NonEnvoyee),
                             ]),
                     ]),
                 Forms\Components\Section::make('Montants')
@@ -205,9 +206,43 @@ class FactureResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('statut')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => FactureStatus::from($state)->getLabel())
+                    ->color(fn (string $state): string => match ($state) {
+                        'brouillon' => 'gray',
+                        'emise' => 'info',
+                        'envoyee' => 'warning',
+                        'payee' => 'success',
+                        'en_retard' => 'danger',
+                        'annulee' => 'gray',
+                        default => 'gray',
+                    })
+                    ->icon(fn (string $state): string => match ($state) {
+                        'brouillon' => 'heroicon-m-document-text',
+                        'emise' => 'heroicon-m-document',
+                        'envoyee' => 'heroicon-m-paper-airplane',
+                        'payee' => 'heroicon-m-banknotes',
+                        'en_retard' => 'heroicon-m-exclamation-triangle',
+                        'annulee' => 'heroicon-m-x-circle',
+                        default => 'heroicon-m-question-mark-circle',
+                    })
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('statut_envoi')
+                    ->badge()
+                    ->formatStateUsing(fn (string $state): string => FactureEnvoiStatus::from($state)->getLabel())
+                    ->color(fn (string $state): string => match ($state) {
+                        'non_envoyee' => 'gray',
+                        'envoyee' => 'success',
+                        'echec_envoi' => 'danger',
+                        default => 'gray',
+                    })
+                    ->icon(fn (string $state): string => match ($state) {
+                        'non_envoyee' => 'heroicon-m-paper-airplane',
+                        'envoyee' => 'heroicon-m-check-circle',
+                        'echec_envoi' => 'heroicon-m-exclamation-triangle',
+                        default => 'heroicon-m-question-mark-circle',
+                    })
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('pdf_file')
@@ -292,14 +327,10 @@ class FactureResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('statut')
-                    ->options([
-                        'brouillon' => 'Brouillon',
-                        'en_attente' => 'En attente',
-                        'envoyee' => 'Envoyée',
-                        'payee' => 'Payée',
-                        'en_retard' => 'En retard',
-                        'annulee' => 'Annulée',
-                    ]),
+                    ->options(FactureStatus::class),
+                Tables\Filters\SelectFilter::make('statut_envoi')
+                    ->label("Statut d'envoi")
+                    ->options(FactureEnvoiStatus::class),
                 Tables\Filters\SelectFilter::make('mode_paiement_propose')
                     ->label('Mode proposé')
                     ->options([
@@ -354,9 +385,43 @@ class FactureResource extends Resource
                                     ->label('Date d\'échéance')
                                     ->date(),
                                 Infolists\Components\TextEntry::make('statut')
-                                    ->label('Statut'),
+                                    ->label('Statut')
+                                    ->badge()
+                                    ->formatStateUsing(fn (string $state): string => FactureStatus::from($state)->getLabel())
+                                    ->color(fn (string $state): string => match ($state) {
+                                        'brouillon' => 'gray',
+                                        'emise' => 'info',
+                                        'envoyee' => 'warning',
+                                        'payee' => 'success',
+                                        'en_retard' => 'danger',
+                                        'annulee' => 'gray',
+                                        default => 'gray',
+                                    })
+                                    ->icon(fn (string $state): string => match ($state) {
+                                        'brouillon' => 'heroicon-m-document-text',
+                                        'emise' => 'heroicon-m-document',
+                                        'envoyee' => 'heroicon-m-paper-airplane',
+                                        'payee' => 'heroicon-m-banknotes',
+                                        'en_retard' => 'heroicon-m-exclamation-triangle',
+                                        'annulee' => 'heroicon-m-x-circle',
+                                        default => 'heroicon-m-question-mark-circle',
+                                    }),
                                 Infolists\Components\TextEntry::make('statut_envoi')
-                                    ->label('Statut d\'envoi'),
+                                    ->label('Statut d\'envoi')
+                                    ->badge()
+                                    ->formatStateUsing(fn (string $state): string => FactureEnvoiStatus::from($state)->getLabel())
+                                    ->color(fn (string $state): string => match ($state) {
+                                        'non_envoyee' => 'gray',
+                                        'envoyee' => 'success',
+                                        'echec_envoi' => 'danger',
+                                        default => 'gray',
+                                    })
+                                    ->icon(fn (string $state): string => match ($state) {
+                                        'non_envoyee' => 'heroicon-m-paper-airplane',
+                                        'envoyee' => 'heroicon-m-check-circle',
+                                        'echec_envoi' => 'heroicon-m-exclamation-triangle',
+                                        default => 'heroicon-m-question-mark-circle',
+                                    }),
                             ]),
                         Infolists\Components\Section::make('Montants')
                             ->description('HT, TVA et TTC')
@@ -418,6 +483,12 @@ class FactureResource extends Resource
                                     ->dateTime(),
                             ]),
                     ]),
+                Tables\Actions\Action::make('detail')
+                    ->label('Détail')
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->color('info')
+                    ->url(fn ($record): string => static::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(false),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

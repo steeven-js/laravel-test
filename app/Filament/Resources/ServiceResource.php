@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServiceResource\Pages;
+use App\Filament\Resources\Traits\HasStandardActions;
 use App\Models\Service;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,6 +16,8 @@ use Filament\Tables\Table;
 
 class ServiceResource extends Resource
 {
+    use HasStandardActions;
+
     protected static ?string $modelLabel = 'Service';
 
     protected static ?string $pluralModelLabel = 'Services';
@@ -213,6 +216,12 @@ class ServiceResource extends Resource
                                     ]),
                             ]),
                     ]),
+                Tables\Actions\Action::make('detail')
+                    ->label('Détail')
+                    ->icon('heroicon-o-arrow-top-right-on-square')
+                    ->color('info')
+                    ->url(fn (Service $record): string => static::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(false),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

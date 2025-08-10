@@ -52,27 +52,48 @@ class NotificationResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('type')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('notifiable_type')
-                    ->label('Notifiable type')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('notifiable_id')
-                    ->label('Notifiable ID')
-                    ->numeric()
-                    ->required(),
-                Forms\Components\KeyValue::make('data')
-                    ->label('Données (JSON)')
-                    ->keyLabel('Clé')
-                    ->valueLabel('Valeur')
-                    ->addButtonLabel('Ajouter une donnée')
-                    ->reorderable()
-                    ->nullable()
-                    ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('read_at')
-                    ->label('Lu le'),
+                Forms\Components\Section::make('Type de notification')
+                    ->description('Catégorie et identifiant de la notification')
+                    ->icon('heroicon-o-bell')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('type')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\DateTimePicker::make('read_at')
+                                    ->label('Lu le'),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Destinataire')
+                    ->description('Type et identifiant de l\'entité notifiée')
+                    ->icon('heroicon-o-user')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('notifiable_type')
+                                    ->label('Notifiable type')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('notifiable_id')
+                                    ->label('Notifiable ID')
+                                    ->numeric()
+                                    ->required(),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Contenu de la notification')
+                    ->description('Données et informations de la notification')
+                    ->icon('heroicon-o-document-text')
+                    ->schema([
+                        Forms\Components\KeyValue::make('data')
+                            ->label('Données (JSON)')
+                            ->keyLabel('Clé')
+                            ->valueLabel('Valeur')
+                            ->addButtonLabel('Ajouter une donnée')
+                            ->reorderable()
+                            ->nullable()
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
@@ -150,26 +171,29 @@ class NotificationResource extends Resource
                             ->description('Type, destinataire et données de la notification')
                             ->icon('heroicon-o-bell-alert')
                             ->schema([
-                                Infolists\Components\TextEntry::make('type')
-                                    ->label('Type')
-                                    ->badge()
-                                    ->color('primary'),
-                                Infolists\Components\TextEntry::make('notifiable_type')
-                                    ->label('Type de destinataire')
-                                    ->badge()
-                                    ->color('info'),
-                                Infolists\Components\TextEntry::make('notifiable_id')
-                                    ->label('ID du destinataire')
-                                    ->badge()
-                                    ->color('warning'),
-                                Infolists\Components\IconEntry::make('read_at')
-                                    ->label('Statut de lecture')
-                                    ->boolean()
-                                    ->trueIcon('heroicon-m-check-circle')
-                                    ->falseIcon('heroicon-m-x-circle')
-                                    ->trueColor('success')
-                                    ->falseColor('danger')
-                                    ->getStateUsing(fn ($record) => ! is_null($record->read_at)),
+                                Infolists\Components\Grid::make(2)
+                                    ->schema([
+                                        Infolists\Components\TextEntry::make('type')
+                                            ->label('Type')
+                                            ->badge()
+                                            ->color('primary'),
+                                        Infolists\Components\TextEntry::make('notifiable_type')
+                                            ->label('Type de destinataire')
+                                            ->badge()
+                                            ->color('info'),
+                                        Infolists\Components\TextEntry::make('notifiable_id')
+                                            ->label('ID du destinataire')
+                                            ->badge()
+                                            ->color('warning'),
+                                        Infolists\Components\IconEntry::make('read_at')
+                                            ->label('Statut de lecture')
+                                            ->boolean()
+                                            ->trueIcon('heroicon-m-check-circle')
+                                            ->falseIcon('heroicon-m-x-circle')
+                                            ->trueColor('success')
+                                            ->falseColor('danger')
+                                            ->getStateUsing(fn ($record) => ! is_null($record->read_at)),
+                                    ]),
                             ]),
                         Infolists\Components\Section::make('Données de la notification')
                             ->description('Contenu et métadonnées de la notification')

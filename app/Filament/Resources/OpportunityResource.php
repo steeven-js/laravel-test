@@ -51,56 +51,93 @@ class OpportunityResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('nom')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('etape')
-                    ->label('Étape')
-                    ->required()
-                    ->options([
-                        'prospection' => 'Prospection',
-                        'qualification' => 'Qualification',
-                        'proposition' => 'Proposition',
-                        'negociation' => 'Négociation',
-                        'fermeture' => 'Fermeture',
-                        'gagnee' => 'Gagnée',
-                        'perdue' => 'Perdue',
-                    ])
-                    ->default('prospection'),
-                Forms\Components\TextInput::make('probabilite')
-                    ->label('Probabilité')
-                    ->required()
-                    ->numeric()
-                    ->minValue(0)
-                    ->maxValue(100)
-                    ->step(1)
-                    ->suffix('%')
-                    ->default(0),
-                Forms\Components\TextInput::make('montant')
-                    ->label('Montant estimé')
-                    ->numeric()
-                    ->inputMode('decimal')
-                    ->prefix('€'),
-                Forms\Components\DatePicker::make('date_cloture_prevue'),
-                Forms\Components\DatePicker::make('date_cloture_reelle'),
-                Forms\Components\Select::make('client_id')
-                    ->label('Client')
-                    ->relationship('client', 'nom')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\Select::make('user_id')
-                    ->label('Responsable')
-                    ->relationship('user', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\Textarea::make('notes')
-                    ->columnSpanFull(),
-                Forms\Components\Toggle::make('active')
-                    ->required(),
+                Forms\Components\Section::make('Opportunité')
+                    ->description('Nom, description et détails de l\'opportunité')
+                    ->icon('heroicon-o-light-bulb')
+                    ->schema([
+                        Forms\Components\TextInput::make('nom')
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('description')
+                            ->columnSpanFull(),
+                    ]),
+                Forms\Components\Section::make('Suivi commercial')
+                    ->description('Étape, probabilité et montant estimé')
+                    ->icon('heroicon-o-chart-bar')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('etape')
+                                    ->label('Étape')
+                                    ->required()
+                                    ->options([
+                                        'prospection' => 'Prospection',
+                                        'qualification' => 'Qualification',
+                                        'proposition' => 'Proposition',
+                                        'negociation' => 'Négociation',
+                                        'fermeture' => 'Fermeture',
+                                        'gagnee' => 'Gagnée',
+                                        'perdue' => 'Perdue',
+                                    ])
+                                    ->default('prospection'),
+                                Forms\Components\TextInput::make('probabilite')
+                                    ->label('Probabilité')
+                                    ->required()
+                                    ->numeric()
+                                    ->minValue(0)
+                                    ->maxValue(100)
+                                    ->step(1)
+                                    ->suffix('%')
+                                    ->default(0),
+                            ]),
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('montant')
+                                    ->label('Montant estimé')
+                                    ->numeric()
+                                    ->inputMode('decimal')
+                                    ->prefix('€'),
+                                Forms\Components\Toggle::make('active')
+                                    ->required(),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Dates et échéances')
+                    ->description('Planning et clôture de l\'opportunité')
+                    ->icon('heroicon-o-calendar')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\DatePicker::make('date_cloture_prevue'),
+                                Forms\Components\DatePicker::make('date_cloture_reelle'),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Responsabilités')
+                    ->description('Client et responsable de l\'opportunité')
+                    ->icon('heroicon-o-user-group')
+                    ->schema([
+                        Forms\Components\Grid::make(2)
+                            ->schema([
+                                Forms\Components\Select::make('client_id')
+                                    ->label('Client')
+                                    ->relationship('client', 'nom')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+                                Forms\Components\Select::make('user_id')
+                                    ->label('Responsable')
+                                    ->relationship('user', 'name')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
+                            ]),
+                    ]),
+                Forms\Components\Section::make('Notes et commentaires')
+                    ->description('Informations complémentaires')
+                    ->icon('heroicon-o-pencil-square')
+                    ->schema([
+                        Forms\Components\Textarea::make('notes')
+                            ->columnSpanFull(),
+                    ]),
             ]);
     }
 
