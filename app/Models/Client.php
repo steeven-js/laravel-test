@@ -111,7 +111,7 @@ class Client extends Model
         if ($total === 0) {
             return 0;
         }
-        
+
         return round(($this->getTotalDevisAcceptes() / $total) * 100, 2);
     }
 

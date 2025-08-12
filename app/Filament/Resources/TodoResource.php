@@ -150,68 +150,70 @@ class TodoResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouvelle tâche'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->modal()
-                    ->url(null)
-                    ->modalCancelActionLabel('Fermer')
-                    ->infolist([
-                        Infolists\Components\Section::make('Tâche')
-                            ->description('Titre et description')
-                            ->icon('heroicon-o-check-circle')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('titre')
-                                    ->label('Titre'),
-                                Infolists\Components\TextEntry::make('description')
-                                    ->label('Description')
-                                    ->markdown()
-                                    ->columnSpanFull(),
-                            ]),
-                        Infolists\Components\Section::make('Paramètres')
-                            ->description('État, ordre et priorité')
-                            ->icon('heroicon-o-adjustments-horizontal')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\IconEntry::make('termine')
-                                            ->label('Terminé')
-                                            ->boolean(),
-                                        Infolists\Components\TextEntry::make('ordre')
-                                            ->label('Ordre'),
-                                        Infolists\Components\TextEntry::make('priorite')
-                                            ->label('Priorité'),
-                                        Infolists\Components\TextEntry::make('date_echeance')
-                                            ->label('Date d\'échéance')
-                                            ->date(),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Liens')
-                            ->description('Client concerné et créateur')
-                            ->icon('heroicon-o-link')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('client.nom')
-                                            ->label('Client'),
-                                        Infolists\Components\TextEntry::make('user.name')
-                                            ->label('Créateur'),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Informations système')
-                            ->description('Métadonnées techniques')
-                            ->icon('heroicon-o-cog')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('created_at')
-                                            ->label('Créé le')
-                                            ->dateTime(),
-                                        Infolists\Components\TextEntry::make('updated_at')
-                                            ->label('Modifié le')
-                                            ->dateTime(),
-                                    ]),
-                            ]),
-                    ]),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->modal()
+                        ->url(null)
+                        ->modalCancelActionLabel('Fermer')
+                        ->infolist([
+                            Infolists\Components\Section::make('Tâche')
+                                ->description('Titre et description')
+                                ->icon('heroicon-o-check-circle')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('titre')
+                                        ->label('Titre'),
+                                    Infolists\Components\TextEntry::make('description')
+                                        ->label('Description')
+                                        ->markdown()
+                                        ->columnSpanFull(),
+                                ]),
+                            Infolists\Components\Section::make('Paramètres')
+                                ->description('État, ordre et priorité')
+                                ->icon('heroicon-o-adjustments-horizontal')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\IconEntry::make('termine')
+                                                ->label('Terminé')
+                                                ->boolean(),
+                                            Infolists\Components\TextEntry::make('ordre')
+                                                ->label('Ordre'),
+                                            Infolists\Components\TextEntry::make('priorite')
+                                                ->label('Priorité'),
+                                            Infolists\Components\TextEntry::make('date_echeance')
+                                                ->label('Date d\'échéance')
+                                                ->date(),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Liens')
+                                ->description('Client concerné et créateur')
+                                ->icon('heroicon-o-link')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('client.nom')
+                                                ->label('Client'),
+                                            Infolists\Components\TextEntry::make('user.name')
+                                                ->label('Créateur'),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Informations système')
+                                ->description('Métadonnées techniques')
+                                ->icon('heroicon-o-cog')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('created_at')
+                                                ->label('Créé le')
+                                                ->dateTime(),
+                                            Infolists\Components\TextEntry::make('updated_at')
+                                                ->label('Modifié le')
+                                                ->dateTime(),
+                                        ]),
+                                ]),
+                        ]),
+                    Tables\Actions\EditAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

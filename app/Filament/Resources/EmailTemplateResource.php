@@ -147,67 +147,69 @@ class EmailTemplateResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouveau modèle'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->modal()
-                    ->url(null)
-                    ->modalCancelActionLabel('Fermer')
-                    ->infolist([
-                        Infolists\Components\Section::make('Métadonnées')
-                            ->description('Nom, catégories et statut du template')
-                            ->icon('heroicon-o-envelope')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('name')
-                                            ->label('Nom'),
-                                        Infolists\Components\TextEntry::make('subject')
-                                            ->label('Objet'),
-                                        Infolists\Components\TextEntry::make('category')
-                                            ->label('Catégorie'),
-                                        Infolists\Components\TextEntry::make('sub_category')
-                                            ->label('Sous-catégorie'),
-                                        Infolists\Components\IconEntry::make('is_default')
-                                            ->label('Par défaut')
-                                            ->boolean(),
-                                        Infolists\Components\IconEntry::make('is_active')
-                                            ->label('Actif')
-                                            ->boolean(),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Contenu')
-                            ->description('Corps et variables disponibles')
-                            ->icon('heroicon-o-document-text')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('body')
-                                    ->label('Corps du message')
-                                    ->markdown()
-                                    ->columnSpanFull(),
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('variables')
-                                            ->label('Variables')
-                                            ->json(),
-                                        Infolists\Components\TextEntry::make('description')
-                                            ->label('Description')
-                                            ->markdown(),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Informations système')
-                            ->description('Métadonnées techniques')
-                            ->icon('heroicon-o-cog')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('created_at')
-                                            ->label('Créé le')
-                                            ->dateTime(),
-                                        Infolists\Components\TextEntry::make('updated_at')
-                                            ->label('Modifié le')
-                                            ->dateTime(),
-                                    ]),
-                            ]),
-                    ]),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->modal()
+                        ->url(null)
+                        ->modalCancelActionLabel('Fermer')
+                        ->infolist([
+                            Infolists\Components\Section::make('Métadonnées')
+                                ->description('Nom, catégories et statut du template')
+                                ->icon('heroicon-o-envelope')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('name')
+                                                ->label('Nom'),
+                                            Infolists\Components\TextEntry::make('subject')
+                                                ->label('Objet'),
+                                            Infolists\Components\TextEntry::make('category')
+                                                ->label('Catégorie'),
+                                            Infolists\Components\TextEntry::make('sub_category')
+                                                ->label('Sous-catégorie'),
+                                            Infolists\Components\IconEntry::make('is_default')
+                                                ->label('Par défaut')
+                                                ->boolean(),
+                                            Infolists\Components\IconEntry::make('is_active')
+                                                ->label('Actif')
+                                                ->boolean(),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Contenu')
+                                ->description('Corps et variables disponibles')
+                                ->icon('heroicon-o-document-text')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('body')
+                                        ->label('Corps du message')
+                                        ->markdown()
+                                        ->columnSpanFull(),
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('variables')
+                                                ->label('Variables')
+                                                ->json(),
+                                            Infolists\Components\TextEntry::make('description')
+                                                ->label('Description')
+                                                ->markdown(),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Informations système')
+                                ->description('Métadonnées techniques')
+                                ->icon('heroicon-o-cog')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('created_at')
+                                                ->label('Créé le')
+                                                ->dateTime(),
+                                            Infolists\Components\TextEntry::make('updated_at')
+                                                ->label('Modifié le')
+                                                ->dateTime(),
+                                        ]),
+                                ]),
+                        ]),
+                    Tables\Actions\EditAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

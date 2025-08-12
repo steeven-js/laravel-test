@@ -352,154 +352,156 @@ class FactureResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouvelle facture'),
             ])
             ->actions([
-                Tables\Actions\Action::make('preview_pdf_modal')
-                    ->label('Aperçu PDF')
-                    ->icon('heroicon-o-eye')
-                    ->color('info')
-                    ->modalHeading(fn ($record) => "Aperçu PDF - Facture {$record->numero_facture}")
-                    ->modalContent(fn ($record) => view('pdf.preview-modal-facture', [
-                        'pdfUrl' => route('factures.pdf', $record),
-                        'facture' => $record,
-                    ]))
-                    ->modalWidth('7xl')
-                    ->modalCancelActionLabel('Fermer')
-                    ->modalSubmitAction(false)
-                    ->visible(fn ($record) => $record !== null),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('preview_pdf_modal')
+                        ->label('Aperçu PDF')
+                        ->icon('heroicon-o-eye')
+                        ->color('info')
+                        ->modalHeading(fn ($record) => "Aperçu PDF - Facture {$record->numero_facture}")
+                        ->modalContent(fn ($record) => view('pdf.preview-modal-facture', [
+                            'pdfUrl' => route('factures.pdf', $record),
+                            'facture' => $record,
+                        ]))
+                        ->modalWidth('7xl')
+                        ->modalCancelActionLabel('Fermer')
+                        ->modalSubmitAction(false)
+                        ->visible(fn ($record) => $record !== null),
 
-                Tables\Actions\ViewAction::make()
-                    ->modal()
-                    ->url(null)
-                    ->modalCancelActionLabel('Fermer')
-                    ->infolist([
-                        Infolists\Components\Section::make('Informations générales')
-                            ->description('Client, devis, dates et statuts de la facture')
-                            ->icon('heroicon-o-receipt-refund')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('numero_facture')
-                                    ->label('Numéro de facture'),
-                                Infolists\Components\TextEntry::make('devis.numero_devis')
-                                    ->label('Devis'),
-                                Infolists\Components\TextEntry::make('client.nom')
-                                    ->label('Client'),
-                                Infolists\Components\TextEntry::make('administrateur.name')
-                                    ->label('Administrateur'),
-                                Infolists\Components\TextEntry::make('date_facture')
-                                    ->label('Date de facture')
-                                    ->date(),
-                                Infolists\Components\TextEntry::make('date_echeance')
-                                    ->label('Date d\'échéance')
-                                    ->date(),
-                                Infolists\Components\TextEntry::make('statut')
-                                    ->label('Statut')
-                                    ->badge()
-                                    ->formatStateUsing(fn (string $state): string => match ($state) {
-                                        'en_attente' => 'En attente',
-                                        default => FactureStatus::from($state)->getLabel(),
-                                    })
-                                    ->color(fn (string $state): string => match ($state) {
-                                        'en_attente' => 'warning',
-                                        'brouillon' => 'gray',
-                                        'emise' => 'info',
-                                        'envoyee' => 'warning',
-                                        'payee' => 'success',
-                                        'en_retard' => 'danger',
-                                        'annulee' => 'gray',
-                                        default => 'gray',
-                                    })
-                                    ->icon(fn (string $state): string => match ($state) {
-                                        'en_attente' => 'heroicon-m-clock',
-                                        'brouillon' => 'heroicon-m-document-text',
-                                        'emise' => 'heroicon-m-document',
-                                        'envoyee' => 'heroicon-m-paper-airplane',
-                                        'payee' => 'heroicon-m-banknotes',
-                                        'en_retard' => 'heroicon-m-exclamation-triangle',
-                                        'annulee' => 'heroicon-m-x-circle',
-                                        default => 'heroicon-m-question-mark-circle',
-                                    }),
-                                Infolists\Components\TextEntry::make('statut_envoi')
-                                    ->label('Statut d\'envoi')
-                                    ->badge()
-                                    ->formatStateUsing(fn (string $state): string => FactureEnvoiStatus::from($state)->getLabel())
-                                    ->color(fn (string $state): string => match ($state) {
-                                        'non_envoyee' => 'gray',
-                                        'envoyee' => 'success',
-                                        'echec_envoi' => 'danger',
-                                        default => 'gray',
-                                    })
-                                    ->icon(fn (string $state): string => match ($state) {
-                                        'non_envoyee' => 'heroicon-m-paper-airplane',
-                                        'envoyee' => 'heroicon-m-check-circle',
-                                        'echec_envoi' => 'heroicon-m-exclamation-triangle',
-                                        default => 'heroicon-m-question-mark-circle',
-                                    }),
-                            ]),
-                        Infolists\Components\Section::make('Montants')
-                            ->description('HT, TVA et TTC')
-                            ->icon('heroicon-o-banknotes')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('montant_ht')
-                                    ->label('Montant HT')
-                                    ->money('EUR'),
-                                Infolists\Components\TextEntry::make('taux_tva')
-                                    ->label('Taux TVA')
-                                    ->suffix('%'),
-                                Infolists\Components\TextEntry::make('montant_tva')
-                                    ->label('Montant TVA')
-                                    ->money('EUR'),
-                                Infolists\Components\TextEntry::make('montant_ttc')
-                                    ->label('Montant TTC')
-                                    ->money('EUR'),
-                            ]),
-                        Infolists\Components\Section::make('Paiement')
-                            ->description('Informations de paiement et Stripe')
-                            ->icon('heroicon-o-credit-card')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('mode_paiement_propose')
-                                    ->label('Mode de paiement proposé'),
-                                Infolists\Components\TextEntry::make('stripe_payment_url')
-                                    ->label('URL de paiement Stripe'),
-                                Infolists\Components\TextEntry::make('stripe_status')
-                                    ->label('Statut Stripe'),
-                                Infolists\Components\TextEntry::make('stripe_receipt_url')
-                                    ->label('URL de reçu Stripe'),
-                            ]),
-                        Infolists\Components\Section::make('Documents')
-                            ->description('Fichiers et dates d\'envoi')
-                            ->icon('heroicon-o-paper-clip')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('pdf_file')
-                                    ->label('Fichier PDF'),
-                                Infolists\Components\TextEntry::make('pdf_url')
-                                    ->label('URL PDF'),
-                                Infolists\Components\TextEntry::make('date_envoi_client')
-                                    ->label('Date d\'envoi client')
-                                    ->dateTime(),
-                                Infolists\Components\TextEntry::make('date_envoi_admin')
-                                    ->label('Date d\'envoi admin')
-                                    ->dateTime(),
-                                Infolists\Components\IconEntry::make('archive')
-                                    ->label('Archivée')
-                                    ->boolean(),
-                            ]),
-                        Infolists\Components\Section::make('Informations système')
-                            ->description('Métadonnées techniques')
-                            ->icon('heroicon-o-cog')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('created_at')
-                                    ->label('Créée le')
-                                    ->dateTime(),
-                                Infolists\Components\TextEntry::make('updated_at')
-                                    ->label('Modifiée le')
-                                    ->dateTime(),
-                            ]),
-                    ]),
-                Tables\Actions\Action::make('detail')
-                    ->label('Détail')
-                    ->icon('heroicon-o-arrow-top-right-on-square')
-                    ->color('info')
-                    ->url(fn ($record): string => static::getUrl('view', ['record' => $record]))
-                    ->openUrlInNewTab(false),
-                Tables\Actions\EditAction::make(),
+                    Tables\Actions\ViewAction::make()
+                        ->modal()
+                        ->url(null)
+                        ->modalCancelActionLabel('Fermer')
+                        ->infolist([
+                            Infolists\Components\Section::make('Informations générales')
+                                ->description('Client, devis, dates et statuts de la facture')
+                                ->icon('heroicon-o-receipt-refund')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('numero_facture')
+                                        ->label('Numéro de facture'),
+                                    Infolists\Components\TextEntry::make('devis.numero_devis')
+                                        ->label('Devis'),
+                                    Infolists\Components\TextEntry::make('client.nom')
+                                        ->label('Client'),
+                                    Infolists\Components\TextEntry::make('administrateur.name')
+                                        ->label('Administrateur'),
+                                    Infolists\Components\TextEntry::make('date_facture')
+                                        ->label('Date de facture')
+                                        ->date(),
+                                    Infolists\Components\TextEntry::make('date_echeance')
+                                        ->label('Date d\'échéance')
+                                        ->date(),
+                                    Infolists\Components\TextEntry::make('statut')
+                                        ->label('Statut')
+                                        ->badge()
+                                        ->formatStateUsing(fn (string $state): string => match ($state) {
+                                            'en_attente' => 'En attente',
+                                            default => FactureStatus::from($state)->getLabel(),
+                                        })
+                                        ->color(fn (string $state): string => match ($state) {
+                                            'en_attente' => 'warning',
+                                            'brouillon' => 'gray',
+                                            'emise' => 'info',
+                                            'envoyee' => 'warning',
+                                            'payee' => 'success',
+                                            'en_retard' => 'danger',
+                                            'annulee' => 'gray',
+                                            default => 'gray',
+                                        })
+                                        ->icon(fn (string $state): string => match ($state) {
+                                            'en_attente' => 'heroicon-m-clock',
+                                            'brouillon' => 'heroicon-m-document-text',
+                                            'emise' => 'heroicon-m-document',
+                                            'envoyee' => 'heroicon-m-paper-airplane',
+                                            'payee' => 'heroicon-m-banknotes',
+                                            'en_retard' => 'heroicon-m-exclamation-triangle',
+                                            'annulee' => 'heroicon-m-x-circle',
+                                            default => 'heroicon-m-question-mark-circle',
+                                        }),
+                                    Infolists\Components\TextEntry::make('statut_envoi')
+                                        ->label('Statut d\'envoi')
+                                        ->badge()
+                                        ->formatStateUsing(fn (string $state): string => FactureEnvoiStatus::from($state)->getLabel())
+                                        ->color(fn (string $state): string => match ($state) {
+                                            'non_envoyee' => 'gray',
+                                            'envoyee' => 'success',
+                                            'echec_envoi' => 'danger',
+                                            default => 'gray',
+                                        })
+                                        ->icon(fn (string $state): string => match ($state) {
+                                            'non_envoyee' => 'heroicon-m-paper-airplane',
+                                            'envoyee' => 'heroicon-m-check-circle',
+                                            'echec_envoi' => 'heroicon-m-exclamation-triangle',
+                                            default => 'heroicon-m-question-mark-circle',
+                                        }),
+                                ]),
+                            Infolists\Components\Section::make('Montants')
+                                ->description('HT, TVA et TTC')
+                                ->icon('heroicon-o-banknotes')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('montant_ht')
+                                        ->label('Montant HT')
+                                        ->money('EUR'),
+                                    Infolists\Components\TextEntry::make('taux_tva')
+                                        ->label('Taux TVA')
+                                        ->suffix('%'),
+                                    Infolists\Components\TextEntry::make('montant_tva')
+                                        ->label('Montant TVA')
+                                        ->money('EUR'),
+                                    Infolists\Components\TextEntry::make('montant_ttc')
+                                        ->label('Montant TTC')
+                                        ->money('EUR'),
+                                ]),
+                            Infolists\Components\Section::make('Paiement')
+                                ->description('Informations de paiement et Stripe')
+                                ->icon('heroicon-o-credit-card')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('mode_paiement_propose')
+                                        ->label('Mode de paiement proposé'),
+                                    Infolists\Components\TextEntry::make('stripe_payment_url')
+                                        ->label('URL de paiement Stripe'),
+                                    Infolists\Components\TextEntry::make('stripe_status')
+                                        ->label('Statut Stripe'),
+                                    Infolists\Components\TextEntry::make('stripe_receipt_url')
+                                        ->label('URL de reçu Stripe'),
+                                ]),
+                            Infolists\Components\Section::make('Documents')
+                                ->description('Fichiers et dates d\'envoi')
+                                ->icon('heroicon-o-paper-clip')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('pdf_file')
+                                        ->label('Fichier PDF'),
+                                    Infolists\Components\TextEntry::make('pdf_url')
+                                        ->label('URL PDF'),
+                                    Infolists\Components\TextEntry::make('date_envoi_client')
+                                        ->label('Date d\'envoi client')
+                                        ->dateTime(),
+                                    Infolists\Components\TextEntry::make('date_envoi_admin')
+                                        ->label('Date d\'envoi admin')
+                                        ->dateTime(),
+                                    Infolists\Components\IconEntry::make('archive')
+                                        ->label('Archivée')
+                                        ->boolean(),
+                                ]),
+                            Infolists\Components\Section::make('Informations système')
+                                ->description('Métadonnées techniques')
+                                ->icon('heroicon-o-cog')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('created_at')
+                                        ->label('Créée le')
+                                        ->dateTime(),
+                                    Infolists\Components\TextEntry::make('updated_at')
+                                        ->label('Modifiée le')
+                                        ->dateTime(),
+                                ]),
+                        ]),
+                    Tables\Actions\Action::make('detail')
+                        ->label('Détail')
+                        ->icon('heroicon-o-arrow-top-right-on-square')
+                        ->color('info')
+                        ->url(fn ($record): string => static::getUrl('view', ['record' => $record]))
+                        ->openUrlInNewTab(false),
+                    Tables\Actions\EditAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -184,31 +184,33 @@ class UserResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouvel utilisateur'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->label('Aperçu')
-                    ->modalHeading('Aperçu de l\'utilisateur')
-                    ->modalSubmitAction(false)
-                    ->modalCancelActionLabel('Fermer')
-                    ->infolist([
-                        Infolists\Components\Section::make('Informations')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('name')->label('Nom'),
-                                        Infolists\Components\TextEntry::make('email')->label('Email'),
-                                        Infolists\Components\TextEntry::make('telephone')->label('Téléphone')->placeholder('—'),
-                                        Infolists\Components\TextEntry::make('ville')->label('Ville')->placeholder('—'),
-                                        Infolists\Components\TextEntry::make('adresse')->label('Adresse')->placeholder('—'),
-                                        Infolists\Components\TextEntry::make('code_postal')->label('Code postal')->placeholder('—'),
-                                        Infolists\Components\TextEntry::make('pays')->label('Pays')->placeholder('—'),
-                                        Infolists\Components\TextEntry::make('userRole.display_name')->label('Rôle'),
-                                        Infolists\Components\TextEntry::make('email_verified_at')->label('Email vérifié le')->dateTime()->placeholder('Non vérifié'),
-                                        Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
-                                        Infolists\Components\TextEntry::make('updated_at')->label('Mis à jour le')->dateTime(),
-                                    ]),
-                            ]),
-                    ]),
-                Tables\Actions\EditAction::make()->label('Modifier'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->label('Aperçu')
+                        ->modalHeading('Aperçu de l\'utilisateur')
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Fermer')
+                        ->infolist([
+                            Infolists\Components\Section::make('Informations')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('name')->label('Nom'),
+                                            Infolists\Components\TextEntry::make('email')->label('Email'),
+                                            Infolists\Components\TextEntry::make('telephone')->label('Téléphone')->placeholder('—'),
+                                            Infolists\Components\TextEntry::make('ville')->label('Ville')->placeholder('—'),
+                                            Infolists\Components\TextEntry::make('adresse')->label('Adresse')->placeholder('—'),
+                                            Infolists\Components\TextEntry::make('code_postal')->label('Code postal')->placeholder('—'),
+                                            Infolists\Components\TextEntry::make('pays')->label('Pays')->placeholder('—'),
+                                            Infolists\Components\TextEntry::make('userRole.display_name')->label('Rôle'),
+                                            Infolists\Components\TextEntry::make('email_verified_at')->label('Email vérifié le')->dateTime()->placeholder('Non vérifié'),
+                                            Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
+                                            Infolists\Components\TextEntry::make('updated_at')->label('Mis à jour le')->dateTime(),
+                                        ]),
+                                ]),
+                        ]),
+                    Tables\Actions\EditAction::make()->label('Modifier'),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

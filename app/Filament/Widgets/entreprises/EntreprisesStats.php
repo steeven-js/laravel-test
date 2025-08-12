@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Filament\Widgets\entreprises;
 
 use App\Models\Entreprise;
@@ -21,7 +23,7 @@ class EntreprisesStats extends BaseWidget
             ->whereHas('clients.devis')
             ->whereHas('clients.factures')
             ->count();
-        // Nombre d'entreprises avec au moins un devis et une facture   
+        // Nombre d'entreprises avec au moins un devis et une facture
         $caTotal = (float) Facture::query()->sum('montant_ttc');
 
         return [

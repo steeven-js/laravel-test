@@ -15,7 +15,6 @@ enum DevisStatus: string implements HasColor, HasIcon, HasLabel
     case Accepte = 'accepte';
     case Refuse = 'refuse';
     case Expire = 'expire';
-    case Transforme = 'transforme';
 
     public function getLabel(): string
     {
@@ -25,7 +24,6 @@ enum DevisStatus: string implements HasColor, HasIcon, HasLabel
             self::Accepte => 'Accepté',
             self::Refuse => 'Refusé',
             self::Expire => 'Expiré',
-            self::Transforme => 'Transformé en facture',
         };
     }
 
@@ -37,7 +35,6 @@ enum DevisStatus: string implements HasColor, HasIcon, HasLabel
             self::Accepte => 'success',
             self::Refuse => 'danger',
             self::Expire => 'gray',
-            self::Transforme => 'info',
         };
     }
 
@@ -49,7 +46,6 @@ enum DevisStatus: string implements HasColor, HasIcon, HasLabel
             self::Accepte => 'heroicon-m-check-circle',
             self::Refuse => 'heroicon-m-x-circle',
             self::Expire => 'heroicon-m-exclamation-triangle',
-            self::Transforme => 'heroicon-m-arrow-right-circle',
         };
     }
 }

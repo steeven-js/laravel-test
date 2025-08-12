@@ -53,7 +53,9 @@ class NumeroSequenceResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')->dateTime()->since(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\EditAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

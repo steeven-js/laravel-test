@@ -221,92 +221,94 @@ class TicketResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouveau ticket'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->modal()
-                    ->url(null)
-                    ->modalCancelActionLabel('Fermer')
-                    ->infolist([
-                        Infolists\Components\Section::make('Ticket')
-                            ->description('Informations principales du ticket')
-                            ->icon('heroicon-o-lifebuoy')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('titre')
-                                    ->label('Titre'),
-                                Infolists\Components\TextEntry::make('description')
-                                    ->label('Description')
-                                    ->markdown()
-                                    ->columnSpanFull(),
-                            ]),
-                        Infolists\Components\Section::make('Classification')
-                            ->description('Priorité, statut et type')
-                            ->icon('heroicon-o-flag')
-                            ->schema([
-                                Infolists\Components\Grid::make(3)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('priorite')
-                                            ->label('Priorité'),
-                                        Infolists\Components\TextEntry::make('statut')
-                                            ->label('Statut'),
-                                        Infolists\Components\TextEntry::make('type')
-                                            ->label('Type'),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Attribution')
-                            ->description('Client, assignation et créateur')
-                            ->icon('heroicon-o-user-plus')
-                            ->schema([
-                                Infolists\Components\Grid::make(3)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('client.nom')
-                                            ->label('Client'),
-                                        Infolists\Components\TextEntry::make('user.name')
-                                            ->label('Assigné à'),
-                                        Infolists\Components\TextEntry::make('creator.name')
-                                            ->label('Créé par'),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Suivi & temps')
-                            ->description('Dates, temps et visibilité')
-                            ->icon('heroicon-o-clock')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('date_resolution')
-                                            ->label('Date de résolution')
-                                            ->dateTime(),
-                                        Infolists\Components\TextEntry::make('date_echeance')
-                                            ->label('Date d\'échéance')
-                                            ->dateTime(),
-                                        Infolists\Components\TextEntry::make('temps_estime')
-                                            ->label('Temps estimé')
-                                            ->suffix('h'),
-                                        Infolists\Components\TextEntry::make('temps_passe')
-                                            ->label('Temps passé')
-                                            ->suffix('h'),
-                                        Infolists\Components\TextEntry::make('progression')
-                                            ->label('Progression')
-                                            ->suffix('%'),
-                                        Infolists\Components\IconEntry::make('visible_client')
-                                            ->label('Visible client')
-                                            ->boolean(),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Informations système')
-                            ->description('Métadonnées techniques')
-                            ->icon('heroicon-o-cog')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('created_at')
-                                            ->label('Créé le')
-                                            ->dateTime(),
-                                        Infolists\Components\TextEntry::make('updated_at')
-                                            ->label('Modifié le')
-                                            ->dateTime(),
-                                    ]),
-                            ]),
-                    ]),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->modal()
+                        ->url(null)
+                        ->modalCancelActionLabel('Fermer')
+                        ->infolist([
+                            Infolists\Components\Section::make('Ticket')
+                                ->description('Informations principales du ticket')
+                                ->icon('heroicon-o-lifebuoy')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('titre')
+                                        ->label('Titre'),
+                                    Infolists\Components\TextEntry::make('description')
+                                        ->label('Description')
+                                        ->markdown()
+                                        ->columnSpanFull(),
+                                ]),
+                            Infolists\Components\Section::make('Classification')
+                                ->description('Priorité, statut et type')
+                                ->icon('heroicon-o-flag')
+                                ->schema([
+                                    Infolists\Components\Grid::make(3)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('priorite')
+                                                ->label('Priorité'),
+                                            Infolists\Components\TextEntry::make('statut')
+                                                ->label('Statut'),
+                                            Infolists\Components\TextEntry::make('type')
+                                                ->label('Type'),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Attribution')
+                                ->description('Client, assignation et créateur')
+                                ->icon('heroicon-o-user-plus')
+                                ->schema([
+                                    Infolists\Components\Grid::make(3)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('client.nom')
+                                                ->label('Client'),
+                                            Infolists\Components\TextEntry::make('user.name')
+                                                ->label('Assigné à'),
+                                            Infolists\Components\TextEntry::make('creator.name')
+                                                ->label('Créé par'),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Suivi & temps')
+                                ->description('Dates, temps et visibilité')
+                                ->icon('heroicon-o-clock')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('date_resolution')
+                                                ->label('Date de résolution')
+                                                ->dateTime(),
+                                            Infolists\Components\TextEntry::make('date_echeance')
+                                                ->label('Date d\'échéance')
+                                                ->dateTime(),
+                                            Infolists\Components\TextEntry::make('temps_estime')
+                                                ->label('Temps estimé')
+                                                ->suffix('h'),
+                                            Infolists\Components\TextEntry::make('temps_passe')
+                                                ->label('Temps passé')
+                                                ->suffix('h'),
+                                            Infolists\Components\TextEntry::make('progression')
+                                                ->label('Progression')
+                                                ->suffix('%'),
+                                            Infolists\Components\IconEntry::make('visible_client')
+                                                ->label('Visible client')
+                                                ->boolean(),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Informations système')
+                                ->description('Métadonnées techniques')
+                                ->icon('heroicon-o-cog')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('created_at')
+                                                ->label('Créé le')
+                                                ->dateTime(),
+                                            Infolists\Components\TextEntry::make('updated_at')
+                                                ->label('Modifié le')
+                                                ->dateTime(),
+                                        ]),
+                                ]),
+                        ]),
+                    Tables\Actions\EditAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

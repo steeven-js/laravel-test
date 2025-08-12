@@ -7,13 +7,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EntrepriseResource\Pages;
 use App\Filament\Resources\Traits\HasStandardActions;
 use App\Models\Entreprise;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EntrepriseResource extends Resource
@@ -189,136 +189,138 @@ class EntrepriseResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouvelle entreprise'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->name('view')
-                    ->label('Aperçu')
-                    ->icon('heroicon-o-eye')
-                    ->modal()
-                    ->url(null)
-                    ->modalCancelActionLabel('Fermer')
-                    ->modalHeading('Aperçu de l\'entreprise')
-                    ->modalDescription('Détails complets de l\'entreprise sélectionnée')
-                    ->modalWidth('4xl')
-                    ->infolist([
-                        Infolists\Components\Section::make('Identité de l\'entreprise')
-                            ->description('Informations générales et références légales')
-                            ->icon('heroicon-o-building-office')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('nom')
-                                    ->label('Nom')
-                                    ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
-                                    ->weight('bold'),
-                                Infolists\Components\TextEntry::make('nom_commercial')
-                                    ->label('Nom commercial')
-                                    ->badge()
-                                    ->color('info'),
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('siret')
-                                            ->label('SIRET')
-                                            ->badge()
-                                            ->color('primary'),
-                                        Infolists\Components\TextEntry::make('siren')
-                                            ->label('SIREN')
-                                            ->badge()
-                                            ->color('primary'),
-                                    ]),
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('secteur_activite')
-                                            ->label('Secteur d\'activité')
-                                            ->badge()
-                                            ->color('warning'),
-                                        Infolists\Components\TextEntry::make('secteurActivite.libelle')
-                                            ->label('Secteur (référence)')
-                                            ->badge()
-                                            ->color('success'),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Coordonnées')
-                            ->description('Adresse postale et moyens de contact')
-                            ->icon('heroicon-o-map-pin')
-                            ->schema([
-                                Infolists\Components\TextEntry::make('adresse')
-                                    ->label('Adresse')
-                                    ->columnSpanFull()
-                                    ->icon('heroicon-o-map-pin'),
-                                Infolists\Components\Grid::make(3)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('ville')
-                                            ->label('Ville')
-                                            ->badge()
-                                            ->color('info'),
-                                        Infolists\Components\TextEntry::make('code_postal')
-                                            ->label('Code postal')
-                                            ->badge()
-                                            ->color('warning'),
-                                        Infolists\Components\TextEntry::make('pays')
-                                            ->label('Pays')
-                                            ->badge()
-                                            ->color('success'),
-                                    ]),
-                                Infolists\Components\Grid::make(3)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('telephone')
-                                            ->label('Téléphone')
-                                            ->icon('heroicon-o-phone')
-                                            ->badge()
-                                            ->color('primary'),
-                                        Infolists\Components\TextEntry::make('email')
-                                            ->label('Email')
-                                            ->icon('heroicon-o-envelope')
-                                            ->badge()
-                                            ->color('info'),
-                                        Infolists\Components\TextEntry::make('site_web')
-                                            ->label('Site web')
-                                            ->icon('heroicon-o-globe-alt')
-                                            ->badge()
-                                            ->color('success'),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Paramètres')
-                            ->description('Activation et notes internes')
-                            ->icon('heroicon-o-adjustments-horizontal')
-                            ->schema([
-                                Infolists\Components\IconEntry::make('actif')
-                                    ->label('Statut')
-                                    ->boolean()
-                                    ->size(Infolists\Components\IconEntry\IconEntrySize::Large)
-                                    ->trueIcon('heroicon-m-check-circle')
-                                    ->falseIcon('heroicon-m-x-circle')
-                                    ->trueColor('success')
-                                    ->falseColor('danger'),
-                                Infolists\Components\TextEntry::make('notes')
-                                    ->label('Notes')
-                                    ->markdown()
-                                    ->columnSpanFull()
-                                    ->placeholder('Aucune note'),
-                            ]),
-                        Infolists\Components\Section::make('Informations système')
-                            ->description('Métadonnées techniques')
-                            ->icon('heroicon-o-cog')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('created_at')
-                                            ->label('Créé le')
-                                            ->dateTime()
-                                            ->icon('heroicon-o-calendar'),
-                                        Infolists\Components\TextEntry::make('updated_at')
-                                            ->label('Modifié le')
-                                            ->dateTime()
-                                            ->icon('heroicon-o-clock'),
-                                    ]),
-                            ]),
-                    ]),
-                Tables\Actions\Action::make('detail')
-                    ->label('Détail')
-                    ->icon('heroicon-o-arrow-top-right-on-square')
-                    ->color('info')
-                    ->url(fn (Entreprise $record): string => static::getUrl('view', ['record' => $record]))
-                    ->openUrlInNewTab(false),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->name('view')
+                        ->label('Aperçu')
+                        ->icon('heroicon-o-eye')
+                        ->modal()
+                        ->url(null)
+                        ->modalCancelActionLabel('Fermer')
+                        ->modalHeading('Aperçu de l\'entreprise')
+                        ->modalDescription('Détails complets de l\'entreprise sélectionnée')
+                        ->modalWidth('4xl')
+                        ->infolist([
+                            Infolists\Components\Section::make('Identité de l\'entreprise')
+                                ->description('Informations générales et références légales')
+                                ->icon('heroicon-o-building-office')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('nom')
+                                        ->label('Nom')
+                                        ->size(Infolists\Components\TextEntry\TextEntrySize::Large)
+                                        ->weight('bold'),
+                                    Infolists\Components\TextEntry::make('nom_commercial')
+                                        ->label('Nom commercial')
+                                        ->badge()
+                                        ->color('info'),
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('siret')
+                                                ->label('SIRET')
+                                                ->badge()
+                                                ->color('primary'),
+                                            Infolists\Components\TextEntry::make('siren')
+                                                ->label('SIREN')
+                                                ->badge()
+                                                ->color('primary'),
+                                        ]),
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('secteur_activite')
+                                                ->label('Secteur d\'activité')
+                                                ->badge()
+                                                ->color('warning'),
+                                            Infolists\Components\TextEntry::make('secteurActivite.libelle')
+                                                ->label('Secteur (référence)')
+                                                ->badge()
+                                                ->color('success'),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Coordonnées')
+                                ->description('Adresse postale et moyens de contact')
+                                ->icon('heroicon-o-map-pin')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('adresse')
+                                        ->label('Adresse')
+                                        ->columnSpanFull()
+                                        ->icon('heroicon-o-map-pin'),
+                                    Infolists\Components\Grid::make(3)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('ville')
+                                                ->label('Ville')
+                                                ->badge()
+                                                ->color('info'),
+                                            Infolists\Components\TextEntry::make('code_postal')
+                                                ->label('Code postal')
+                                                ->badge()
+                                                ->color('warning'),
+                                            Infolists\Components\TextEntry::make('pays')
+                                                ->label('Pays')
+                                                ->badge()
+                                                ->color('success'),
+                                        ]),
+                                    Infolists\Components\Grid::make(3)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('telephone')
+                                                ->label('Téléphone')
+                                                ->icon('heroicon-o-phone')
+                                                ->badge()
+                                                ->color('primary'),
+                                            Infolists\Components\TextEntry::make('email')
+                                                ->label('Email')
+                                                ->icon('heroicon-o-envelope')
+                                                ->badge()
+                                                ->color('info'),
+                                            Infolists\Components\TextEntry::make('site_web')
+                                                ->label('Site web')
+                                                ->icon('heroicon-o-globe-alt')
+                                                ->badge()
+                                                ->color('success'),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Paramètres')
+                                ->description('Activation et notes internes')
+                                ->icon('heroicon-o-adjustments-horizontal')
+                                ->schema([
+                                    Infolists\Components\IconEntry::make('actif')
+                                        ->label('Statut')
+                                        ->boolean()
+                                        ->size(Infolists\Components\IconEntry\IconEntrySize::Large)
+                                        ->trueIcon('heroicon-m-check-circle')
+                                        ->falseIcon('heroicon-m-x-circle')
+                                        ->trueColor('success')
+                                        ->falseColor('danger'),
+                                    Infolists\Components\TextEntry::make('notes')
+                                        ->label('Notes')
+                                        ->markdown()
+                                        ->columnSpanFull()
+                                        ->placeholder('Aucune note'),
+                                ]),
+                            Infolists\Components\Section::make('Informations système')
+                                ->description('Métadonnées techniques')
+                                ->icon('heroicon-o-cog')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('created_at')
+                                                ->label('Créé le')
+                                                ->dateTime()
+                                                ->icon('heroicon-o-calendar'),
+                                            Infolists\Components\TextEntry::make('updated_at')
+                                                ->label('Modifié le')
+                                                ->dateTime()
+                                                ->icon('heroicon-o-clock'),
+                                        ]),
+                                ]),
+                        ]),
+                    Tables\Actions\Action::make('detail')
+                        ->label('Détail')
+                        ->icon('heroicon-o-arrow-top-right-on-square')
+                        ->color('info')
+                        ->url(fn (Entreprise $record): string => static::getUrl('view', ['record' => $record]))
+                        ->openUrlInNewTab(false),
+                    Tables\Actions\EditAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

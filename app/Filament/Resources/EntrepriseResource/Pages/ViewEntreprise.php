@@ -10,12 +10,11 @@ use Filament\Actions\Action;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Contracts\Support\Htmlable;
 
-
 class ViewEntreprise extends ViewRecord
 {
     protected static string $resource = EntrepriseResource::class;
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
         $nom = (string) ($this->record->nom ?? '');
 

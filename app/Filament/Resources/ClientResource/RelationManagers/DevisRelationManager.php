@@ -49,7 +49,6 @@ class DevisRelationManager extends RelationManager
                         'accepte' => 'success',
                         'refuse' => 'danger',
                         'expire' => 'gray',
-                        'transforme' => 'info',
                         default => 'gray',
                     })
                     ->searchable(),

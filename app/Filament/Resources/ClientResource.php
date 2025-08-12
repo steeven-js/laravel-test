@@ -198,84 +198,86 @@ class ClientResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouveau client'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->label('Aperçu')
-                    ->modal()
-                    ->url(null)
-                    ->modalCancelActionLabel('Fermer')
-                    ->icon('heroicon-o-eye')
-                    ->infolist([
-                        Infolists\Components\Section::make('Informations personnelles')
-                            ->description('Détails du profil client')
-                            ->icon('heroicon-o-user')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('nom')
-                                            ->label('Nom'),
-                                        Infolists\Components\TextEntry::make('prenom')
-                                            ->label('Prénom'),
-                                        Infolists\Components\TextEntry::make('email')
-                                            ->label('Email'),
-                                        Infolists\Components\TextEntry::make('telephone')
-                                            ->label('Téléphone'),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Adresse')
-                            ->description('Coordonnées géographiques')
-                            ->icon('heroicon-o-map-pin')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('adresse')
-                                            ->label('Adresse'),
-                                        Infolists\Components\TextEntry::make('ville')
-                                            ->label('Ville'),
-                                        Infolists\Components\TextEntry::make('code_postal')
-                                            ->label('Code postal'),
-                                        Infolists\Components\TextEntry::make('pays')
-                                            ->label('Pays'),
-                                    ]),
-                            ]),
-                        Infolists\Components\Section::make('Entreprise et statut')
-                            ->description('Informations professionnelles')
-                            ->icon('heroicon-o-building-office')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('entreprise.nom')
-                                            ->label('Entreprise'),
-                                        Infolists\Components\IconEntry::make('actif')
-                                            ->label('Statut')
-                                            ->boolean(),
-                                    ]),
-                                Infolists\Components\TextEntry::make('notes')
-                                    ->label('Notes')
-                                    ->markdown()
-                                    ->columnSpanFull(),
-                            ]),
-                        Infolists\Components\Section::make('Informations système')
-                            ->description('Métadonnées techniques')
-                            ->icon('heroicon-o-cog')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('created_at')
-                                            ->label('Créé le')
-                                            ->dateTime(),
-                                        Infolists\Components\TextEntry::make('updated_at')
-                                            ->label('Modifié le')
-                                            ->dateTime(),
-                                    ]),
-                            ]),
-                    ]),
-                Tables\Actions\Action::make('detail')
-                    ->label('Détail')
-                    ->icon('heroicon-o-arrow-top-right-on-square')
-                    ->color('info')
-                    ->url(fn (Client $record): string => static::getUrl('view', ['record' => $record]))
-                    ->openUrlInNewTab(false),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->label('Aperçu')
+                        ->modal()
+                        ->url(null)
+                        ->modalCancelActionLabel('Fermer')
+                        ->icon('heroicon-o-eye')
+                        ->infolist([
+                            Infolists\Components\Section::make('Informations personnelles')
+                                ->description('Détails du profil client')
+                                ->icon('heroicon-o-user')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('nom')
+                                                ->label('Nom'),
+                                            Infolists\Components\TextEntry::make('prenom')
+                                                ->label('Prénom'),
+                                            Infolists\Components\TextEntry::make('email')
+                                                ->label('Email'),
+                                            Infolists\Components\TextEntry::make('telephone')
+                                                ->label('Téléphone'),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Adresse')
+                                ->description('Coordonnées géographiques')
+                                ->icon('heroicon-o-map-pin')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('adresse')
+                                                ->label('Adresse'),
+                                            Infolists\Components\TextEntry::make('ville')
+                                                ->label('Ville'),
+                                            Infolists\Components\TextEntry::make('code_postal')
+                                                ->label('Code postal'),
+                                            Infolists\Components\TextEntry::make('pays')
+                                                ->label('Pays'),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Entreprise et statut')
+                                ->description('Informations professionnelles')
+                                ->icon('heroicon-o-building-office')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('entreprise.nom')
+                                                ->label('Entreprise'),
+                                            Infolists\Components\IconEntry::make('actif')
+                                                ->label('Statut')
+                                                ->boolean(),
+                                        ]),
+                                    Infolists\Components\TextEntry::make('notes')
+                                        ->label('Notes')
+                                        ->markdown()
+                                        ->columnSpanFull(),
+                                ]),
+                            Infolists\Components\Section::make('Informations système')
+                                ->description('Métadonnées techniques')
+                                ->icon('heroicon-o-cog')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('created_at')
+                                                ->label('Créé le')
+                                                ->dateTime(),
+                                            Infolists\Components\TextEntry::make('updated_at')
+                                                ->label('Modifié le')
+                                                ->dateTime(),
+                                        ]),
+                                ]),
+                        ]),
+                    Tables\Actions\Action::make('detail')
+                        ->label('Détail')
+                        ->icon('heroicon-o-arrow-top-right-on-square')
+                        ->color('info')
+                        ->url(fn (Client $record): string => static::getUrl('view', ['record' => $record]))
+                        ->openUrlInNewTab(false),
+                    Tables\Actions\EditAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

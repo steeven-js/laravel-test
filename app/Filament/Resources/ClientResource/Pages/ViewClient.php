@@ -21,7 +21,7 @@ class ViewClient extends ViewRecord
 {
     protected static string $resource = ClientResource::class;
 
-    public function getTitle(): string | Htmlable
+    public function getTitle(): string|Htmlable
     {
         $nom = (string) ($this->record->nom ?? '');
         $prenom = (string) ($this->record->prenom ?? '');

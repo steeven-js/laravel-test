@@ -97,45 +97,47 @@ class SecteurActiviteResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouveau secteur'),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->name('view')
-                    ->label('Aperçu')
-                    ->icon('heroicon-o-eye')
-                    ->modal()
-                    ->url(null)
-                    ->modalCancelActionLabel('Fermer')
-                    ->modalHeading("Aperçu du secteur d'activité")
-                    ->modalDescription("Détails complets du secteur d'activité sélectionné")
-                    ->modalWidth('4xl')
-                    ->infolist([
-                        Infolists\Components\Section::make("Secteur d'activité")
-                            ->description('Code NAF/APE, libellé et classification')
-                            ->icon('heroicon-o-rectangle-stack')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('code')->label('Code')->badge()->color('primary'),
-                                        Infolists\Components\TextEntry::make('libelle')->label('Libellé')->size(Infolists\Components\TextEntry\TextEntrySize::Large)->weight('bold'),
-                                    ]),
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('division')->label('Division')->badge(),
-                                        Infolists\Components\TextEntry::make('section')->label('Section')->badge(),
-                                    ]),
-                                Infolists\Components\IconEntry::make('actif')->label('Actif')->boolean(),
-                            ]),
-                        Infolists\Components\Section::make('Informations système')
-                            ->description('Métadonnées techniques')
-                            ->icon('heroicon-o-cog')
-                            ->schema([
-                                Infolists\Components\Grid::make(2)
-                                    ->schema([
-                                        Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
-                                        Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime(),
-                                    ]),
-                            ]),
-                    ]),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->name('view')
+                        ->label('Aperçu')
+                        ->icon('heroicon-o-eye')
+                        ->modal()
+                        ->url(null)
+                        ->modalCancelActionLabel('Fermer')
+                        ->modalHeading("Aperçu du secteur d'activité")
+                        ->modalDescription("Détails complets du secteur d'activité sélectionné")
+                        ->modalWidth('4xl')
+                        ->infolist([
+                            Infolists\Components\Section::make("Secteur d'activité")
+                                ->description('Code NAF/APE, libellé et classification')
+                                ->icon('heroicon-o-rectangle-stack')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('code')->label('Code')->badge()->color('primary'),
+                                            Infolists\Components\TextEntry::make('libelle')->label('Libellé')->size(Infolists\Components\TextEntry\TextEntrySize::Large)->weight('bold'),
+                                        ]),
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('division')->label('Division')->badge(),
+                                            Infolists\Components\TextEntry::make('section')->label('Section')->badge(),
+                                        ]),
+                                    Infolists\Components\IconEntry::make('actif')->label('Actif')->boolean(),
+                                ]),
+                            Infolists\Components\Section::make('Informations système')
+                                ->description('Métadonnées techniques')
+                                ->icon('heroicon-o-cog')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
+                                            Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime(),
+                                        ]),
+                                ]),
+                        ]),
+                    Tables\Actions\EditAction::make(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

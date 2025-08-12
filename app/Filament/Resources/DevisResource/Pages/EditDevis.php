@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\DevisResource\Pages;
 
 use App\Filament\Resources\DevisResource;
+use App\Models\Facture;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -29,6 +30,17 @@ class EditDevis extends EditRecord
                 ->modalWidth('7xl')
                 ->modalCancelActionLabel('Fermer')
                 ->modalSubmitAction(false),
+
+            Actions\Action::make('convert_to_invoice')
+                ->label('Transformer en facture')
+                ->icon('heroicon-m-arrow-right-circle')
+                ->color('success')
+                ->disabled(fn (): bool => Facture::query()->where('devis_id', $this->record->id)->exists())
+                ->tooltip(fn (): ?string => Facture::query()->where('devis_id', $this->record->id)->exists()
+                    ? 'Une facture existe déjà pour ce devis.'
+                    : 'Le statut du devis sera automatiquement passé à ‘Accepté’ lors de la transformation.')
+                ->url(fn (): string => DevisResource::getUrl('transform', ['record' => $this->record]))
+                ->openUrlInNewTab(false),
 
             Actions\DeleteAction::make(),
         ];
