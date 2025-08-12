@@ -198,11 +198,11 @@ class FactureResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('date_facture')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('date_echeance')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('statut')
@@ -276,7 +276,7 @@ class FactureResource extends Resource
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('date_paiement')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('mode_paiement')
@@ -286,11 +286,11 @@ class FactureResource extends Resource
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('date_envoi_client')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('date_envoi_admin')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('mode_paiement_propose')
@@ -318,15 +318,15 @@ class FactureResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('stripe_created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -386,10 +386,10 @@ class FactureResource extends Resource
                                         ->label('Administrateur'),
                                     Infolists\Components\TextEntry::make('date_facture')
                                         ->label('Date de facture')
-                                        ->date(),
+                                        ->date('d/m/Y'),
                                     Infolists\Components\TextEntry::make('date_echeance')
                                         ->label('Date d\'échéance')
-                                        ->date(),
+                                        ->date('d/m/Y'),
                                     Infolists\Components\TextEntry::make('statut')
                                         ->label('Statut')
                                         ->badge()
@@ -474,10 +474,10 @@ class FactureResource extends Resource
                                         ->label('URL PDF'),
                                     Infolists\Components\TextEntry::make('date_envoi_client')
                                         ->label('Date d\'envoi client')
-                                        ->dateTime(),
+                                        ->dateTime('d/m/Y H:i'),
                                     Infolists\Components\TextEntry::make('date_envoi_admin')
                                         ->label('Date d\'envoi admin')
-                                        ->dateTime(),
+                                        ->dateTime('d/m/Y H:i'),
                                     Infolists\Components\IconEntry::make('archive')
                                         ->label('Archivée')
                                         ->boolean(),
@@ -488,10 +488,10 @@ class FactureResource extends Resource
                                 ->schema([
                                     Infolists\Components\TextEntry::make('created_at')
                                         ->label('Créée le')
-                                        ->dateTime(),
+                                        ->dateTime('d/m/Y H:i'),
                                     Infolists\Components\TextEntry::make('updated_at')
                                         ->label('Modifiée le')
-                                        ->dateTime(),
+                                        ->dateTime('d/m/Y H:i'),
                                 ]),
                         ]),
                     Tables\Actions\Action::make('detail')

@@ -158,11 +158,11 @@ class TicketResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('date_resolution')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('date_echeance')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('temps_estime')
@@ -181,11 +181,11 @@ class TicketResource extends Resource
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -274,10 +274,10 @@ class TicketResource extends Resource
                                         ->schema([
                                             Infolists\Components\TextEntry::make('date_resolution')
                                                 ->label('Date de résolution')
-                                                ->dateTime(),
+                                                ->dateTime('d/m/Y H:i'),
                                             Infolists\Components\TextEntry::make('date_echeance')
                                                 ->label('Date d\'échéance')
-                                                ->dateTime(),
+                                                ->dateTime('d/m/Y H:i'),
                                             Infolists\Components\TextEntry::make('temps_estime')
                                                 ->label('Temps estimé')
                                                 ->suffix('h'),
@@ -300,10 +300,10 @@ class TicketResource extends Resource
                                         ->schema([
                                             Infolists\Components\TextEntry::make('created_at')
                                                 ->label('Créé le')
-                                                ->dateTime(),
+                                                ->dateTime('d/m/Y H:i'),
                                             Infolists\Components\TextEntry::make('updated_at')
                                                 ->label('Modifié le')
-                                                ->dateTime(),
+                                                ->dateTime('d/m/Y H:i'),
                                         ]),
                                 ]),
                         ]),

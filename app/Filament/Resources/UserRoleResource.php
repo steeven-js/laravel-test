@@ -62,7 +62,7 @@ class UserRoleResource extends Resource
                 Tables\Columns\TextColumn::make('name')->label('Nom')->searchable(),
                 Tables\Columns\TextColumn::make('display_name')->label("Nom d'affichage")->searchable(),
                 Tables\Columns\IconColumn::make('is_active')->label('Actif')->boolean(),
-                Tables\Columns\TextColumn::make('updated_at')->dateTime()->since(),
+                Tables\Columns\TextColumn::make('updated_at')->dateTime('d/m/Y H:i')->since(),
             ])
             ->filters([
             ])
@@ -100,8 +100,8 @@ class UserRoleResource extends Resource
                                 ->schema([
                                     Infolists\Components\Grid::make(2)
                                         ->schema([
-                                            Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
-                                            Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime(),
+                                            Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime('d/m/Y H:i'),
+                                            Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime('d/m/Y H:i'),
                                         ]),
                                 ]),
                         ]),

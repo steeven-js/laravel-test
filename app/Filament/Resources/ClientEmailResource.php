@@ -105,15 +105,15 @@ class ClientEmailResource extends Resource
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('date_envoi')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -194,7 +194,7 @@ class ClientEmailResource extends Resource
                                                 ->color(fn ($record) => $record->statut === 'envoye' ? 'success' : 'danger'),
                                             Infolists\Components\TextEntry::make('date_envoi')
                                                 ->label('Date d\'envoi')
-                                                ->dateTime()
+                                                ->dateTime('d/m/Y H:i')
                                                 ->icon('heroicon-o-clock'),
                                         ]),
                                 ]),
@@ -206,11 +206,11 @@ class ClientEmailResource extends Resource
                                         ->schema([
                                             Infolists\Components\TextEntry::make('created_at')
                                                 ->label('Créé le')
-                                                ->dateTime()
+                                                ->dateTime('d/m/Y H:i')
                                                 ->icon('heroicon-o-calendar'),
                                             Infolists\Components\TextEntry::make('updated_at')
                                                 ->label('Modifié le')
-                                                ->dateTime()
+                                                ->dateTime('d/m/Y H:i')
                                                 ->icon('heroicon-o-clock'),
                                         ]),
                                 ]),

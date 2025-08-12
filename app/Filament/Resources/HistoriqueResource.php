@@ -106,7 +106,7 @@ class HistoriqueResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(),
             ])
@@ -222,11 +222,11 @@ class HistoriqueResource extends Resource
                                         ->schema([
                                             Infolists\Components\TextEntry::make('created_at')
                                                 ->label('Créé le')
-                                                ->dateTime()
+                                                ->dateTime('d/m/Y H:i')
                                                 ->icon('heroicon-o-calendar'),
                                             Infolists\Components\TextEntry::make('updated_at')
                                                 ->label('Modifié le')
-                                                ->dateTime()
+                                                ->dateTime('d/m/Y H:i')
                                                 ->icon('heroicon-o-clock'),
                                         ]),
                                 ]),

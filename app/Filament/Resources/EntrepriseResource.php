@@ -170,11 +170,11 @@ class EntrepriseResource extends Resource
                     ->boolean()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -304,11 +304,11 @@ class EntrepriseResource extends Resource
                                         ->schema([
                                             Infolists\Components\TextEntry::make('created_at')
                                                 ->label('Créé le')
-                                                ->dateTime()
+                                                ->dateTime('d/m/Y H:i')
                                                 ->icon('heroicon-o-calendar'),
                                             Infolists\Components\TextEntry::make('updated_at')
                                                 ->label('Modifié le')
-                                                ->dateTime()
+                                                ->dateTime('d/m/Y H:i')
                                                 ->icon('heroicon-o-clock'),
                                         ]),
                                 ]),

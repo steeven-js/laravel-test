@@ -128,7 +128,7 @@ class NotificationResource extends Resource
                     ->getStateUsing(fn ($record) => ! is_null($record->read_at))
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(),
             ])
@@ -214,11 +214,11 @@ class NotificationResource extends Resource
                                         ->schema([
                                             Infolists\Components\TextEntry::make('created_at')
                                                 ->label('Créée le')
-                                                ->dateTime()
+                                                ->dateTime('d/m/Y H:i')
                                                 ->icon('heroicon-o-calendar'),
                                             Infolists\Components\TextEntry::make('read_at')
                                                 ->label('Lue le')
-                                                ->dateTime()
+                                                ->dateTime('d/m/Y H:i')
                                                 ->icon('heroicon-o-clock')
                                                 ->placeholder('Non lue'),
                                         ]),

@@ -155,7 +155,7 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('email_verified_at')
                     ->label('Email vérifié le')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('userRole.display_name')
@@ -164,12 +164,12 @@ class UserResource extends Resource
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Créé le')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Mis à jour le')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -203,9 +203,9 @@ class UserResource extends Resource
                                             Infolists\Components\TextEntry::make('code_postal')->label('Code postal')->placeholder('—'),
                                             Infolists\Components\TextEntry::make('pays')->label('Pays')->placeholder('—'),
                                             Infolists\Components\TextEntry::make('userRole.display_name')->label('Rôle'),
-                                            Infolists\Components\TextEntry::make('email_verified_at')->label('Email vérifié le')->dateTime()->placeholder('Non vérifié'),
-                                            Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
-                                            Infolists\Components\TextEntry::make('updated_at')->label('Mis à jour le')->dateTime(),
+                                            Infolists\Components\TextEntry::make('email_verified_at')->label('Email vérifié le')->dateTime('d/m/Y H:i')->placeholder('Non vérifié'),
+                                            Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime('d/m/Y H:i'),
+                                            Infolists\Components\TextEntry::make('updated_at')->label('Mis à jour le')->dateTime('d/m/Y H:i'),
                                         ]),
                                 ]),
                         ]),

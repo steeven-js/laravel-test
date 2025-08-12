@@ -169,11 +169,11 @@ class DevisResource extends Resource
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('date_devis')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('date_validite')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('statut')
@@ -215,11 +215,11 @@ class DevisResource extends Resource
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('date_envoi_client')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('date_envoi_admin')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('pdf_file')
@@ -248,18 +248,18 @@ class DevisResource extends Resource
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('date_acceptation')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('archive')
                     ->boolean()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -342,12 +342,12 @@ class DevisResource extends Resource
                                                     'expire' => 'heroicon-m-exclamation-triangle',
                                                     default => 'heroicon-m-question-mark-circle',
                                                 }),
-                                            Infolists\Components\TextEntry::make('date_devis')
-                                                ->label('Date du devis')
-                                                ->date(),
-                                            Infolists\Components\TextEntry::make('date_validite')
-                                                ->label('Date de validité')
-                                                ->date(),
+                                                                                    Infolists\Components\TextEntry::make('date_devis')
+                                            ->label('Date du devis')
+                                            ->date('d/m/Y'),
+                                        Infolists\Components\TextEntry::make('date_validite')
+                                            ->label('Date de validité')
+                                            ->date('d/m/Y'),
                                             Infolists\Components\TextEntry::make('statut_envoi')
                                                 ->label('Statut d\'envoi')
                                                 ->badge()
@@ -411,12 +411,12 @@ class DevisResource extends Resource
                                 ->schema([
                                     Infolists\Components\Grid::make(2)
                                         ->schema([
-                                            Infolists\Components\TextEntry::make('created_at')
-                                                ->label('Créé le')
-                                                ->dateTime(),
-                                            Infolists\Components\TextEntry::make('updated_at')
-                                                ->label('Modifié le')
-                                                ->dateTime(),
+                                                                                    Infolists\Components\TextEntry::make('created_at')
+                                            ->label('Créé le')
+                                            ->dateTime('d/m/Y H:i'),
+                                        Infolists\Components\TextEntry::make('updated_at')
+                                            ->label('Modifié le')
+                                            ->dateTime('d/m/Y H:i'),
                                         ]),
                                 ]),
                         ]),

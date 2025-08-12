@@ -78,11 +78,11 @@ class SecteurActiviteResource extends Resource
                     ->boolean()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -131,8 +131,8 @@ class SecteurActiviteResource extends Resource
                                 ->schema([
                                     Infolists\Components\Grid::make(2)
                                         ->schema([
-                                            Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime(),
-                                            Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime(),
+                                            Infolists\Components\TextEntry::make('created_at')->label('Créé le')->dateTime('d/m/Y H:i'),
+                                            Infolists\Components\TextEntry::make('updated_at')->label('Modifié le')->dateTime('d/m/Y H:i'),
                                         ]),
                                 ]),
                         ]),

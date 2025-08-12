@@ -109,7 +109,7 @@ class TodoResource extends Resource
                     ->searchable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('date_echeance')
-                    ->date()
+                    ->date('d/m/Y')
                     ->sortable()
                     ->toggleable(),
                 Tables\Columns\TextColumn::make('client.nom')
@@ -123,11 +123,11 @@ class TodoResource extends Resource
                     ->searchable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime('d/m/Y H:i')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
@@ -182,7 +182,7 @@ class TodoResource extends Resource
                                                 ->label('Priorité'),
                                             Infolists\Components\TextEntry::make('date_echeance')
                                                 ->label('Date d\'échéance')
-                                                ->date(),
+                                                ->date('d/m/Y'),
                                         ]),
                                 ]),
                             Infolists\Components\Section::make('Liens')
@@ -205,10 +205,10 @@ class TodoResource extends Resource
                                         ->schema([
                                             Infolists\Components\TextEntry::make('created_at')
                                                 ->label('Créé le')
-                                                ->dateTime(),
+                                                ->dateTime('d/m/Y H:i'),
                                             Infolists\Components\TextEntry::make('updated_at')
                                                 ->label('Modifié le')
-                                                ->dateTime(),
+                                                ->dateTime('d/m/Y H:i'),
                                         ]),
                                 ]),
                         ]),
