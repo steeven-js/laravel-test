@@ -24,10 +24,10 @@ class DevisStats extends BaseWidget
     protected function getStats(): array
     {
         $totalDevis = Devis::query()->count();
-        $devisEnAttente = Devis::query()->where('status', DevisStatus::EnAttente)->count();
-        $devisAcceptes = Devis::query()->where('status', DevisStatus::Accepte)->count();
-        $devisRefuses = Devis::query()->where('status', DevisStatus::Refuse)->count();
-        $devisExpires = Devis::query()->where('status', DevisStatus::Expire)->count();
+        $devisEnAttente = Devis::query()->where('statut', DevisStatus::EnAttente)->count();
+        $devisAcceptes = Devis::query()->where('statut', DevisStatus::Accepte)->count();
+        $devisRefuses = Devis::query()->where('statut', DevisStatus::Refuse)->count();
+        $devisExpires = Devis::query()->where('statut', DevisStatus::Expire)->count();
         $montantTotalDevis = (float) Devis::query()->sum('montant_ttc');
         $devisConvertis = Devis::query()->whereHas('factures')->count();
 

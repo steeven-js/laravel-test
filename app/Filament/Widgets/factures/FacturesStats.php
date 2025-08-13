@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Widgets\factures;
 
 use App\Enums\FactureEnvoiStatus;
+use App\Enums\FactureStatus;
 use App\Models\Facture;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -24,13 +25,13 @@ class FacturesStats extends BaseWidget
     protected function getStats(): array
     {
         $totalFactures = Facture::query()->count();
-        $facturesPayees = Facture::query()->where('paye', true)->count();
-        $facturesImpayees = Facture::query()->where('paye', false)->count();
+        $facturesPayees = Facture::query()->where('statut', FactureStatus::Payee)->count();
+        $facturesImpayees = Facture::query()->whereNotIn('statut', [FactureStatus::Payee, FactureStatus::Annulee])->count();
         $montantTotalFactures = (float) Facture::query()->sum('montant_ttc');
-        $montantPaye = (float) Facture::query()->where('paye', true)->sum('montant_ttc');
-        $montantImpaye = (float) Facture::query()->where('paye', false)->sum('montant_ttc');
-        $facturesNonEnvoyees = Facture::query()->where('envoi_status', FactureEnvoiStatus::NonEnvoyee)->count();
-        $facturesEnvoyees = Facture::query()->where('envoi_status', FactureEnvoiStatus::Envoyee)->count();
+        $montantPaye = (float) Facture::query()->where('statut', FactureStatus::Payee)->sum('montant_ttc');
+        $montantImpaye = (float) Facture::query()->whereNotIn('statut', [FactureStatus::Payee, FactureStatus::Annulee])->sum('montant_ttc');
+        $facturesNonEnvoyees = Facture::query()->where('statut_envoi', FactureEnvoiStatus::NonEnvoyee)->count();
+        $facturesEnvoyees = Facture::query()->where('statut_envoi', FactureEnvoiStatus::Envoyee)->count();
 
         return [
             Stat::make('Total factures', (string) $totalFactures)

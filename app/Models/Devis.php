@@ -65,4 +65,9 @@ class Devis extends Model
     {
         return $this->hasMany(LigneDevis::class, 'devis_id')->orderBy('ordre');
     }
+
+    public function factures(): HasMany
+    {
+        return $this->hasMany(Facture::class, 'devis_id');
+    }
 }
