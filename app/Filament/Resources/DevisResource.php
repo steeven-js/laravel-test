@@ -287,6 +287,12 @@ class DevisResource extends Resource
                     ->url(fn ($record): string => static::getUrl('view', ['record' => $record]))
                     ->openUrlInNewTab(false),
                 Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('send_email')
+                        ->label('Envoyer par email')
+                        ->icon('heroicon-m-paper-airplane')
+                        ->color('primary')
+                        ->url(fn (Devis $record): string => static::getUrl('sendEmail', ['record' => $record]))
+                        ->openUrlInNewTab(false),
                     Tables\Actions\Action::make('preview_pdf_modal')
                         ->label('Aperçu PDF')
                         ->icon('heroicon-o-eye')
@@ -411,6 +417,7 @@ class DevisResource extends Resource
             'view' => Pages\ViewDevis::route('/{record}'),
             'edit' => Pages\EditDevis::route('/{record}/edit'),
             'transform' => Pages\TransformDevisToFacture::route('/{record}/transform'),
+            'sendEmail' => Pages\SendDevisByEmail::route('/{record}/send-email'),
         ];
     }
 }

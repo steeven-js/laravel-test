@@ -65,6 +65,13 @@ class ViewDevis extends ViewRecord
                     })
                     ->url(fn (): string => DevisResource::getUrl('transform', ['record' => $this->record]))
                     ->openUrlInNewTab(false),
+
+                Actions\Action::make('send_email')
+                    ->label('Envoyer par email')
+                    ->icon('heroicon-m-paper-airplane')
+                    ->color('primary')
+                    ->url(fn (): string => DevisResource::getUrl('sendEmail', ['record' => $this->record]))
+                    ->openUrlInNewTab(false),
             ])
             ->label('Actions')
             ->icon('heroicon-o-cog-6-tooth')
