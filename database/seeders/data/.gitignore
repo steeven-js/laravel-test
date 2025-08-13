@@ -1,0 +1,18 @@
+# Fichiers temporaires
+*.tmp
+*.temp
+
+# Fichiers de sauvegarde
+*.bak
+*.backup
+
+# Fichiers de test
+*_test.csv
+*_test_*.csv
+
+# Fichiers personnalisés (optionnel)
+# Décommentez les lignes suivantes si vous ne voulez pas versionner certains fichiers
+# email_templates.csv
+# secteurs_activite.csv
+# services.csv
+# madinia.csv

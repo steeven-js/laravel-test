@@ -12,7 +12,7 @@ class SecteurActiviteSeeder extends Seeder
 {
     public function run(): void
     {
-        $csvPath = base_path('secteurs_activite_rows.csv');
+        $csvPath = base_path('database/seeders/data/secteurs_activite.csv');
         if (! file_exists($csvPath)) {
             $this->command?->warn("Fichier CSV introuvable: {$csvPath}");
 

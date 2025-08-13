@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             SecteurActiviteSeeder::class,
             ServiceSeeder::class,
             MadiniaSeeder::class,
+            EmailTemplateSeeder::class,
         ]);
     }
 }

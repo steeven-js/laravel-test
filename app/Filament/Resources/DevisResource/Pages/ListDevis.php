@@ -161,7 +161,7 @@ class ListDevis extends ListRecords
                                 'remise_pourcentage' => $remise,
                                 'taux_tva' => $tva,
                                 'ordre' => $ligneOrder++,
-                                'description_personnalisee' => null,
+                                'description_personnalisee' => $service->description,
                             ]);
 
                             $sumHt += (float) $ligne->montant_ht;

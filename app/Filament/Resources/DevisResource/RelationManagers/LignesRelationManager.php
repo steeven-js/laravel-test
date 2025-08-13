@@ -22,7 +22,18 @@ class LignesRelationManager extends RelationManager
                 ->searchable()
                 ->preload()
                 ->label('Service')
-                ->nullable(),
+                ->nullable()
+                ->live()
+                ->afterStateUpdated(function ($state, Forms\Set $set) {
+                    if ($state) {
+                        $service = \App\Models\Service::find($state);
+                        if ($service) {
+                            $set('description_personnalisee', $service->description);
+                            $set('prix_unitaire_ht', $service->prix_ht);
+                            $set('unite', $service->unite ?? 'unite');
+                        }
+                    }
+                }),
             Forms\Components\TextInput::make('description_personnalisee')
                 ->label('Description')
                 ->columnSpanFull(),
@@ -70,7 +81,9 @@ class LignesRelationManager extends RelationManager
     {
         return $table->columns([
             Tables\Columns\TextColumn::make('service.nom')->label('Service')->searchable(),
-            Tables\Columns\TextColumn::make('description_personnalisee')->label('Description')->limit(40),
+            Tables\Columns\TextColumn::make('description')
+                ->label('Description')
+                ->limit(40),
             Tables\Columns\TextColumn::make('quantite')->numeric()->sortable(),
             Tables\Columns\TextColumn::make('prix_unitaire_ht')->money('EUR')->sortable(),
             Tables\Columns\TextColumn::make('taux_tva')->suffix('%')->sortable(),

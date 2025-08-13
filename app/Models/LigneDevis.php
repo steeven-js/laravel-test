@@ -69,4 +69,12 @@ class LigneDevis extends Model
     {
         return $this->belongsTo(Service::class);
     }
+
+    /**
+     * Retourne la description à afficher (personnalisée ou du service)
+     */
+    public function getDescriptionAttribute(): string
+    {
+        return $this->description_personnalisee ?? $this->service?->description ?? '';
+    }
 }

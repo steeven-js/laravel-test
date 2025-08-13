@@ -32,9 +32,9 @@ class EmailTemplate extends Model
 
     protected static function booted(): void
     {
-        static::saved(function (EmailTemplate $template): void {
-            if ($template->is_default) {
-                // Désactive tous les autres modèles par défaut dans la même catégorie
+        static::saving(function (EmailTemplate $template): void {
+            if ($template->is_default && $template->isDirty('is_default')) {
+                // Désactive tous les autres modèles par défaut dans la même catégorie AVANT la sauvegarde
                 static::query()
                     ->where('category', $template->category)
                     ->whereKeyNot($template->getKey())

@@ -33,10 +33,10 @@ class MadiniaSeeder extends Seeder
         $this->command->info("Utilisateur de contact créé/récupéré: {$contactUser->name} (ID: {$contactUser->id})");
 
         // Chemin vers le fichier CSV
-        $csvFile = database_path('seeders/madinia_rows (2).csv');
+        $csvFile = database_path('seeders/data/madinia.csv');
 
         if (! file_exists($csvFile)) {
-            $this->command->error("Le fichier CSV 'madinia_rows (2).csv' n'existe pas dans database/seeders/");
+            $this->command->error("Le fichier CSV 'madinia.csv' n'existe pas dans database/seeders/data/");
 
             return;
         }

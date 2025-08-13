@@ -12,7 +12,7 @@ class ServiceSeeder extends Seeder
 {
     public function run(): void
     {
-        $csvPath = base_path('services_rows (2).csv');
+        $csvPath = base_path('database/seeders/data/services.csv');
         if (! file_exists($csvPath)) {
             $this->command?->warn("Fichier CSV introuvable: {$csvPath}");
 
