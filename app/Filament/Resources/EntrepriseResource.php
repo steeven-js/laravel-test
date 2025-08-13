@@ -332,7 +332,7 @@ class EntrepriseResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            \App\Filament\Resources\EntrepriseResource\RelationManagers\ClientsRelationManager::class,
         ];
     }
 

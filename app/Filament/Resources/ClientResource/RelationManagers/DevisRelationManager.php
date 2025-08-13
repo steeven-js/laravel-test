@@ -7,6 +7,7 @@ namespace App\Filament\Resources\ClientResource\RelationManagers;
 use App\Enums\DevisEnvoiStatus;
 use App\Enums\DevisStatus;
 use Filament\Forms\Form;
+use Filament\Infolists;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -26,6 +27,7 @@ class DevisRelationManager extends RelationManager
     {
         return $table
             ->recordUrl(null)
+            ->recordAction('view')
             ->columns([
                 Tables\Columns\TextColumn::make('numero_devis')
                     ->label('Numéro')
@@ -71,13 +73,92 @@ class DevisRelationManager extends RelationManager
                 Tables\Actions\CreateAction::make()->label('Nouveau devis'),
             ])
             ->actions([
-                Tables\Actions\Action::make('detail')
-                    ->label('Détail')
-                    ->icon('heroicon-o-arrow-top-right-on-square')
-                    ->url(fn ($record): string => route('filament.admin.resources.devis.view', ['record' => $record]))
-                    ->openUrlInNewTab(false),
-                Tables\Actions\EditAction::make()->label('Éditer'),
-                Tables\Actions\DeleteAction::make()->label('Supprimer'),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make()
+                        ->infolist([
+                            Infolists\Components\Section::make('Informations générales')
+                                ->description('Détails du devis')
+                                ->icon('heroicon-o-document-text')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('numero_devis')
+                                                ->label('Numéro'),
+                                            Infolists\Components\TextEntry::make('date_devis')
+                                                ->label('Date')
+                                                ->date('d/m/Y'),
+                                            Infolists\Components\TextEntry::make('date_validite')
+                                                ->label('Date de validité')
+                                                ->date('d/m/Y'),
+                                            Infolists\Components\TextEntry::make('objet')
+                                                ->label('Objet'),
+                                        ]),
+                                    Infolists\Components\TextEntry::make('description')
+                                        ->label('Description')
+                                        ->columnSpanFull(),
+                                ]),
+                            Infolists\Components\Section::make('Montants')
+                                ->description('Calculs financiers')
+                                ->icon('heroicon-o-currency-euro')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('montant_ht')
+                                                ->label('Montant HT')
+                                                ->money('EUR'),
+                                            Infolists\Components\TextEntry::make('montant_tva')
+                                                ->label('Montant TVA')
+                                                ->money('EUR'),
+                                            Infolists\Components\TextEntry::make('montant_ttc')
+                                                ->label('Montant TTC')
+                                                ->money('EUR'),
+                                            Infolists\Components\TextEntry::make('taux_tva')
+                                                ->label('Taux TVA')
+                                                ->suffix('%'),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Statuts')
+                                ->description('État du devis')
+                                ->icon('heroicon-o-information-circle')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('statut')
+                                                ->label('Statut')
+                                                ->formatStateUsing(fn (string $state): string => DevisStatus::from($state)->getLabel()),
+                                            Infolists\Components\TextEntry::make('statut_envoi')
+                                                ->label("Statut d'envoi")
+                                                ->formatStateUsing(fn (string $state): string => DevisEnvoiStatus::from($state)->getLabel()),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Responsabilités')
+                                ->description('Personnes impliquées')
+                                ->icon('heroicon-o-user-group')
+                                ->schema([
+                                    Infolists\Components\Grid::make(2)
+                                        ->schema([
+                                            Infolists\Components\TextEntry::make('administrateur.name')
+                                                ->label('Administrateur'),
+                                            Infolists\Components\TextEntry::make('date_acceptation')
+                                                ->label('Date d\'acceptation')
+                                                ->date('d/m/Y'),
+                                        ]),
+                                ]),
+                            Infolists\Components\Section::make('Notes et conditions')
+                                ->description('Informations complémentaires')
+                                ->icon('heroicon-o-pencil-square')
+                                ->schema([
+                                    Infolists\Components\TextEntry::make('conditions')
+                                        ->label('Conditions')
+                                        ->columnSpanFull(),
+                                    Infolists\Components\TextEntry::make('notes')
+                                        ->label('Notes')
+                                        ->columnSpanFull(),
+                                ]),
+                        ]),
+                    Tables\Actions\EditAction::make()->label('Modifier'),
+                    Tables\Actions\DeleteAction::make()->label('Supprimer'),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -126,7 +126,7 @@ class ClientResource extends Resource
     {
         return $table
             ->query(static::getEloquentQuery()->whereNull('deleted_at'))
-            ->modifyQueryUsing(fn (Builder $query) => $query->withCount(['devis', 'factures']))
+            ->modifyQueryUsing(fn (Builder $query) => $query->withCount(['devis', 'factures', 'opportunities', 'tickets', 'todos']))
             ->recordUrl(null)
             ->recordAction('view')
             ->columns([
@@ -169,6 +169,24 @@ class ClientResource extends Resource
                     ->badge()
                     ->sortable()
                     ->toggleable(),
+                Tables\Columns\TextColumn::make('opportunities_count')
+                    ->label('Opportunités')
+                    ->badge()
+                    ->color('info')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('tickets_count')
+                    ->label('Tickets')
+                    ->badge()
+                    ->color('warning')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('todos_count')
+                    ->label('Tâches')
+                    ->badge()
+                    ->color('success')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime('d/m/Y H:i')
                     ->sortable()
