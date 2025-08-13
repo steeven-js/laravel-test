@@ -1,0 +1,30 @@
+# Fichiers d'environnement
+.env
+.env.local
+.env.*.local
+
+# Fichiers de configuration sensibles
+config.json
+secrets.json
+
+# Fichiers de cache et temporaires
+*.log
+*.tmp
+*.cache
+
+# Dossiers de dépendances
+node_modules/
+vendor/
+
+# Fichiers de build
+dist/
+build/
+
+# json
+*.json
+
+# Markdown
+*.md
+
+# Script
+*.sh

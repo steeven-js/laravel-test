@@ -337,6 +337,13 @@ class EntrepriseResource extends Resource
         ];
     }
 
+    protected static function getDefaultRelations(): array
+    {
+        return [
+            \App\Filament\Resources\EntrepriseResource\RelationManagers\ClientsRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

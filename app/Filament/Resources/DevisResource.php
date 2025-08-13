@@ -409,6 +409,13 @@ class DevisResource extends Resource
         ];
     }
 
+    protected static function getDefaultRelations(): array
+    {
+        return [
+            DevisResource\RelationManagers\LignesRelationManager::class,
+        ];
+    }
+
     public static function getPages(): array
     {
         return [

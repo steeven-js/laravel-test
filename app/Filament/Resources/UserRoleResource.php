@@ -123,6 +123,12 @@ class UserRoleResource extends Resource
             //
         ];
     }
+    protected static function getDefaultRelations(): array
+    {
+        return [
+        ];
+    }
+
 
     public static function getPages(): array
     {

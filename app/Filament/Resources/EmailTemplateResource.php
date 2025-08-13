@@ -286,6 +286,13 @@ class EmailTemplateResource extends Resource
         ];
     }
 
+    protected static function getDefaultRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
     public static function getPages(): array
     {
         return [
