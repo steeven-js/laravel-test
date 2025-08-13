@@ -20,6 +20,8 @@ use Filament\Tables\Table;
 
 class ClientEmailResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Email client';
 
     protected static ?string $pluralModelLabel = 'Emails clients';
@@ -278,6 +280,13 @@ class ClientEmailResource extends Resource
     }
 
     public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    protected static function getDefaultRelations(): array
     {
         return [
             //

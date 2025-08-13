@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Filament\Resources\ClientResource\RelationManagers;
+namespace App\Filament\Resources\RelationManagers;
 
 use App\Models\Historique;
 use Filament\Forms\Form;
@@ -39,6 +39,7 @@ class HistoriquesRelationManager extends RelationManager
                         'suppression' => 'danger',
                         'changement_statut' => 'warning',
                         'envoi_email' => 'info',
+                        'paiement_stripe' => 'success',
                         default => 'gray',
                     })
                     ->icon(fn (string $state): string => match ($state) {
@@ -101,13 +102,12 @@ class HistoriquesRelationManager extends RelationManager
                     ])
                     ->multiple()
                     ->searchable(),
-
             ])
             ->defaultSort('created_at', 'desc')
             ->searchPlaceholder('Rechercher dans l\'historique...')
             ->emptyStateIcon('heroicon-o-clock')
             ->emptyStateHeading('Aucun historique')
-            ->emptyStateDescription("Il n'y a pas encore d'événements d'historique pour ce client.")
+            ->emptyStateDescription("Il n'y a pas encore d'événements d'historique.")
             ->actions([
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\ViewAction::make()

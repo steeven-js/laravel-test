@@ -18,6 +18,8 @@ use Ysfkaya\FilamentPhoneInput\Tables\PhoneColumn;
 
 class UserResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Utilisateur';
 
     protected static ?string $pluralModelLabel = 'Utilisateurs';

@@ -20,6 +20,8 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class ClientResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Client';
 
     protected static ?string $pluralModelLabel = 'Clients';
@@ -317,6 +319,18 @@ class ClientResource extends Resource
         ];
     }
 
+    protected static function getDefaultRelations(): array
+    {
+        return [
+            ClientResource\RelationManagers\DevisRelationManager::class,
+            ClientResource\RelationManagers\FacturesRelationManager::class,
+            ClientResource\RelationManagers\OpportunitiesRelationManager::class,
+            ClientResource\RelationManagers\TicketsRelationManager::class,
+            ClientResource\RelationManagers\TodosRelationManager::class,
+            ClientResource\RelationManagers\EmailsRelationManager::class,
+        ];
+    }
+
     public static function getRecordSubNavigation(Page $page): array
     {
         // Masque les onglets "View" / "Edit" en haut des pages d'enregistrement
@@ -330,6 +344,7 @@ class ClientResource extends Resource
             'create' => Pages\CreateClient::route('/create'),
             'view' => Pages\ViewClient::route('/{record}'),
             'edit' => Pages\EditClient::route('/{record}/edit'),
+            'historique' => Pages\HistoriqueActions::route('/{record}/historique'),
         ];
     }
 }

@@ -16,6 +16,8 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class MadiniaResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Madinia';
 
     protected static ?string $pluralModelLabel = 'Madinia';

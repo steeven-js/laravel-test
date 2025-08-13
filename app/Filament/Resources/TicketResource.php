@@ -15,6 +15,8 @@ use Filament\Tables\Table;
 
 class TicketResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Ticket';
 
     protected static ?string $pluralModelLabel = 'Tickets';

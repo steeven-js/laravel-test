@@ -16,6 +16,8 @@ use Filament\Tables\Table;
 
 class FactureResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Facture';
 
     protected static ?string $pluralModelLabel = 'Factures';

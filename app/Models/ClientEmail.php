@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ClientEmail extends Model
 {
-    use HasFactory, SoftDeletes;
+    use \App\Models\Traits\HasHistorique, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'client_id',

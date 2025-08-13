@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SecteurActivite extends Model
 {
-    use HasFactory, SoftDeletes;
+    use \App\Models\Traits\HasHistorique, HasFactory, SoftDeletes;
 
     protected $table = 'secteurs_activite';
 

@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Http;
 
 class DevisResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
     use HasStandardActions;
 
     protected static ?string $modelLabel = 'Devis';

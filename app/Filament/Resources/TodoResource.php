@@ -15,6 +15,8 @@ use Filament\Tables\Table;
 
 class TodoResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Tâche';
 
     protected static ?string $pluralModelLabel = 'Tâches';

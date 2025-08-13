@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Client extends Model
 {
-    use HasFactory, SoftDeletes;
+    use \App\Models\Traits\HasHistorique, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'nom',

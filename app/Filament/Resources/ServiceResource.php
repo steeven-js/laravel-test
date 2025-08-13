@@ -16,6 +16,7 @@ use Filament\Tables\Table;
 
 class ServiceResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
     use HasStandardActions;
 
     protected static ?string $modelLabel = 'Service';

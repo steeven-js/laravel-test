@@ -1,0 +1,317 @@
+/* Styles pour l'historique des actions */
+
+.historique-entry {
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    background-color: white;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease-in-out;
+}
+
+.historique-entry:hover {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transform: translateY(-1px);
+}
+
+.historique-entry:last-child {
+    margin-bottom: 0;
+}
+
+/* En-tête de l'action */
+.historique-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.historique-action-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+.historique-action-badge.creation {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.historique-action-badge.modification {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.historique-action-badge.suppression {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.historique-action-badge.changement_statut {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.historique-action-badge.envoi_email {
+    background-color: #e0e7ff;
+    color: #3730a3;
+}
+
+.historique-action-badge.paiement_stripe {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+/* Description */
+.historique-description {
+    color: #374151;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+/* Bouton voir les détails */
+.historique-toggle-details {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.historique-toggle-details:hover {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+    color: #374151;
+}
+
+.historique-toggle-details svg {
+    width: 1rem;
+    height: 1rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+.historique-toggle-details svg.rotate-180 {
+    transform: rotate(180deg);
+}
+
+/* Section des détails */
+.historique-details {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background-color: #f9fafb;
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.historique-details h4 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.historique-json {
+    background-color: #1f2937;
+    color: #f9fafb;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* Informations utilisateur et date */
+.historique-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.historique-user {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.historique-user-icon {
+    width: 1rem;
+    height: 1rem;
+    color: #9ca3af;
+}
+
+.historique-date {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.historique-date-icon {
+    width: 1rem;
+    height: 1rem;
+    color: #9ca3af;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .historique-entry {
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .historique-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .historique-meta {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .historique-details {
+        padding: 1rem;
+    }
+}
+
+/* Animations */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.historique-entry {
+    animation: slideIn 0.3s ease-out;
+}
+
+.historique-entry:nth-child(1) { animation-delay: 0.1s; }
+.historique-entry:nth-child(2) { animation-delay: 0.2s; }
+.historique-entry:nth-child(3) { animation-delay: 0.3s; }
+.historique-entry:nth-child(4) { animation-delay: 0.4s; }
+.historique-entry:nth-child(5) { animation-delay: 0.5s; }
+
+/* États vides */
+.historique-empty {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+}
+
+.historique-empty-icon {
+    width: 4rem;
+    height: 4rem;
+    color: #d1d5db;
+    margin: 0 auto 1rem;
+}
+
+.historique-empty-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.historique-empty-description {
+    font-size: 0.875rem;
+    color: #6b7280;
+    max-width: 24rem;
+    margin: 0 auto;
+}
+
+/* Filtres et recherche */
+.historique-filters {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background-color: #f9fafb;
+    border-radius: 0.75rem;
+    border: 1px solid #e5e7eb;
+}
+
+.historique-search {
+    flex: 1;
+    position: relative;
+}
+
+.historique-search input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.historique-search input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.historique-search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    color: #9ca3af;
+}
+
+.historique-action-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.historique-action-filter {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.historique-action-filter input[type="checkbox"] {
+    width: 1rem;
+    height: 1rem;
+    border-radius: 0.25rem;
+    border: 1px solid #d1d5db;
+}
+
+.historique-action-filter label {
+    font-size: 0.875rem;
+    color: #374151;
+    cursor: pointer;
+}

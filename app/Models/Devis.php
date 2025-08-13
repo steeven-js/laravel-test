@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Devis extends Model
 {
-    use HasFactory, SoftDeletes;
+    use \App\Models\Traits\HasHistorique, HasFactory, SoftDeletes;
 
     protected $fillable = [
         'numero_devis',

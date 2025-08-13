@@ -15,6 +15,8 @@ use Filament\Tables\Table;
 
 class SecteurActiviteResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $model = SecteurActivite::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';

@@ -18,6 +18,7 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EntrepriseResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
     use HasStandardActions;
 
     protected static ?string $modelLabel = 'Entreprise';

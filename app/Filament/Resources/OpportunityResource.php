@@ -14,6 +14,8 @@ use Filament\Tables\Table;
 
 class OpportunityResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Opportunité';
 
     protected static ?string $pluralModelLabel = 'Opportunités';

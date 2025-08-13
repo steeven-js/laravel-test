@@ -15,6 +15,8 @@ use Filament\Tables\Table;
 
 class UserRoleResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $model = UserRole::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-key';

@@ -16,6 +16,8 @@ use Filament\Tables\Table;
 
 class EmailTemplateResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Template email';
 
     protected static ?string $pluralModelLabel = 'Templates emails';

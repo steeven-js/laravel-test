@@ -15,6 +15,8 @@ use Illuminate\Notifications\DatabaseNotification as NotificationModel;
 
 class NotificationResource extends Resource
 {
+    use \App\Filament\Resources\Traits\HasHistoriqueResource;
+
     protected static ?string $modelLabel = 'Notification';
 
     protected static ?string $pluralModelLabel = 'Notifications';
