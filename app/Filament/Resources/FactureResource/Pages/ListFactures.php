@@ -215,9 +215,9 @@ class ListFactures extends ListRecords
 
                         if ($created % 10 === 0 || $created === $count) {
                             Notification::make()
-                                ->title("Progression: $created / $count factures")
+                                ->title("Progression: $created / $count factures générées")
                                 ->success()
-                                ->sendToDatabase(\Illuminate\Support\Facades\Auth::user());
+                                ->send(); // Notification immédiate au lieu de sendToDatabase
                         }
                     }
 

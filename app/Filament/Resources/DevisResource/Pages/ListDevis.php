@@ -13,6 +13,7 @@ use App\Models\Service;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
@@ -175,11 +176,12 @@ class ListDevis extends ListRecords
 
                         $created++;
 
+                        // Notifications de progression seulement à intervalles ou à la fin
                         if ($created % 10 === 0 || $created === $count) {
                             Notification::make()
-                                ->title("Progression: $created / $count devis")
+                                ->title("Progression: $created / $count devis générés")
                                 ->success()
-                                ->sendToDatabase(\Illuminate\Support\Facades\Auth::user());
+                                ->sendToDatabase(Filament::auth()->user());
                         }
                     }
 

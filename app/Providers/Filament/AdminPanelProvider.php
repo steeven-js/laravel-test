@@ -126,6 +126,7 @@ class AdminPanelProvider extends PanelProvider
                 Widgets\FilamentInfoWidget::class,
             ])
             ->databaseNotifications()
+            ->databaseNotificationsPolling('15s')
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

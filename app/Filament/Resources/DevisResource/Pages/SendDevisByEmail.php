@@ -9,7 +9,6 @@ use App\Filament\Resources\DevisResource;
 use App\Models\Devis;
 use App\Models\EmailTemplate;
 use App\Models\User;
-use App\Notifications\DevisEmailNotification;
 use App\Services\EmailTemplateRenderer;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -17,11 +16,15 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Forms\Set;
 use Filament\Forms\Get;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Notifications\DatabaseNotification;
 
 class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
 {
@@ -47,7 +50,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
         $record->refresh();
         $this->record = $record;
 
-        $admin = Auth::user();
+        $admin = Filament::auth()->user() ?? Auth::user();
         $client = $record->client;
 
         $defaultTemplateId = EmailTemplate::query()
@@ -317,7 +320,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
     protected function buildContext(): array
     {
         $devis = $this->record->fresh(['client', 'administrateur']);
-        $admin = Auth::user();
+        $admin = Filament::auth()->user() ?? Auth::user();
 
         $euro = function ($v): string {
             $num = (float) ($v ?? 0);
@@ -455,12 +458,18 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
 
             // Notification applicative de succès
             try {
-                $admin = Auth::user();
-                if ($admin instanceof User) {
-                    $admin->notify(new DevisEmailNotification($devis, true));
-                }
-            } catch (\Throwable) {
+                $admin = Filament::auth()->user();
+                // Notification Filament persistée (cloche en haut à droite)
+                Notification::make()
+                    ->title('Email devis ' . ($devis->numero_devis ?: ('#' . $devis->id)) . ' envoyé')
+                    ->body('Le devis a été envoyé avec succès au client.')
+                    ->icon('heroicon-m-paper-airplane')
+                    ->success()
+                    ->duration('persistent')
+                    ->sendToDatabase($admin);
+            } catch (\Throwable $e) {
                 // ne bloque pas
+                Log::error('Error sending success notification:', ['error' => $e->getMessage()]);
             }
 
             Notification::make()
@@ -475,11 +484,16 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
             $devis->save();
 
             try {
-                $admin = Auth::user();
-                if ($admin instanceof User) {
-                    $admin->notify(new DevisEmailNotification($devis, false, $e->getMessage()));
-                }
-            } catch (\Throwable) {
+                $admin = Filament::auth()->user();
+                Notification::make()
+                    ->title('Échec envoi devis ' . ($devis->numero_devis ?: ('#' . $devis->id)))
+                    ->body($e->getMessage())
+                    ->icon('heroicon-m-exclamation-triangle')
+                    ->danger()
+                    ->duration('persistent')
+                    ->sendToDatabase($admin);
+            } catch (\Throwable $notificationError) {
+                Log::error('Error sending error notification:', ['error' => $notificationError->getMessage()]);
             }
 
             Notification::make()

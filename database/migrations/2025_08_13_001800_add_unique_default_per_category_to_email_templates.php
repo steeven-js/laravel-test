@@ -12,7 +12,7 @@ return new class extends Migration
     {
         // 1) Normaliser les données existantes: garder 1 par catégorie, mettre les autres à false
         $duplicates = DB::table('email_templates')
-            ->select('category', DB::raw('COUNT(*) as cnt'))
+            ->select('category', DB::raw('COUNT(*) as count'))
             ->where('is_default', true)
             ->whereNull('deleted_at')
             ->groupBy('category')
