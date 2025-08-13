@@ -18,13 +18,15 @@ class SeedEmailTemplates extends Command
         $this->info('Début de l\'import des modèles d\'email...');
 
         try {
-            $seeder = new EmailTemplateSeeder();
+            $seeder = new EmailTemplateSeeder;
             $seeder->run();
 
             $this->info('✅ Import des modèles d\'email terminé avec succès !');
+
             return self::SUCCESS;
         } catch (\Exception $e) {
             $this->error('❌ Erreur lors de l\'import des modèles d\'email : ' . $e->getMessage());
+
             return self::FAILURE;
         }
     }

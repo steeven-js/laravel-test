@@ -21,6 +21,9 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             MadiniaSeeder::class,
             EmailTemplateSeeder::class,
+            // OpportunitySeeder::class,
+            // TicketSeeder::class,
+            // TodoSeeder::class,
         ]);
     }
 }
