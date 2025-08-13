@@ -9,6 +9,7 @@ use App\Filament\Widgets\entreprises\EntreprisesStats;
 use App\Models\Entreprise;
 use Faker\Factory as FakerFactory;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
@@ -80,6 +81,13 @@ class ListEntreprises extends ListRecords
                             'notes' => $faker->sentence(8),
                         ]);
                     }
+
+                    $recipient = Filament::auth()->user();
+
+                    Notification::make()
+                        ->title($count . ' entreprises factices créées')
+                        ->success()
+                        ->sendToDatabase($recipient);
 
                     Notification::make()->title($count . ' entreprises factices créées')->success()->send();
                 })

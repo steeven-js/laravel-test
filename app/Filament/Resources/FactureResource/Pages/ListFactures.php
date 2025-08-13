@@ -14,6 +14,7 @@ use App\Models\Service;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -221,7 +222,14 @@ class ListFactures extends ListRecords
                         }
                     }
 
-                    Notification::make()->title($created . ' factures factices créées')->success()->send();
+                    $recipient = Filament::auth()->user();
+
+                    Notification::make()
+                        ->title($count . ' factures factices créées')
+                        ->success()
+                        ->sendToDatabase($recipient);
+
+                    Notification::make()->title($count . ' factures factices créées')->success()->send();
                 })
                 ->requiresConfirmation(),
         ];
