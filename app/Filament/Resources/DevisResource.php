@@ -17,6 +17,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Http;
+use Filament\Notifications\Notification;
 
 class DevisResource extends Resource
 {
@@ -304,6 +306,72 @@ class DevisResource extends Resource
                             : 'Le statut du devis sera automatiquement passé à ‘Accepté’ lors de la transformation.')
                         ->url(fn (Devis $record): string => static::getUrl('transform', ['record' => $record]))
                         ->openUrlInNewTab(false),
+
+                    Tables\Actions\Action::make('save_pdf')
+                        ->label('Sauvegarder le PDF')
+                        ->icon('heroicon-m-arrow-down-tray')
+                        ->color('gray')
+                        ->visible(fn ($record) => $record !== null)
+                        ->action(function (Devis $record): void {
+
+                            $functionsBaseUrl = env('SUPABASE_FUNCTIONS_URL', 'https://uemmyrtikobkczqmnpbi.supabase.co/functions/v1');
+                            // Normaliser: s'assurer qu'on pointe bien sur /functions/v1 uniquement
+                            $base = rtrim($functionsBaseUrl, '/');
+                            $needle = '/functions/v1';
+                            if (($pos = strpos($base, $needle)) !== false) {
+                                $base = substr($base, 0, $pos + strlen($needle));
+                            }
+                            $base = rtrim($base, '/');
+                            $anonKey = env('SUPABASE_ANON_KEY');
+
+                            if (blank($anonKey)) {
+                                Notification::make()
+                                    ->title('Clé Supabase manquante')
+                                    ->body('Définissez SUPABASE_ANON_KEY dans .env')
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
+
+                            // Chemin cible: si un chemin existe déjà, on réutilise pour écraser; sinon on nomme avec le numéro de devis
+                            if (! empty($record->pdf_file)) {
+                                $desiredPath = ltrim((string) $record->pdf_file, '/');
+                            } else {
+                                $numero = (string) ($record->numero_devis ?? $record->id);
+                                $sanitized = preg_replace('/[^A-Za-z0-9._-]/', '-', $numero) ?: (string) $record->id;
+                                $desiredPath = 'devis/' . $sanitized . '.pdf';
+                            }
+
+								$response = Http::withToken($anonKey)
+									->post($base . "/generate-devis-pdf/{$record->id}?public=true&path=" . urlencode($desiredPath));
+
+                            if (! $response->ok()) {
+                                Notification::make()
+                                    ->title('Erreur lors de la génération du PDF')
+                                    ->body($response->body())
+                                    ->danger()
+                                    ->send();
+                                return;
+                            }
+
+                            $data = $response->json();
+                            $publicUrl = $data['publicUrl'] ?? null;
+                            $storagePath = $data['storagePath'] ?? null;
+
+                            if ($publicUrl) {
+                                $record->pdf_url = $publicUrl;
+                            }
+                            if ($storagePath) {
+                                $record->pdf_file = $storagePath;
+                            }
+                            $record->save();
+
+                            Notification::make()
+                                ->title('PDF sauvegardé')
+                                ->body('Le PDF du devis a été généré et écrasé s’il existait déjà.')
+                                ->success()
+                                ->send();
+                        }),
 
                     Tables\Actions\ViewAction::make()
                         ->modal()

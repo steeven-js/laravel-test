@@ -970,7 +970,7 @@ Deno.serve(async (req) => {
     if (!Number.isFinite(id)) return badRequest("ID invalide");
 
     const bucket = url.searchParams.get("bucket") ?? "devis-pdfs";
-    const path = url.searchParams.get("path") ?? `devis/${id}.pdf`;
+    let path = url.searchParams.get("path") ?? `devis/${id}.pdf`;
     const isPublic =
       (url.searchParams.get("public") ?? "false").toLowerCase() === "true";
     const signedTTLSeconds = Number(
@@ -991,6 +991,16 @@ Deno.serve(async (req) => {
 
     const devis = await fetchDevisById(id);
     if (!devis) return badRequest("Devis introuvable", 404);
+    // Si aucun chemin explicite demandé ou si le chemin est encore "devis/<id>.pdf",
+    // renommer automatiquement avec le numéro de devis si disponible
+    const numeroMaybe = String((devis as any)?.numero_devis ?? "").trim();
+    if (numeroMaybe.length > 0) {
+      const sanitizedNumero = numeroMaybe.replace(/[^A-Za-z0-9._-]/g, "-");
+      const defaultIdPath = `devis/${id}.pdf`;
+      if (!url.searchParams.has("path") || path.endsWith(`/${id}.pdf`) || path === defaultIdPath) {
+        path = `devis/${sanitizedNumero}.pdf`;
+      }
+    }
     // Charger compléments pour reproduire le rendu React-PDF côté Laravel
     const madinia = await fetchMadinia();
     let client: Client | null = null;
@@ -1017,6 +1027,7 @@ Deno.serve(async (req) => {
       // fallback vers pdf-lib (sans Tailwind)
       pdfBytes = await generatePdfFromDevis(devis as any, templateBytes);
     }
+    const previousPath = String((devis as any)?.pdf_file ?? "");
     const {
       path: storagePath,
       publicUrl,
@@ -1025,6 +1036,19 @@ Deno.serve(async (req) => {
       public: isPublic,
       signedTTLSeconds,
     });
+    // Supprimer l'ancien fichier s'il existait et si le chemin a changé
+    try {
+      if (previousPath && previousPath !== storagePath) {
+        const url = Deno.env.get("SUPABASE_URL");
+        const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        if (url && serviceKey) {
+          const client = createClient(url, serviceKey, { auth: { persistSession: false } });
+          await client.storage.from(bucket).remove([previousPath]);
+        }
+      }
+    } catch (_) {
+      // ignorer les erreurs de suppression
+    }
     const finalUrl = isPublic ? publicUrl : signedUrl;
     await updateDevisFileInfo(id, storagePath, finalUrl ?? null);
 
