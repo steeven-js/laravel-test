@@ -6,6 +6,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\EmailTemplateResource\Pages;
 use App\Models\EmailTemplate;
+use App\Services\EmailTemplateRenderer;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists;
@@ -96,7 +97,13 @@ class EmailTemplateResource extends Resource
                     ->description('Corps et variables disponibles')
                     ->icon('heroicon-o-document-text')
                     ->schema([
-                        Forms\Components\Textarea::make('body')->required()->columnSpanFull(),
+                        Forms\Components\Placeholder::make('variables_help')
+                            ->label('Variables disponibles')
+                            ->content('Vous pouvez utiliser des variables comme {{client.nom}}, {{user.name}}. Elles seront remplacées à l\'envoi.'),
+                        Forms\Components\MarkdownEditor::make('body')
+                            ->label('Corps (Markdown)')
+                            ->columnSpanFull()
+                            ->required(),
                         Forms\Components\KeyValue::make('variables')->label('Variables (JSON)')->keyLabel('Variable')->valueLabel('Exemple')->addButtonLabel('Ajouter une variable')->reorderable()->nullable()->columnSpanFull(),
                         Forms\Components\Textarea::make('description')->columnSpanFull(),
                     ]),
@@ -137,7 +144,14 @@ class EmailTemplateResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('category')
+                    ->label('Catégorie')
+                    ->options([
+                        'envoi_initial' => 'Envoi initial',
+                        'rappel' => 'Rappel',
+                        'relance' => 'Relance',
+                        'confirmation' => 'Confirmation',
+                    ]),
             ])
             ->searchPlaceholder('Rechercher...')
             ->emptyStateIcon('heroicon-o-envelope')
@@ -183,15 +197,12 @@ class EmailTemplateResource extends Resource
                                         ->label('Corps du message')
                                         ->markdown()
                                         ->columnSpanFull(),
-                                    Infolists\Components\Grid::make(2)
-                                        ->schema([
-                                            Infolists\Components\TextEntry::make('variables')
-                                                ->label('Variables')
-                                                ->json(),
-                                            Infolists\Components\TextEntry::make('description')
-                                                ->label('Description')
-                                                ->markdown(),
-                                        ]),
+                                    Infolists\Components\TextEntry::make('variables')
+                                        ->label('Variables')
+                                        ->formatStateUsing(fn ($state) => $state ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES) : '—'),
+                                    Infolists\Components\TextEntry::make('description')
+                                        ->label('Description')
+                                        ->markdown(),
                                 ]),
                             Infolists\Components\Section::make('Informations système')
                                 ->description('Métadonnées techniques')
@@ -208,6 +219,54 @@ class EmailTemplateResource extends Resource
                                         ]),
                                 ]),
                         ]),
+                    Tables\Actions\Action::make('preview')
+                        ->label('Aperçu')
+                        ->icon('heroicon-o-eye')
+                        ->modalHeading('Aperçu du template email')
+                        ->modalSubmitAction(false)
+                        ->modalContent(function ($record) {
+                            $renderer = new EmailTemplateRenderer;
+                            $context = [
+                                // Variables plates les plus courantes
+                                'client_nom' => 'Jean Dupont',
+                                'client_email' => 'jean.dupont@example.com',
+                                'devis_numero' => 'DV-25-001',
+                                'devis_montant' => '1 250,00 €',
+                                'devis_validite' => '30 jours',
+                                'entreprise_nom' => 'Madinia Solutions',
+                                // Variables imbriquées (dot notation)
+                                'client' => [
+                                    'nom' => 'Jean Dupont',
+                                    'email' => 'jean.dupont@example.com',
+                                    'created_at' => now()->subDays(30),
+                                ],
+                                'user' => [
+                                    'name' => 'Marie Martin',
+                                    'email' => 'marie.martin@madinia.fr',
+                                ],
+                                'devis' => [
+                                    'numero' => 'DV-25-001',
+                                    'montant' => '1 250,00 €',
+                                    'validite' => '30 jours',
+                                ],
+                                'entreprise' => [
+                                    'nom' => 'Madinia Solutions',
+                                    'ville' => 'Fort-de-France',
+                                ],
+                                'now' => now(),
+                            ];
+
+                            $subject = $renderer->render($record->subject, $context);
+                            $rendered = $renderer->render($record->body, $context);
+                            $body = $renderer->renderMarkdown($rendered);
+
+                            return view('partials.email-preview', compact('subject', 'body'));
+                        }),
+                    Tables\Actions\Action::make('useTemplate')
+                        ->label('Utiliser ce modèle')
+                        ->icon('heroicon-o-paper-airplane')
+                        ->url(fn ($record) => route('filament.admin.resources.client-emails.create', ['template_id' => $record->getKey()]))
+                        ->openUrlInNewTab(),
                     Tables\Actions\EditAction::make(),
                 ]),
             ])

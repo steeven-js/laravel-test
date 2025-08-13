@@ -13,12 +13,12 @@ use App\Models\Facture;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Http;
-use Filament\Notifications\Notification;
 
 class DevisResource extends Resource
 {
@@ -149,8 +149,7 @@ class DevisResource extends Resource
         return $table
             ->query(static::getEloquentQuery()->whereNull('deleted_at'))
             ->modifyQueryUsing(fn (Builder $query) => $query->withCount('lignes'))
-            ->recordUrl(null)
-            ->recordAction('view')
+            ->recordUrl(fn ($record): string => static::getUrl('view', ['record' => $record]))
             ->columns([
                 Tables\Columns\TextColumn::make('numero_devis')
                     ->searchable()
@@ -281,6 +280,12 @@ class DevisResource extends Resource
                 Tables\Actions\CreateAction::make()->label('Nouveau devis'),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()
+                    ->label('Voir')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->url(fn ($record): string => static::getUrl('view', ['record' => $record]))
+                    ->openUrlInNewTab(false),
                 Tables\Actions\ActionGroup::make([
                     Tables\Actions\Action::make('preview_pdf_modal')
                         ->label('Aperçu PDF')
@@ -303,7 +308,7 @@ class DevisResource extends Resource
                         ->disabled(fn (Devis $record): bool => Facture::query()->where('devis_id', $record->id)->exists())
                         ->tooltip(fn (Devis $record): ?string => Facture::query()->where('devis_id', $record->id)->exists()
                             ? 'Une facture existe déjà pour ce devis.'
-                            : 'Le statut du devis sera automatiquement passé à ‘Accepté’ lors de la transformation.')
+                            : 'Le statut du devis sera automatiquement passé à \'Accepté\' lors de la transformation.')
                         ->url(fn (Devis $record): string => static::getUrl('transform', ['record' => $record]))
                         ->openUrlInNewTab(false),
 
@@ -330,6 +335,7 @@ class DevisResource extends Resource
                                     ->body('Définissez SUPABASE_ANON_KEY dans .env')
                                     ->danger()
                                     ->send();
+
                                 return;
                             }
 
@@ -342,8 +348,8 @@ class DevisResource extends Resource
                                 $desiredPath = 'devis/' . $sanitized . '.pdf';
                             }
 
-								$response = Http::withToken($anonKey)
-									->post($base . "/generate-devis-pdf/{$record->id}?public=true&path=" . urlencode($desiredPath));
+                            $response = Http::withToken($anonKey)
+                                ->post($base . "/generate-devis-pdf/{$record->id}?public=true&path=" . urlencode($desiredPath));
 
                             if (! $response->ok()) {
                                 Notification::make()
@@ -351,6 +357,7 @@ class DevisResource extends Resource
                                     ->body($response->body())
                                     ->danger()
                                     ->send();
+
                                 return;
                             }
 
@@ -368,126 +375,11 @@ class DevisResource extends Resource
 
                             Notification::make()
                                 ->title('PDF sauvegardé')
-                                ->body('Le PDF du devis a été généré et écrasé s’il existait déjà.')
+                                ->body('Le PDF du devis a été généré et écrasé s\'il existait déjà.')
                                 ->success()
                                 ->send();
                         }),
 
-                    Tables\Actions\ViewAction::make()
-                        ->modal()
-                        ->url(null)
-                        ->modalCancelActionLabel('Fermer')
-                        ->infolist([
-                            Infolists\Components\Section::make('Informations générales')
-                                ->description('Client, dates, administrateur et statut du devis')
-                                ->icon('heroicon-o-document-text')
-                                ->schema([
-                                    Infolists\Components\Grid::make(2)
-                                        ->schema([
-                                            Infolists\Components\TextEntry::make('numero_devis')
-                                                ->label('Numéro de devis'),
-                                            Infolists\Components\TextEntry::make('client.nom')
-                                                ->label('Client'),
-                                            Infolists\Components\TextEntry::make('administrateur.name')
-                                                ->label('Administrateur'),
-                                            Infolists\Components\TextEntry::make('statut')
-                                                ->label('Statut')
-                                                ->badge()
-                                                ->formatStateUsing(fn (string $state): string => DevisStatus::from($state)->getLabel())
-                                                ->color(fn (string $state): string => match ($state) {
-                                                    'brouillon' => 'gray',
-                                                    'en_attente' => 'warning',
-                                                    'accepte' => 'success',
-                                                    'refuse' => 'danger',
-                                                    'expire' => 'gray',
-                                                    default => 'gray',
-                                                })
-                                                ->icon(fn (string $state): string => match ($state) {
-                                                    'brouillon' => 'heroicon-m-document-text',
-                                                    'en_attente' => 'heroicon-m-clock',
-                                                    'accepte' => 'heroicon-m-check-circle',
-                                                    'refuse' => 'heroicon-m-x-circle',
-                                                    'expire' => 'heroicon-m-exclamation-triangle',
-                                                    default => 'heroicon-m-question-mark-circle',
-                                                }),
-                                            Infolists\Components\TextEntry::make('date_devis')
-                                                ->label('Date du devis')
-                                                ->date('d/m/Y'),
-                                            Infolists\Components\TextEntry::make('date_validite')
-                                                ->label('Date de validité')
-                                                ->date('d/m/Y'),
-                                            Infolists\Components\TextEntry::make('statut_envoi')
-                                                ->label('Statut d\'envoi')
-                                                ->badge()
-                                                ->formatStateUsing(fn (string $state): string => DevisEnvoiStatus::from($state)->getLabel())
-                                                ->color(fn (string $state): string => match ($state) {
-                                                    'non_envoye' => 'gray',
-                                                    'envoye' => 'success',
-                                                    'echec_envoi' => 'danger',
-                                                    default => 'gray',
-                                                })
-                                                ->icon(fn (string $state): string => match ($state) {
-                                                    'non_envoye' => 'heroicon-m-paper-airplane',
-                                                    'envoye' => 'heroicon-m-check-circle',
-                                                    'echec_envoi' => 'heroicon-m-exclamation-triangle',
-                                                    default => 'heroicon-m-question-mark-circle',
-                                                }),
-                                            Infolists\Components\IconEntry::make('archive')
-                                                ->label('Archivé')
-                                                ->boolean(),
-                                        ]),
-                                ]),
-                            Infolists\Components\Section::make('Montants')
-                                ->description('HT, TVA et TTC')
-                                ->icon('heroicon-o-banknotes')
-                                ->schema([
-                                    Infolists\Components\Grid::make(2)
-                                        ->schema([
-                                            Infolists\Components\TextEntry::make('montant_ht')
-                                                ->label('Montant HT')
-                                                ->money('EUR'),
-                                            Infolists\Components\TextEntry::make('taux_tva')
-                                                ->label('Taux TVA')
-                                                ->suffix('%'),
-                                            Infolists\Components\TextEntry::make('montant_tva')
-                                                ->label('Montant TVA')
-                                                ->money('EUR'),
-                                            Infolists\Components\TextEntry::make('montant_ttc')
-                                                ->label('Montant TTC')
-                                                ->money('EUR'),
-                                        ]),
-                                ]),
-                            Infolists\Components\Section::make('Documents')
-                                ->description('Pièces liées au devis')
-                                ->icon('heroicon-o-paper-clip')
-                                ->schema([
-                                    Infolists\Components\Grid::make(2)
-                                        ->schema([
-                                            Infolists\Components\TextEntry::make('pdf_file')
-                                                ->label('Fichier PDF'),
-                                            Infolists\Components\TextEntry::make('pdf_url')
-                                                ->label('URL PDF'),
-                                        ]),
-                                    Infolists\Components\TextEntry::make('objet')
-                                        ->label('Objet')
-                                        ->markdown()
-                                        ->columnSpanFull(),
-                                ]),
-                            Infolists\Components\Section::make('Informations système')
-                                ->description('Métadonnées techniques')
-                                ->icon('heroicon-o-cog')
-                                ->schema([
-                                    Infolists\Components\Grid::make(2)
-                                        ->schema([
-                                            Infolists\Components\TextEntry::make('created_at')
-                                                ->label('Créé le')
-                                                ->dateTime('d/m/Y H:i'),
-                                            Infolists\Components\TextEntry::make('updated_at')
-                                                ->label('Modifié le')
-                                                ->dateTime('d/m/Y H:i'),
-                                        ]),
-                                ]),
-                        ]),
                     Tables\Actions\Action::make('detail')
                         ->label('Détail')
                         ->icon('heroicon-o-arrow-top-right-on-square')

@@ -6,8 +6,13 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ClientEmailResource\Pages;
 use App\Models\ClientEmail;
+use App\Models\EmailTemplate;
+use App\Services\EmailTemplateRenderer;
 use Filament\Forms;
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action as FormAction;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Infolists;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -61,8 +66,55 @@ class ClientEmailResource extends Resource
                                 Forms\Components\Select::make('client_id')->label('Client')->relationship('client', 'nom')->searchable()->preload()->required(),
                                 Forms\Components\Select::make('user_id')->label('Utilisateur')->relationship('user', 'name')->searchable()->preload()->required(),
                             ]),
+                        Forms\Components\Placeholder::make('preview_help')
+                            ->label('Variables disponibles')
+                            ->content('Utilisez des variables comme {{client.nom}}, {{user.name}} dans objet et contenu. Elles seront remplacées lors de l\'envoi.'),
+                        Forms\Components\Select::make('template_id')
+                            ->label('Modèle d\'email')
+                            ->options(fn () => EmailTemplate::query()->where('is_active', true)->orderBy('name')->pluck('name', 'id'))
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->dehydrated(false)
+                            ->helperText('Sélectionner un modèle pour pré-remplir l\'objet et le contenu.')
+                            ->afterStateUpdated(function ($state, Set $set): void {
+                                if (! $state) {
+                                    return;
+                                }
+                                $template = EmailTemplate::find($state);
+                                if ($template) {
+                                    $renderer = new EmailTemplateRenderer;
+                                    // Contexte minimal, le reste sera affiné dans la page (si client/user choisis après)
+                                    $set('objet', $renderer->render($template->subject, []));
+                                    $set('contenu', $renderer->render($template->body, []));
+                                }
+                            }),
                         Forms\Components\TextInput::make('objet')->required()->maxLength(255),
-                        Forms\Components\Textarea::make('contenu')->required()->columnSpanFull(),
+                        Forms\Components\MarkdownEditor::make('contenu')
+                            ->label('Contenu (Markdown)')
+                            ->required()
+                            ->columnSpanFull(),
+                        Actions::make([
+                            FormAction::make('previewRendered')
+                                ->label('Aperçu rendu')
+                                ->icon('heroicon-o-eye')
+                                ->modalHeading('Aperçu rendu de l\'email')
+                                ->modalSubmitAction(false)
+                                ->action(fn () => null)
+                                ->modalContent(function ($livewire) {
+                                    $data = $livewire->form->getState();
+                                    $renderer = new EmailTemplateRenderer;
+                                    $context = [
+                                        'client' => isset($data['client_id']) && $data['client_id'] ? optional(\App\Models\Client::find($data['client_id']))->toArray() : null,
+                                        'user' => isset($data['user_id']) && $data['user_id'] ? optional(\App\Models\User::find($data['user_id']))->toArray() : null,
+                                        'now' => now(),
+                                    ];
+                                    $subject = $renderer->render((string) ($data['objet'] ?? ''), $context);
+                                    $body = $renderer->render((string) ($data['contenu'] ?? ''), $context);
+
+                                    return view('partials.email-preview', compact('subject', 'body'));
+                                }),
+                        ])->fullWidth(),
                     ]),
                 Forms\Components\Section::make('Pièces & statut')
                     ->description('Pièces jointes, copie et statut d’envoi')

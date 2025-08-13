@@ -708,8 +708,8 @@ function buildDevisHtml(doc: any): string {
     tailwind.config = { theme: { extend: { colors: { brand: { 700: '#0F172A' } } } } };
   </script>
   <title>Devis ${escapeHtml(String(doc.numero_devis ?? ""))}</title>
- </head>
- <body>
+</head>
+<body>
   <main class="text-[11px] text-slate-800">
     <header class="pb-4 mb-4 border-b border-slate-200">
       <div class="flex items-end justify-between">
@@ -997,7 +997,11 @@ Deno.serve(async (req) => {
     if (numeroMaybe.length > 0) {
       const sanitizedNumero = numeroMaybe.replace(/[^A-Za-z0-9._-]/g, "-");
       const defaultIdPath = `devis/${id}.pdf`;
-      if (!url.searchParams.has("path") || path.endsWith(`/${id}.pdf`) || path === defaultIdPath) {
+      if (
+        !url.searchParams.has("path") ||
+        path.endsWith(`/${id}.pdf`) ||
+        path === defaultIdPath
+      ) {
         path = `devis/${sanitizedNumero}.pdf`;
       }
     }
@@ -1042,7 +1046,9 @@ Deno.serve(async (req) => {
         const url = Deno.env.get("SUPABASE_URL");
         const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
         if (url && serviceKey) {
-          const client = createClient(url, serviceKey, { auth: { persistSession: false } });
+          const client = createClient(url, serviceKey, {
+            auth: { persistSession: false },
+          });
           await client.storage.from(bucket).remove([previousPath]);
         }
       }

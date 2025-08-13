@@ -29,4 +29,17 @@ class EmailTemplate extends Model
         'is_default' => 'boolean',
         'is_active' => 'boolean',
     ];
+
+    protected static function booted(): void
+    {
+        static::saved(function (EmailTemplate $template): void {
+            if ($template->is_default) {
+                // Désactive tous les autres modèles par défaut dans la même catégorie
+                static::query()
+                    ->where('category', $template->category)
+                    ->whereKeyNot($template->getKey())
+                    ->update(['is_default' => false]);
+            }
+        });
+    }
 }
