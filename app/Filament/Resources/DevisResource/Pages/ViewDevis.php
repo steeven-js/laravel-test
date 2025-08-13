@@ -26,46 +26,51 @@ class ViewDevis extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('preview_pdf_modal')
-                ->label('Aperçu PDF')
-                ->icon('heroicon-o-eye')
-                ->color('info')
-                ->modalHeading(fn () => "Aperçu PDF - Devis {$this->record->numero_devis}")
-                ->modalContent(fn () => view('pdf.preview-modal', [
-                    'pdfUrl' => route('devis.pdf', $this->record),
-                    'devis' => $this->record,
-                ]))
-                ->modalWidth('7xl')
-                ->modalCancelActionLabel('Fermer')
-                ->modalSubmitAction(false),
+            // Groupe 1: Actions principales
+            Actions\ActionGroup::make([
+                Actions\Action::make('preview_pdf_modal')
+                    ->label('Aperçu PDF')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->modalHeading(fn () => "Aperçu PDF - Devis {$this->record->numero_devis}")
+                    ->modalContent(fn () => view('pdf.preview-modal', [
+                        'pdfUrl' => route('devis.pdf', $this->record),
+                        'devis' => $this->record,
+                    ]))
+                    ->modalWidth('7xl')
+                    ->modalCancelActionLabel('Fermer')
+                    ->modalSubmitAction(false),
 
-            Actions\Action::make('convert_to_invoice')
-                ->label('Transformer en facture')
-                ->icon('heroicon-m-arrow-right-circle')
-                ->color('success')
-                // Toujours visible à côté d'Aperçu PDF, désactivé seulement si une facture existe déjà
-                ->disabled(function (): bool {
-                    if (! $this->record) {
-                        return true;
-                    }
-                    $alreadyConverted = Facture::query()->where('devis_id', $this->record->id)->exists();
+                Actions\Action::make('convert_to_invoice')
+                    ->label('Transformer en facture')
+                    ->icon('heroicon-m-arrow-right-circle')
+                    ->color('success')
+                    ->disabled(function (): bool {
+                        if (! $this->record) {
+                            return true;
+                        }
+                        $alreadyConverted = Facture::query()->where('devis_id', $this->record->id)->exists();
 
-                    return $alreadyConverted;
-                })
-                ->tooltip(function (): ?string {
-                    if (! $this->record) {
-                        return null;
-                    }
-                    if (Facture::query()->where('devis_id', $this->record->id)->exists()) {
-                        return 'Une facture existe déjà pour ce devis.';
-                    }
+                        return $alreadyConverted;
+                    })
+                    ->tooltip(function (): ?string {
+                        if (! $this->record) {
+                            return null;
+                        }
+                        if (Facture::query()->where('devis_id', $this->record->id)->exists()) {
+                            return 'Une facture existe déjà pour ce devis.';
+                        }
 
-                    return 'Le statut du devis sera automatiquement passé à ‘Accepté’ lors de la transformation.';
-                })
-                ->url(fn (): string => DevisResource::getUrl('transform', ['record' => $this->record]))
-                ->openUrlInNewTab(false),
+                        return 'Le statut du devis sera automatiquement passé à \'Accepté\' lors de la transformation.';
+                    })
+                    ->url(fn (): string => DevisResource::getUrl('transform', ['record' => $this->record]))
+                    ->openUrlInNewTab(false),
+            ])
+            ->label('Actions')
+            ->icon('heroicon-o-cog-6-tooth')
+            ->color('primary'),
 
-            Actions\EditAction::make(),
+            // Boutons de navigation directement visibles
             Action::make('precedent')
                 ->label('Précédent')
                 ->icon('heroicon-m-chevron-left')
@@ -82,6 +87,12 @@ class ViewDevis extends ViewRecord
                     ? DevisResource::getUrl('view', ['record' => $this->getNextRecordId()])
                     : '#')
                 ->disabled(fn (): bool => $this->getNextRecordId() === null),
+
+            // Groupe 3: Actions secondaires
+            Actions\EditAction::make()
+                ->label('Modifier')
+                ->icon('heroicon-o-pencil')
+                ->color('warning'),
         ];
     }
 

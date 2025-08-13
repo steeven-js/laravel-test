@@ -15,7 +15,30 @@ class EditFacture extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            // Groupe 1: Actions principales
+            Actions\ActionGroup::make([
+                Actions\Action::make('preview_pdf_modal')
+                    ->label('Aperçu PDF')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->modalHeading(fn () => "Aperçu PDF - Facture {$this->record->numero_facture}")
+                    ->modalContent(fn () => view('pdf.preview-modal-facture', [
+                        'pdfUrl' => route('factures.pdf', $this->record),
+                        'facture' => $this->record,
+                    ]))
+                    ->modalWidth('7xl')
+                    ->modalCancelActionLabel('Fermer')
+                    ->modalSubmitAction(false),
+            ])
+            ->label('Actions')
+            ->icon('heroicon-o-cog-6-tooth')
+            ->color('primary'),
+
+            // Groupe 2: Actions secondaires
+            Actions\DeleteAction::make()
+                ->label('Supprimer')
+                ->icon('heroicon-o-trash')
+                ->color('danger'),
         ];
     }
 }
