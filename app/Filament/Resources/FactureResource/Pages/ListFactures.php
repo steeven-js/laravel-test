@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\FactureResource\Pages;
 
 use App\Filament\Resources\FactureResource;
+use App\Filament\Widgets\factures\FacturesStats;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\Facture;
@@ -232,6 +233,13 @@ class ListFactures extends ListRecords
                     Notification::make()->title($count . ' factures factices créées')->success()->send();
                 })
                 ->requiresConfirmation(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            FacturesStats::class,
         ];
     }
 }

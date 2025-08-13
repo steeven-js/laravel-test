@@ -18,8 +18,7 @@ class DevisMarkdownMail extends Mailable
         public string $markdownBody,
         public Devis $devis,
         public bool $includeUrl = true,
-    ) {
-    }
+    ) {}
 
     public function build(): self
     {
@@ -32,5 +31,3 @@ class DevisMarkdownMail extends Mailable
             ]);
     }
 }
-
-

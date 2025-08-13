@@ -30,9 +30,9 @@ class EditFacture extends EditRecord
                     ->modalCancelActionLabel('Fermer')
                     ->modalSubmitAction(false),
             ])
-            ->label('Actions')
-            ->icon('heroicon-o-cog-6-tooth')
-            ->color('primary'),
+                ->label('Actions')
+                ->icon('heroicon-o-cog-6-tooth')
+                ->color('primary'),
 
             // Groupe 2: Actions secondaires
             Actions\DeleteAction::make()

@@ -30,9 +30,9 @@ class ViewFacture extends ViewRecord
                     ->modalCancelActionLabel('Fermer')
                     ->modalSubmitAction(false),
             ])
-            ->label('Actions')
-            ->icon('heroicon-o-cog-6-tooth')
-            ->color('primary'),
+                ->label('Actions')
+                ->icon('heroicon-o-cog-6-tooth')
+                ->color('primary'),
 
             // Boutons de navigation directement visibles
             Actions\Action::make('precedent')

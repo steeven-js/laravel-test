@@ -12,6 +12,16 @@ class ClientStats extends BaseWidget
 {
     public ?Client $record = null;
 
+    protected static bool $shouldPoll = false;
+
+    protected static ?string $pollingInterval = null;
+
+    public static function canView(): bool
+    {
+        // Ne s'affiche que sur les pages de détail des clients
+        return request()->routeIs('filament.admin.resources.clients.view');
+    }
+
     protected function getStats(): array
     {
         $client = $this->record;

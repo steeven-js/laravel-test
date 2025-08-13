@@ -8,23 +8,20 @@ use App\Enums\DevisEnvoiStatus;
 use App\Filament\Resources\DevisResource;
 use App\Models\Devis;
 use App\Models\EmailTemplate;
-use App\Models\User;
 use App\Services\EmailTemplateRenderer;
 use Carbon\Carbon;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Forms\Get;
-use Filament\Facades\Filament;
+use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Illuminate\Notifications\DatabaseNotification;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
 {
@@ -99,6 +96,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
                                 ->label('Statut du PDF')
                                 ->content(function () use ($devis) {
                                     $hasUrl = filled($devis->pdf_url);
+
                                     return $hasUrl
                                         ? 'PDF déjà généré et disponible.'
                                         : 'Aucun PDF détecté. Il sera généré automatiquement.';
@@ -122,7 +120,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
                                         ->email()
                                         ->required(),
                                     Forms\Components\TextInput::make('client_email')
-                                        ->label("Email du client")
+                                        ->label('Email du client')
                                         ->email()
                                         ->required(),
                                 ]),
@@ -190,11 +188,13 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
                                         ->orderByDesc('is_default')
                                         ->orderBy('name')
                                         ->get(['id', 'name', 'is_default']);
+
                                     return $templates->mapWithKeys(function ($t) {
                                         $label = (string) $t->name;
                                         if ((bool) $t->is_default) {
                                             $label .= ' — par défaut';
                                         }
+
                                         return [$t->id => $label];
                                     });
                                 })
@@ -226,6 +226,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
                                     if (! $tmpl) {
                                         return '—';
                                     }
+
                                     return $tmpl->is_default ? 'Par défaut (catégorie)' : 'Non par défaut';
                                 }),
                             Forms\Components\TextInput::make('subject')
@@ -249,6 +250,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
                                         $subject = $renderer->render((string) ($data['subject'] ?? ''), $context);
                                         $bodyRaw = $renderer->render((string) ($data['body'] ?? ''), $context);
                                         $body = $renderer->renderMarkdown($bodyRaw);
+
                                         return view('partials.email-preview', compact('subject', 'body'));
                                     }),
                             ])->fullWidth(),
@@ -324,6 +326,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
 
         $euro = function ($v): string {
             $num = (float) ($v ?? 0);
+
             return number_format($num, 2, ',', ' ') . ' €';
         };
 
@@ -414,6 +417,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
 
         if ($adminEmail === '' || $clientEmail === '') {
             Notification::make()->title('Emails requis')->danger()->body("Renseignez l'email admin et l'email client")->send();
+
             return;
         }
 
@@ -425,7 +429,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
         try {
             // Envoi via Mailable Markdown
             $mailable = new \App\Mail\DevisMarkdownMail($subject, $bodyMarkdown, $devis, (bool) ($data['include_url'] ?? true));
-            if (!empty($data['include_pdf']) && filled($devis->pdf_url)) {
+            if (! empty($data['include_pdf']) && filled($devis->pdf_url)) {
                 // Télécharger la pièce et l'attacher côté serveur
                 try {
                     $tmp = tempnam(sys_get_temp_dir(), 'devis_pdf_') ?: null;
@@ -445,7 +449,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
             }
 
             $mailer = Mail::to($clientEmail);
-            if (!empty($data['cc_admin'])) {
+            if (! empty($data['cc_admin'])) {
                 $mailer->cc([$adminEmail]);
             }
             $mailer->send($mailable);
@@ -453,7 +457,7 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
             // Statut & date
             $devis->statut_envoi = DevisEnvoiStatus::Envoye->value;
             $devis->date_envoi_client = Carbon::now();
-            $devis->date_envoi_admin = !empty($data['cc_admin']) ? Carbon::now() : $devis->date_envoi_admin;
+            $devis->date_envoi_admin = ! empty($data['cc_admin']) ? Carbon::now() : $devis->date_envoi_admin;
             $devis->save();
 
             // Notification applicative de succès
@@ -504,5 +508,3 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
         }
     }
 }
-
-

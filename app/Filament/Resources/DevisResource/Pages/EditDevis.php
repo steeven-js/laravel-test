@@ -44,9 +44,9 @@ class EditDevis extends EditRecord
                     ->url(fn (): string => DevisResource::getUrl('transform', ['record' => $this->record]))
                     ->openUrlInNewTab(false),
             ])
-            ->label('Actions')
-            ->icon('heroicon-o-cog-6-tooth')
-            ->color('primary'),
+                ->label('Actions')
+                ->icon('heroicon-o-cog-6-tooth')
+                ->color('primary'),
 
             // Groupe 2: Actions secondaires
             Actions\DeleteAction::make()

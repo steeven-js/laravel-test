@@ -12,6 +12,16 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ClientsStats extends BaseWidget
 {
+    protected static bool $shouldPoll = false;
+
+    protected static ?string $pollingInterval = null;
+
+    public static function canView(): bool
+    {
+        // Ne s'affiche que sur la page de liste des clients
+        return request()->routeIs('filament.admin.resources.clients.index');
+    }
+
     protected function getStats(): array
     {
         $totalClients = Client::query()->count();

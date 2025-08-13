@@ -12,7 +12,6 @@ use App\Models\Devis;
 use App\Models\Facture;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Infolists;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;

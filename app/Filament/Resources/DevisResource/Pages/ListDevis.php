@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Filament\Resources\DevisResource\Pages;
 
 use App\Filament\Resources\DevisResource;
+use App\Filament\Widgets\devis\DevisStats;
 use App\Models\Client;
 use App\Models\Devis;
 use App\Models\LigneDevis;
@@ -188,6 +189,13 @@ class ListDevis extends ListRecords
                     Notification::make()->title($created . ' devis factices créés')->success()->send();
                 })
                 ->requiresConfirmation(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            DevisStats::class,
         ];
     }
 }

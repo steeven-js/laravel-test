@@ -73,9 +73,9 @@ class ViewDevis extends ViewRecord
                     ->url(fn (): string => DevisResource::getUrl('sendEmail', ['record' => $this->record]))
                     ->openUrlInNewTab(false),
             ])
-            ->label('Actions')
-            ->icon('heroicon-o-cog-6-tooth')
-            ->color('primary'),
+                ->label('Actions')
+                ->icon('heroicon-o-cog-6-tooth')
+                ->color('primary'),
 
             // Boutons de navigation directement visibles
             Action::make('precedent')

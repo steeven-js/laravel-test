@@ -16,8 +16,7 @@ class DevisEmailNotification extends Notification
         public Devis $devis,
         public bool $success,
         public ?string $errorMessage = null,
-    ) {
-    }
+    ) {}
 
     public function via(object $notifiable): array
     {
@@ -30,12 +29,10 @@ class DevisEmailNotification extends Notification
         return [
             'type' => 'devis_email',
             'status' => $this->success ? 'success' : 'error',
-            'message' => $this->success ? 'Email devis envoyé avec succès' : ("Echec envoi email devis: " . ($this->errorMessage ?? '')),
+            'message' => $this->success ? 'Email devis envoyé avec succès' : ('Echec envoi email devis: ' . ($this->errorMessage ?? '')),
             'devis_id' => $this->devis->id,
             'numero_devis' => $this->devis->numero_devis,
             'pdf_url' => $this->devis->pdf_url,
         ];
     }
 }
-
-
