@@ -342,12 +342,12 @@ class DevisResource extends Resource
                                                     'expire' => 'heroicon-m-exclamation-triangle',
                                                     default => 'heroicon-m-question-mark-circle',
                                                 }),
-                                                                                    Infolists\Components\TextEntry::make('date_devis')
-                                            ->label('Date du devis')
-                                            ->date('d/m/Y'),
-                                        Infolists\Components\TextEntry::make('date_validite')
-                                            ->label('Date de validité')
-                                            ->date('d/m/Y'),
+                                            Infolists\Components\TextEntry::make('date_devis')
+                                                ->label('Date du devis')
+                                                ->date('d/m/Y'),
+                                            Infolists\Components\TextEntry::make('date_validite')
+                                                ->label('Date de validité')
+                                                ->date('d/m/Y'),
                                             Infolists\Components\TextEntry::make('statut_envoi')
                                                 ->label('Statut d\'envoi')
                                                 ->badge()
@@ -411,12 +411,12 @@ class DevisResource extends Resource
                                 ->schema([
                                     Infolists\Components\Grid::make(2)
                                         ->schema([
-                                                                                    Infolists\Components\TextEntry::make('created_at')
-                                            ->label('Créé le')
-                                            ->dateTime('d/m/Y H:i'),
-                                        Infolists\Components\TextEntry::make('updated_at')
-                                            ->label('Modifié le')
-                                            ->dateTime('d/m/Y H:i'),
+                                            Infolists\Components\TextEntry::make('created_at')
+                                                ->label('Créé le')
+                                                ->dateTime('d/m/Y H:i'),
+                                            Infolists\Components\TextEntry::make('updated_at')
+                                                ->label('Modifié le')
+                                                ->dateTime('d/m/Y H:i'),
                                         ]),
                                 ]),
                         ]),
