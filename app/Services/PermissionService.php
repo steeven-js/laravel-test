@@ -25,6 +25,7 @@ class PermissionService
 
                 if (is_array($value)) {
                     $walker($value, $currentPath);
+
                     continue;
                 }
 

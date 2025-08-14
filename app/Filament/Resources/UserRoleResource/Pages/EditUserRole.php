@@ -66,6 +66,7 @@ class EditUserRole extends EditRecord
     {
         $display = $this->record->display_name ?? null;
         $technical = $this->record->name ?? 'rôle';
+
         return $display ? "Modifier le rôle : {$display}" : "Modifier le rôle : {$technical}";
     }
 
@@ -77,7 +78,7 @@ class EditUserRole extends EditRecord
 
         $modelClass = $this->getResource()::getModel();
         /** @var \Illuminate\Database\Eloquent\Model $model */
-        $model = new $modelClass();
+        $model = new $modelClass;
 
         $prev = $modelClass::query()
             ->where($model->getKeyName(), '<', $this->record->getKey())
@@ -95,7 +96,7 @@ class EditUserRole extends EditRecord
 
         $modelClass = $this->getResource()::getModel();
         /** @var \Illuminate\Database\Eloquent\Model $model */
-        $model = new $modelClass();
+        $model = new $modelClass;
 
         $next = $modelClass::query()
             ->where($model->getKeyName(), '>', $this->record->getKey())

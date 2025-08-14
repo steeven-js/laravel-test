@@ -21,9 +21,10 @@ class TestNavigationPermissions extends Command
 
         // Déterminer l'utilisateur à tester
         $user = $this->getUserToTest();
-        
-        if (!$user) {
+
+        if (! $user) {
             $this->error('❌ Aucun utilisateur trouvé pour le test');
+
             return 1;
         }
 
@@ -77,7 +78,7 @@ class TestNavigationPermissions extends Command
             $crmItems[] = 'Opportunités';
         }
 
-        if (!empty($crmItems)) {
+        if (! empty($crmItems)) {
             $this->line('📊 Groupe CRM :');
             foreach ($crmItems as $item) {
                 $this->line("   ✅ {$item}");
@@ -95,7 +96,7 @@ class TestNavigationPermissions extends Command
             $ventesItems[] = 'Factures';
         }
 
-        if (!empty($ventesItems)) {
+        if (! empty($ventesItems)) {
             $this->line('💰 Groupe Ventes :');
             foreach ($ventesItems as $item) {
                 $this->line("   ✅ {$item}");
@@ -116,7 +117,7 @@ class TestNavigationPermissions extends Command
             $communicationItems[] = 'Notifications';
         }
 
-        if (!empty($communicationItems)) {
+        if (! empty($communicationItems)) {
             $this->line('📧 Groupe Communication :');
             foreach ($communicationItems as $item) {
                 $this->line("   ✅ {$item}");
@@ -134,7 +135,7 @@ class TestNavigationPermissions extends Command
             $referentielsItems[] = 'Secteurs d\'activité';
         }
 
-        if (!empty($referentielsItems)) {
+        if (! empty($referentielsItems)) {
             $this->line('📚 Groupe Référentiels :');
             foreach ($referentielsItems as $item) {
                 $this->line("   ✅ {$item}");
@@ -152,7 +153,7 @@ class TestNavigationPermissions extends Command
             $supportItems[] = 'Tâches';
         }
 
-        if (!empty($supportItems)) {
+        if (! empty($supportItems)) {
             $this->line('🛠️ Groupe Support :');
             foreach ($supportItems as $item) {
                 $this->line("   ✅ {$item}");
@@ -170,7 +171,7 @@ class TestNavigationPermissions extends Command
             $reglagesItems[] = 'Numéros de séquence';
         }
 
-        if (!empty($reglagesItems)) {
+        if (! empty($reglagesItems)) {
             $this->line('⚙️ Groupe Réglages :');
             foreach ($reglagesItems as $item) {
                 $this->line("   ✅ {$item}");
@@ -188,7 +189,7 @@ class TestNavigationPermissions extends Command
             $adminItems[] = 'Utilisateurs';
         }
 
-        if (!empty($adminItems)) {
+        if (! empty($adminItems)) {
             $this->line('🔐 Groupe Administration :');
             foreach ($adminItems as $item) {
                 $this->line("   ✅ {$item}");
@@ -199,13 +200,13 @@ class TestNavigationPermissions extends Command
 
         $this->newLine();
         $this->info('🎯 Résumé :');
-        $this->line("   • Éléments visibles : " . $this->countVisibleItems($user));
-        $this->line("   • Groupes visibles : " . $this->countVisibleGroups($user));
-        
+        $this->line('   • Éléments visibles : ' . $this->countVisibleItems($user));
+        $this->line('   • Groupes visibles : ' . $this->countVisibleGroups($user));
+
         if ($user->isSuperAdmin()) {
-            $this->line("   • Statut : Super administrateur (accès complet)");
+            $this->line('   • Statut : Super administrateur (accès complet)');
         } else {
-            $this->line("   • Statut : Utilisateur avec permissions filtrées");
+            $this->line('   • Statut : Utilisateur avec permissions filtrées');
         }
     }
 
@@ -220,7 +221,7 @@ class TestNavigationPermissions extends Command
             'services', 'secteursactivite',
             'tickets', 'todos',
             'madinia', 'settings',
-            'userroles', 'users'
+            'userroles', 'users',
         ];
 
         foreach ($resources as $resource) {

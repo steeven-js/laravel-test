@@ -27,6 +27,7 @@ class PermissionsOverview extends Page
     public static function canAccess(): bool
     {
         $user = Auth::user();
+
         return $user && ($user instanceof User) && $user->isSuperAdmin();
     }
 
@@ -37,18 +38,18 @@ class PermissionsOverview extends Page
 
     public function getViewData(): array
     {
-        $permissionService = new PermissionService();
+        $permissionService = new PermissionService;
         $allPermissions = $permissionService->getAllAvailablePermissions();
-        
+
         // Récupérer tous les utilisateurs avec leurs rôles
         $users = User::with('userRole')->get();
-        
+
         // Récupérer tous les rôles
         $roles = UserRole::all();
-        
+
         // Organiser les permissions par ressource
         $permissionsByResource = $permissionService->getPermissionsByResource();
-        
+
         return [
             'users' => $users,
             'roles' => $roles,

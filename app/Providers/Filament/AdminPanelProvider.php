@@ -25,6 +25,7 @@ use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
@@ -38,8 +39,8 @@ use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
-use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -55,9 +56,9 @@ class AdminPanelProvider extends PanelProvider
             // ->topNavigation() // Désactivé: utiliser la navigation latérale
             ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
                 $user = Auth::user();
-                
+
                 // Si pas d'utilisateur connecté, retourner navigation vide
-                if (!$user || !($user instanceof User)) {
+                if (! $user || ! ($user instanceof User)) {
                     return $builder;
                 }
 
@@ -77,12 +78,18 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Pages\Dashboard::class,
                 \App\Filament\Pages\PermissionsOverview::class,
+                \App\Filament\Pages\ProfileSettings::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
                 \App\Filament\Widgets\DashboardStats::class,
+            ])
+            ->userMenuItems([
+                'account' => MenuItem::make()
+                    ->label('Paramètres du profil')
+                    ->url(fn (): string => \App\Filament\Pages\ProfileSettings::getUrl()),
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('15s')
@@ -195,8 +202,8 @@ class AdminPanelProvider extends PanelProvider
         if ($user->canView('opportunities')) {
             $crmItems = array_merge($crmItems, OpportunityResource::getNavigationItems());
         }
-        
-        if (!empty($crmItems)) {
+
+        if (! empty($crmItems)) {
             $groups[] = NavigationGroup::make('CRM')
                 ->collapsible()
                 ->items($crmItems);
@@ -210,8 +217,8 @@ class AdminPanelProvider extends PanelProvider
         if ($user->canView('factures')) {
             $ventesItems = array_merge($ventesItems, FactureResource::getNavigationItems());
         }
-        
-        if (!empty($ventesItems)) {
+
+        if (! empty($ventesItems)) {
             $groups[] = NavigationGroup::make('Ventes')
                 ->collapsible()
                 ->items($ventesItems);
@@ -228,8 +235,8 @@ class AdminPanelProvider extends PanelProvider
         if ($user->canView('notifications')) {
             $communicationItems = array_merge($communicationItems, NotificationsResource::getNavigationItems());
         }
-        
-        if (!empty($communicationItems)) {
+
+        if (! empty($communicationItems)) {
             $groups[] = NavigationGroup::make('Communication')
                 ->collapsible()
                 ->items($communicationItems);
@@ -243,8 +250,8 @@ class AdminPanelProvider extends PanelProvider
         if ($user->canView('secteursactivite')) {
             $referentielsItems = array_merge($referentielsItems, SecteurActiviteResource::getNavigationItems());
         }
-        
-        if (!empty($referentielsItems)) {
+
+        if (! empty($referentielsItems)) {
             $groups[] = NavigationGroup::make('Référentiels')
                 ->collapsible()
                 ->items($referentielsItems);
@@ -258,8 +265,8 @@ class AdminPanelProvider extends PanelProvider
         if ($user->canView('todos')) {
             $supportItems = array_merge($supportItems, TodoResource::getNavigationItems());
         }
-        
-        if (!empty($supportItems)) {
+
+        if (! empty($supportItems)) {
             $groups[] = NavigationGroup::make('Support')
                 ->collapsible()
                 ->items($supportItems);
@@ -273,8 +280,8 @@ class AdminPanelProvider extends PanelProvider
         if ($user->canView('settings')) {
             $reglagesItems = array_merge($reglagesItems, NumeroSequenceResource::getNavigationItems());
         }
-        
-        if (!empty($reglagesItems)) {
+
+        if (! empty($reglagesItems)) {
             $groups[] = NavigationGroup::make('Réglages')
                 ->collapsible()
                 ->items($reglagesItems);
@@ -288,8 +295,8 @@ class AdminPanelProvider extends PanelProvider
         if ($user->canView('users')) {
             $adminItems = array_merge($adminItems, UsersResource::getNavigationItems());
         }
-        
-        if (!empty($adminItems)) {
+
+        if (! empty($adminItems)) {
             $groups[] = NavigationGroup::make('Administration')
                 ->collapsible()
                 ->items($adminItems);
