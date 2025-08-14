@@ -51,6 +51,9 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->favicon(asset('images/favicon.ico'))
+            ->brandLogo(asset('images/logo-1-small.png'))
+            ->darkModeBrandLogo(asset('images/logo-1-small-dark.png'))
             ->collapsibleNavigationGroups()
             ->sidebarCollapsibleOnDesktop()
             // ->topNavigation() // Désactivé: utiliser la navigation latérale
