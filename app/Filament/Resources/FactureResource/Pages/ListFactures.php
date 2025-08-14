@@ -13,6 +13,7 @@ use App\Models\LigneFacture;
 use App\Models\NumeroSequence;
 use App\Models\Service;
 use App\Models\User;
+use App\Traits\EnvironmentProtection;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Facades\Filament;
@@ -26,51 +27,62 @@ use Illuminate\Support\Str;
 
 class ListFactures extends ListRecords
 {
+    use EnvironmentProtection;
+    
     protected static string $resource = FactureResource::class;
 
     protected static ?string $breadcrumb = 'Liste';
 
     protected function getHeaderActions(): array
     {
-        return [
+        $actions = [
             Actions\CreateAction::make()->label('Nouvelle'),
-            Actions\Action::make('generateFakeFactures')
-                ->label('Générer des factures factices')
-                ->icon('heroicon-o-receipt-refund')
-                ->visible(fn (): bool => Auth::user()?->userRole?->name === 'super_admin')
+        ];
+
+        // Afficher le bouton de génération seulement en environnement de développement
+        if ($this->shouldShowGenerationButtons()) {
+            $actions[] = Actions\Action::make('generate_test_data')
+                ->label('🎲 Générer factures de test')
+                ->icon('heroicon-o-plus-circle')
+                ->color('success')
                 ->form([
                     Forms\Components\TextInput::make('count')
-                        ->label('Quantité de factures')
+                        ->label('Nombre de factures')
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(100)
                         ->default(10)
                         ->required(),
-                    Forms\Components\Toggle::make('link_to_devis')
-                        ->label('Lier à un devis existant (et copier les lignes)')
-                        ->reactive()
-                        ->default(true),
                     Forms\Components\TextInput::make('min_lines')
-                        ->label('Lignes min/facture')
+                        ->label('Lignes min par facture')
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(10)
-                        ->default(1)
-                        ->disabled(fn (Get $get): bool => (bool) $get('link_to_devis') === true)
-                        ->helperText('Ignoré si « Lier à un devis » est activé')
+                        ->default(2)
                         ->required(),
                     Forms\Components\TextInput::make('max_lines')
-                        ->label('Lignes max/facture')
+                        ->label('Lignes max par facture')
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(10)
                         ->default(4)
-                        ->disabled(fn (Get $get): bool => (bool) $get('link_to_devis') === true)
-                        ->helperText('Ignoré si « Lier à un devis » est activé')
                         ->required(),
+                    Forms\Components\Toggle::make('link_to_devis')
+                        ->label('Lier à des devis existants')
+                        ->default(true),
                 ])
                 ->action(function (array $data): void {
-                    // Eviter les timeouts et réduire l’overhead mémoire pendant la génération
+                    // Vérifier l'environnement avant de générer des données
+                    if (!$this->isDataGenerationAllowed()) {
+                        Notification::make()
+                            ->title('🚫 Génération bloquée')
+                            ->body($this->getEnvironmentErrorMessage())
+                            ->danger()
+                            ->send();
+                        return;
+                    }
+                    
+                    // Eviter les timeouts et réduire l'overhead mémoire pendant la génération
                     @set_time_limit(0);
                     @ini_set('memory_limit', '512M');
                     \Illuminate\Support\Facades\DB::connection()->disableQueryLog();
@@ -226,14 +238,14 @@ class ListFactures extends ListRecords
                     $recipient = Filament::auth()->user();
 
                     Notification::make()
-                        ->title($count . ' factures factices créées')
+                        ->title($count . ' factures de test créées')
                         ->success()
-                        ->sendToDatabase($recipient);
-
-                    Notification::make()->title($count . ' factures factices créées')->success()->send();
+                        ->send();
                 })
-                ->requiresConfirmation(),
-        ];
+                ->requiresConfirmation();
+        }
+
+        return $actions;
     }
 
     protected function getHeaderWidgets(): array

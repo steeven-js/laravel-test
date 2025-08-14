@@ -4,20 +4,26 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Traits\EnvironmentProtection;
 use Database\Seeders\TodoSeeder;
 use Illuminate\Console\Command;
 
 class SeedTodos extends Command
 {
+    use EnvironmentProtection;
+
     protected $signature = 'seed:todos {--force : Forcer l\'exécution même si des données existent}';
 
     protected $description = 'Créer des tâches de test';
 
     public function handle(): int
     {
-        $this->info('Début de la création des tâches...');
-
         try {
+            // Vérifier l'environnement avant de générer des données
+            $this->ensureDataGenerationAllowed();
+            
+            $this->info('Début de la création des tâches...');
+
             $seeder = new TodoSeeder;
             $seeder->run();
 

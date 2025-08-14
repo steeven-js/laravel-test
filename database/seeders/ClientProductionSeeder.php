@@ -6,17 +6,24 @@ namespace Database\Seeders;
 
 use App\Models\Client;
 use App\Models\Entreprise;
+use App\Models\SecteurActivite;
+use App\Traits\EnvironmentProtection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class ClientProductionSeeder extends Seeder
 {
+    use EnvironmentProtection;
+
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
+        // Vérifier l'environnement avant de générer des données
+        $this->ensureDataGenerationAllowed();
+        
         $this->command->info('🚀 Début de la migration des clients de production...');
 
         // Vérifier que le fichier CSV existe

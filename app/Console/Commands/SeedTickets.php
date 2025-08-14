@@ -4,20 +4,26 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Traits\EnvironmentProtection;
 use Database\Seeders\TicketSeeder;
 use Illuminate\Console\Command;
 
 class SeedTickets extends Command
 {
+    use EnvironmentProtection;
+
     protected $signature = 'seed:tickets {--force : Forcer l\'exécution même si des données existent}';
 
     protected $description = 'Créer des tickets de test';
 
     public function handle(): int
     {
-        $this->info('Début de la création des tickets...');
-
         try {
+            // Vérifier l'environnement avant de générer des données
+            $this->ensureDataGenerationAllowed();
+            
+            $this->info('Début de la création des tickets...');
+
             $seeder = new TicketSeeder;
             $seeder->run();
 

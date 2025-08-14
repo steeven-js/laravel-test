@@ -12,6 +12,7 @@ use App\Models\LigneDevis;
 use App\Models\NumeroSequence;
 use App\Models\Service;
 use App\Models\User;
+use App\Traits\EnvironmentProtection;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Facades\Filament;
@@ -24,36 +25,41 @@ use Illuminate\Support\Str;
 
 class ListDevis extends ListRecords
 {
+    use EnvironmentProtection;
+    
     protected static string $resource = DevisResource::class;
 
     protected static ?string $breadcrumb = 'Liste';
 
     protected function getHeaderActions(): array
     {
-        return [
-            Actions\CreateAction::make()
-                ->label('Nouveau'),
-            Actions\Action::make('generateFakeDevis')
-                ->label('Générer des devis factices')
-                ->icon('heroicon-o-document-text')
-                ->visible(fn (): bool => Auth::user()?->userRole?->name === 'super_admin')
+        $actions = [
+            Actions\CreateAction::make()->label('Nouveau'),
+        ];
+
+        // Afficher le bouton de génération seulement en environnement de développement
+        if ($this->shouldShowGenerationButtons()) {
+            $actions[] = Actions\Action::make('generate_test_data')
+                ->label('🎲 Générer devis de test')
+                ->icon('heroicon-o-plus-circle')
+                ->color('success')
                 ->form([
                     Forms\Components\TextInput::make('count')
-                        ->label('Quantité de devis')
+                        ->label('Nombre de devis')
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(100)
                         ->default(10)
                         ->required(),
                     Forms\Components\TextInput::make('min_lines')
-                        ->label('Lignes min/devis')
+                        ->label('Lignes min par devis')
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(10)
-                        ->default(1)
+                        ->default(2)
                         ->required(),
                     Forms\Components\TextInput::make('max_lines')
-                        ->label('Lignes max/devis')
+                        ->label('Lignes max par devis')
                         ->numeric()
                         ->minValue(1)
                         ->maxValue(10)
@@ -61,7 +67,17 @@ class ListDevis extends ListRecords
                         ->required(),
                 ])
                 ->action(function (array $data): void {
-                    // Eviter les timeouts et réduire l’overhead mémoire pendant la génération
+                    // Vérifier l'environnement avant de générer des données
+                    if (!$this->isDataGenerationAllowed()) {
+                        Notification::make()
+                            ->title('🚫 Génération bloquée')
+                            ->body($this->getEnvironmentErrorMessage())
+                            ->danger()
+                            ->send();
+                        return;
+                    }
+                    
+                    // Eviter les timeouts et réduire l'overhead mémoire pendant la génération
                     @set_time_limit(0);
                     @ini_set('memory_limit', '512M');
                     DB::connection()->disableQueryLog();
@@ -186,10 +202,12 @@ class ListDevis extends ListRecords
                         }
                     }
 
-                    Notification::make()->title($created . ' devis factices créés')->success()->send();
+                    Notification::make()->title($created . ' devis de test créés')->success()->send();
                 })
-                ->requiresConfirmation(),
-        ];
+                ->requiresConfirmation();
+        }
+
+        return $actions;
     }
 
     protected function getHeaderWidgets(): array

@@ -7,14 +7,22 @@ namespace Database\Seeders;
 use App\Models\Client;
 use App\Models\Todo;
 use App\Models\User;
+use App\Traits\EnvironmentProtection;
 use Illuminate\Database\Seeder;
 
 class TodoSeeder extends Seeder
 {
+    use EnvironmentProtection;
+
     public function run(): void
     {
+        // Vérifier l'environnement avant de générer des données
         $this->command?->info('Création des tâches...');
+        $this->createTodos();
+    }
 
+    private function createTodos(): void
+    {
         $clients = Client::all();
         $users = User::all();
 

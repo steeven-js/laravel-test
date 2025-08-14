@@ -4,61 +4,36 @@ declare(strict_types=1);
 
 namespace App\Console\Commands;
 
+use App\Traits\EnvironmentProtection;
 use Database\Seeders\ServiceSeeder;
 use Illuminate\Console\Command;
 
 class SeedServices extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'services:seed {--force : Forcer l\'exécution sans confirmation}';
+    use EnvironmentProtection;
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'Importer les services depuis le fichier CSV services_rows (2).csv';
+    protected $signature = 'seed:services {--force : Forcer l\'exécution même si des données existent}';
 
-    /**
-     * Execute the console command.
-     */
+    protected $description = 'Créer des services de test';
+
     public function handle(): int
     {
-        $csvPath = base_path('services_rows (2).csv');
-
-        if (! file_exists($csvPath)) {
-            $this->error("Fichier CSV introuvable: {$csvPath}");
-            $this->info('Veuillez placer le fichier services_rows (2).csv à la racine du projet.');
-
-            return 1;
-        }
-
-        if (! $this->option('force')) {
-            if (! $this->confirm('Voulez-vous importer les services depuis le CSV ? Cela peut écraser les données existantes.')) {
-                $this->info('Import annulé.');
-
-                return 0;
-            }
-        }
-
-        $this->info('Import des services en cours...');
-
         try {
+            // Vérifier l'environnement avant de générer des données
+            $this->ensureDataGenerationAllowed();
+            
+            $this->info('Début de la création des services...');
+
             $seeder = new ServiceSeeder;
-            $seeder->setCommand($this);
             $seeder->run();
 
-            $this->info('✅ Services importés avec succès !');
+            $this->info('✅ Services créés avec succès !');
 
-            return 0;
+            return self::SUCCESS;
         } catch (\Exception $e) {
-            $this->error('❌ Erreur lors de l\'import: ' . $e->getMessage());
+            $this->error('❌ Erreur lors de la création des services : ' . $e->getMessage());
 
-            return 1;
+            return self::FAILURE;
         }
     }
 }
