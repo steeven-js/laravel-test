@@ -37,17 +37,17 @@ class RemoveHistoriqueTrait extends Command
 
         // Parcourir tous les fichiers de resources
         $resourceFiles = File::glob($resourcesPath . '/*.php');
-        
+
         foreach ($resourceFiles as $resourceFile) {
             $resourceName = basename($resourceFile, '.php');
-            
+
             // Ignorer les fichiers de configuration et les traits
             if (Str::contains($resourceName, 'Trait') || Str::contains($resourceName, 'Config')) {
                 continue;
             }
 
             $result = $this->removeTrait($resourceFile, $resourceName);
-            
+
             if ($result === 'success') {
                 $successCount++;
             } else {
@@ -62,11 +62,13 @@ class RemoveHistoriqueTrait extends Command
 
         if ($errorCount > 0) {
             $this->error('⚠️  Certains resources n\'ont pas pu être modifiés.');
+
             return 1;
         }
 
         $this->info('🎉 Tous les traits ont été supprimés avec succès !');
         $this->info('💡 Vous pourrez les remettre plus tard avec la commande historique:add-to-resources');
+
         return 0;
     }
 
@@ -76,10 +78,11 @@ class RemoveHistoriqueTrait extends Command
     private function removeTrait(string $resourceFile, string $resourceName): string
     {
         $content = File::get($resourceFile);
-        
+
         // Vérifier si le resource utilise HasHistoriqueResource
-        if (!Str::contains($content, 'HasHistoriqueResource')) {
+        if (! Str::contains($content, 'HasHistoriqueResource')) {
             $this->line("⏭️  {$resourceName} n'utilise pas HasHistoriqueResource, ignoré");
+
             return 'success';
         }
 
@@ -97,7 +100,7 @@ class RemoveHistoriqueTrait extends Command
         );
 
         $newContent = str_replace(
-            "use \\App\\Filament\\Resources\\Traits\\HasHistoriqueResource;",
+            'use \\App\\Filament\\Resources\\Traits\\HasHistoriqueResource;',
             '',
             $newContent
         );
@@ -109,9 +112,11 @@ class RemoveHistoriqueTrait extends Command
         try {
             File::put($resourceFile, $newContent);
             $this->info("✅ Trait supprimé de {$resourceName}");
+
             return 'success';
         } catch (\Exception $e) {
             $this->error("❌ Erreur lors de la sauvegarde de {$resourceName} : " . $e->getMessage());
+
             return 'error';
         }
     }

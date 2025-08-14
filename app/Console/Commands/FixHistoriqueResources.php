@@ -37,17 +37,17 @@ class FixHistoriqueResources extends Command
 
         // Parcourir tous les fichiers de resources
         $resourceFiles = File::glob($resourcesPath . '/*.php');
-        
+
         foreach ($resourceFiles as $resourceFile) {
             $resourceName = basename($resourceFile, '.php');
-            
+
             // Ignorer les fichiers de configuration et les traits
             if (Str::contains($resourceName, 'Trait') || Str::contains($resourceName, 'Config')) {
                 continue;
             }
 
             $result = $this->fixResource($resourceFile, $resourceName);
-            
+
             if ($result === 'success') {
                 $successCount++;
             } else {
@@ -62,10 +62,12 @@ class FixHistoriqueResources extends Command
 
         if ($errorCount > 0) {
             $this->error('⚠️  Certains resources n\'ont pas pu être corrigés.');
+
             return 1;
         }
 
         $this->info('🎉 Tous les resources ont été corrigés avec succès !');
+
         return 0;
     }
 
@@ -75,49 +77,54 @@ class FixHistoriqueResources extends Command
     private function fixResource(string $resourceFile, string $resourceName): string
     {
         $content = File::get($resourceFile);
-        
+
         // Vérifier si le resource utilise HasHistoriqueResource
-        if (!Str::contains($content, 'HasHistoriqueResource')) {
+        if (! Str::contains($content, 'HasHistoriqueResource')) {
             return 'success'; // Pas besoin de correction
         }
 
         // Vérifier si getDefaultRelations existe déjà
         if (Str::contains($content, 'getDefaultRelations')) {
             $this->line("⏭️  {$resourceName} a déjà getDefaultRelations, ignoré");
+
             return 'success';
         }
 
         // Vérifier si getRelations existe
-        if (!Str::contains($content, 'getRelations')) {
+        if (! Str::contains($content, 'getRelations')) {
             $this->warn("⚠️  {$resourceName} n'a pas de méthode getRelations, impossible à corriger");
+
             return 'error';
         }
 
         // Extraire le contenu de getRelations
         if (preg_match('/public static function getRelations\(\): array\s*\{([^}]+)\}/s', $content, $matches)) {
             $relationsContent = trim($matches[1]);
-            
+
             // Créer la méthode getDefaultRelations
             $defaultRelationsMethod = "\n    protected static function getDefaultRelations(): array\n    {\n        return [\n        ];\n    }\n";
-            
+
             // Insérer après getRelations
             $newContent = str_replace(
                 'public static function getRelations(): array' . "\n    {\n" . $relationsContent . "\n    }",
                 'public static function getRelations(): array' . "\n    {\n" . $relationsContent . "\n    }" . $defaultRelationsMethod,
                 $content
             );
-            
+
             // Sauvegarder le fichier
             try {
                 File::put($resourceFile, $newContent);
                 $this->info("✅ Resource {$resourceName} corrigé");
+
                 return 'success';
             } catch (\Exception $e) {
                 $this->error("❌ Erreur lors de la sauvegarde de {$resourceName} : " . $e->getMessage());
+
                 return 'error';
             }
         } else {
             $this->warn("⚠️  Impossible de parser getRelations dans {$resourceName}");
+
             return 'error';
         }
     }

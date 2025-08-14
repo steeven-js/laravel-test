@@ -395,12 +395,12 @@ class FactureResource extends Resource
             FactureResource\RelationManagers\LignesRelationManager::class,
         ];
     }
+
     protected static function getDefaultRelations(): array
     {
         return [
         ];
     }
-
 
     public static function getPages(): array
     {

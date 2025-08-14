@@ -77,8 +77,7 @@ class UserResource extends Resource
                                     ->defaultCountry('FR')
                                     ->formatAsYouType(true)
                                     ->displayNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::NATIONAL)
-                                    ->inputNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::E164)
-                                    ->maxLength(255),
+                                    ->inputNumberFormat(\Ysfkaya\FilamentPhoneInput\PhoneInputNumberType::E164),
                                 Forms\Components\TextInput::make('ville')
                                     ->label('Ville')
                                     ->maxLength(255),
@@ -227,12 +226,12 @@ class UserResource extends Resource
             //
         ];
     }
+
     protected static function getDefaultRelations(): array
     {
         return [
         ];
     }
-
 
     public static function getPages(): array
     {

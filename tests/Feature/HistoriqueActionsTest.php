@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature;
 
 use App\Models\Client;
-use App\Models\User;
 use App\Models\Historique;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,7 +19,7 @@ class HistoriqueActionsTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Créer un utilisateur de test
         $this->user = User::factory()->create();
         $this->actingAs($this->user);
@@ -218,7 +218,7 @@ class HistoriqueActionsTest extends TestCase
         ]);
 
         $historique = Historique::where('action', 'modification')->first();
-        
+
         // Vérifier que updated_at n'est pas dans les données
         $this->assertArrayNotHasKey('updated_at', $historique->donnees_avant);
         $this->assertArrayNotHasKey('updated_at', $historique->donnees_apres);
