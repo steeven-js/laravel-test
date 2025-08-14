@@ -1,3 +1,3 @@
-<div class="space-y-6">
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     {{ $getChildComponentContainer() }}
-</div>
+</x-dynamic-component>

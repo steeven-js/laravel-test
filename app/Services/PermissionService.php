@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use Illuminate\Support\Arr;
+
 class PermissionService
 {
     /**
@@ -11,21 +13,32 @@ class PermissionService
      */
     public static function formatPermissionsForDatabase(array $formPermissions): array
     {
-        $permissions = [];
+        // Le state du formulaire est de la forme:
+        // [ 'clients' => ['view' => true, 'create' => false, ...], 'devis' => [...], ... ]
+        // On doit retourner: [ 'clients' => ['view', 'create', ...], 'devis' => [...], ... ]
 
-        foreach ($formPermissions as $key => $value) {
-            if ($value === true) {
-                [$resource, $action] = explode('.', $key);
+        $permissionsByResource = [];
 
-                if (! isset($permissions[$resource])) {
-                    $permissions[$resource] = [];
+        $walker = function (array $node, array $segments = []) use (&$walker, &$permissionsByResource): void {
+            foreach ($node as $key => $value) {
+                $currentPath = array_merge($segments, [$key]);
+
+                if (is_array($value)) {
+                    $walker($value, $currentPath);
+                    continue;
                 }
 
-                $permissions[$resource][] = $action;
+                if ($value === true && count($currentPath) === 2) {
+                    [$resource, $action] = $currentPath;
+                    $permissionsByResource[$resource] = $permissionsByResource[$resource] ?? [];
+                    $permissionsByResource[$resource][] = $action;
+                }
             }
-        }
+        };
 
-        return $permissions;
+        $walker($formPermissions, []);
+
+        return $permissionsByResource;
     }
 
     /**
@@ -33,17 +46,23 @@ class PermissionService
      */
     public static function formatPermissionsForForm(array $databasePermissions): array
     {
-        $formPermissions = [];
+        // Depuis la base: [ 'clients' => ['view', 'create'], ... ]
+        // Vers le state attendu par Filament Field: [ 'clients' => ['view' => true, 'create' => true], ... ]
+        $formState = [];
 
         foreach ($databasePermissions as $resource => $actions) {
-            if (is_array($actions)) {
-                foreach ($actions as $action) {
-                    $formPermissions["{$resource}.{$action}"] = true;
+            if (! is_array($actions)) {
+                continue;
+            }
+
+            foreach ($actions as $action) {
+                if (is_string($action)) {
+                    Arr::set($formState, $resource . '.' . $action, true);
                 }
             }
         }
 
-        return $formPermissions;
+        return $formState;
     }
 
     /**
