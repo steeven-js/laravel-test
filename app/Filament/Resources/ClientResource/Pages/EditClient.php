@@ -8,10 +8,22 @@ use App\Filament\Resources\ClientResource;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditClient extends EditRecord
 {
     protected static string $resource = ClientResource::class;
+
+    public function getTitle(): string|Htmlable
+    {
+        $nom = (string) ($this->record->nom ?? '');
+        $prenom = (string) ($this->record->prenom ?? '');
+        $fullName = trim("{$nom} {$prenom}");
+
+        return $fullName !== '' ? $fullName : parent::getTitle();
+    }
+
+    protected static ?string $breadcrumb = 'Modifier le client';
 
     protected function getHeaderActions(): array
     {

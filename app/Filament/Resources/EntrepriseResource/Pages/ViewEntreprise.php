@@ -24,6 +24,19 @@ class ViewEntreprise extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            // Groupe 1: Actions principales
+            Actions\ActionGroup::make([
+                Action::make('nouvelle_entreprise')
+                    ->label('Nouvel entreprise')
+                    ->icon('heroicon-o-user-plus')
+                    ->color('primary')
+                    ->url(fn (): string => \App\Filament\Resources\EntrepriseResource::getUrl('create', ['entreprise_id' => $this->record->getKey()])),
+            ])
+                ->label('Actions')
+                ->icon('heroicon-o-cog-6-tooth')
+                ->color('primary'),
+
+            // Boutons de navigation directement visibles
             Action::make('precedent')
                 ->label('Précédent')
                 ->icon('heroicon-m-chevron-left')
@@ -40,12 +53,12 @@ class ViewEntreprise extends ViewRecord
                     ? EntrepriseResource::getUrl('view', ['record' => $this->getNextRecordId()])
                     : '#')
                 ->disabled(fn (): bool => $this->getNextRecordId() === null),
-            Actions\EditAction::make(),
-            Action::make('nouvelle_entreprise')
-                ->label('Nouvel entreprise')
-                ->icon('heroicon-o-user-plus')
-                ->color('primary')
-                ->url(fn (): string => \App\Filament\Resources\EntrepriseResource::getUrl('create', ['entreprise_id' => $this->record->getKey()])),
+
+            // Groupe 3: Actions secondaires
+            Actions\EditAction::make()
+                ->label('Modifier')
+                ->icon('heroicon-o-pencil')
+                ->color('warning'),
         ];
     }
 

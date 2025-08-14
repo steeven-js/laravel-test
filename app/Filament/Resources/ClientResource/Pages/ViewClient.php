@@ -33,6 +33,24 @@ class ViewClient extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            // Groupe 1: Actions principales
+            Actions\ActionGroup::make([
+                Action::make('nouveau_devis')
+                    ->label('Nouveau devis')
+                    ->icon('heroicon-o-document-plus')
+                    ->color('primary')
+                    ->url(fn (): string => \App\Filament\Resources\DevisResource::getUrl('create', ['client_id' => $this->record->getKey()])),
+                Action::make('envoyer_email')
+                    ->label('Envoyer un email')
+                    ->icon('heroicon-o-paper-airplane')
+                    ->color('gray')
+                    ->url(fn (): string => \App\Filament\Resources\ClientEmailResource::getUrl('create', ['client_id' => $this->record->getKey()])),
+            ])
+                ->label('Actions')
+                ->icon('heroicon-o-cog-6-tooth')
+                ->color('primary'),
+
+            // Boutons de navigation directement visibles
             Action::make('precedent')
                 ->label('Précédent')
                 ->icon('heroicon-m-chevron-left')
@@ -49,17 +67,12 @@ class ViewClient extends ViewRecord
                     ? ClientResource::getUrl('view', ['record' => $this->getNextRecordId()])
                     : '#')
                 ->disabled(fn (): bool => $this->getNextRecordId() === null),
-            Actions\EditAction::make(),
-            Action::make('nouveau_devis')
-                ->label('Nouveau devis')
-                ->icon('heroicon-o-document-plus')
-                ->color('primary')
-                ->url(fn (): string => \App\Filament\Resources\DevisResource::getUrl('create', ['client_id' => $this->record->getKey()])),
-            Action::make('envoyer_email')
-                ->label('Envoyer un email')
-                ->icon('heroicon-o-paper-airplane')
-                ->color('gray')
-                ->url(fn (): string => \App\Filament\Resources\ClientEmailResource::getUrl('create', ['client_id' => $this->record->getKey()])),
+
+            // Groupe 3: Actions secondaires
+            Actions\EditAction::make()
+                ->label('Modifier')
+                ->icon('heroicon-o-pencil')
+                ->color('warning'),
         ];
     }
 

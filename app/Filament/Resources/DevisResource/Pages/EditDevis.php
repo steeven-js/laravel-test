@@ -8,12 +8,18 @@ use App\Filament\Resources\DevisResource;
 use App\Models\Facture;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditDevis extends EditRecord
 {
     protected static string $resource = DevisResource::class;
 
-    protected static ?string $breadcrumb = 'Modifier';
+    public function getTitle(): string|Htmlable
+    {
+        return 'Modifier le devis ' . $this->record->numero_devis;
+    }
+
+    protected static ?string $breadcrumb = 'Modifier le devis';
 
     protected function getHeaderActions(): array
     {

@@ -18,6 +18,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -28,6 +29,13 @@ class SendDevisByEmail extends Page implements Forms\Contracts\HasForms
     use Forms\Concerns\InteractsWithForms;
 
     protected static string $resource = DevisResource::class;
+
+    public function getTitle(): string|Htmlable
+    {
+        return 'Envoyer par email le devis ' . $this->record->numero_devis;
+    }
+
+    protected static ?string $breadcrumb = 'Envoyer par email le devis';
 
     protected static string $view = 'filament.resources.devis-resource.pages.send-by-email';
 

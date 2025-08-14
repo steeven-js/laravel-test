@@ -7,10 +7,20 @@ namespace App\Filament\Resources\FactureResource\Pages;
 use App\Filament\Resources\FactureResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class EditFacture extends EditRecord
 {
     protected static string $resource = FactureResource::class;
+
+    public function getTitle(): string|Htmlable
+    {
+        $numeroFacture = (string) ($this->record->numero_facture ?? '');
+
+        return $numeroFacture !== '' ? $numeroFacture : parent::getTitle();
+    }
+
+    protected static ?string $breadcrumb = 'Modifier la facture';
 
     protected function getHeaderActions(): array
     {
